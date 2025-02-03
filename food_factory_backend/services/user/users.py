@@ -27,8 +27,12 @@ def insert_user(db_connection, data):
         else:
             return False
     except Exception as e:
-        print(f"Error inserting user: {str(e)}")
-        return False
+        if e.args[0] == 1062:
+            print("Duplicate email detected")
+            return "email already exists"
+        else:
+            print(f"Error inserting user: {str(e)}")
+            return False
     finally:
         cursor.close()
 

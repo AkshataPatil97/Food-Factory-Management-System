@@ -18,7 +18,9 @@ class UserInsertView(APIView):
                     return Response({"error": "Missing required fields."}, status=400)
 
                 isUserInsert = insert_user(db_connection, data)
-                if isUserInsert:
+                if isUserInsert == "email already exists":
+                    return Response({"error": "Email already exists."}, status=400)
+                elif isUserInsert:
                     return Response({"message": "User created successfully."}, status=201)
                 else:
                     return Response({"error": "Failed to create user."}, status=500)

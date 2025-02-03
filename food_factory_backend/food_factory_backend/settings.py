@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'food_factory_management_system',
         'USER': 'root',
-        'PASSWORD': 'akshu',
+        'PASSWORD': 'Monu7070',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -148,3 +148,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'akshatatanajipatil2002@gmail.com'  
 EMAIL_HOST_PASSWORD = 'ziva rrfu gsmq bjxj'  
 DEFAULT_FROM_EMAIL = 'akshatatanajipail2002@gmail.com'
+
+# Fernet Key
+
+FEREN_KEY = 'N_6NepghIwhYOBOWBkSgFRKLAW1011Sm43S9F8c8F1o='

@@ -1,9 +1,13 @@
-from django.contrib.auth.hashers import make_password, check_password
+from cryptography.fernet import Fernet
+from django.conf import settings
 
-def encrypt_password(password):
-    """Encrypts (hashes) the password"""
-    return make_password(password)
+fernet = Fernet(settings.FEREN_KEY)
+# Encrypting sensitive data
+def encrypt_password(data: str) -> str:
+    encrypted_data = fernet.encrypt(data.encode())
+    return encrypted_data.decode()
 
-def verify_password(password, hashed_password):
-    """Verifies if the password matches the hashed password"""
-    return check_password(password, hashed_password)
+# Decrypting sensitive data
+def decrypt_password(encrypted_data: str) -> str:
+    decrypted_data = fernet.decrypt(encrypted_data.encode())
+    return decrypted_data.decode()
