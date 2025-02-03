@@ -1,4 +1,6 @@
 from constants.queries import USER_INSERT_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL
+from services.sendemail.sendemail import send_email
+from services.passwordencrypt.passwordencrypt import encrypt_password
 
 def insert_user(db_connection, data):
     """ Insert a new user into the database.
@@ -11,18 +13,19 @@ def insert_user(db_connection, data):
 
     try:
         cursor = db_connection.cursor()
-        print("Data - ", data)
         cursor.execute(USER_INSERT_QUERY, (
             data.get('username'),
             data.get('email'),
-            data.get('password'),
+            encrypt_password(data.get('password')),
             data.get('role'),
             data.get('is_delete', 0)  
         ))
-
-        # Commit the transaction
-        db_connection.commit()
-        return True
+        isEmailSend = send_email_to_user(data.get('email'))
+        if isEmailSend:
+            db_connection.commit()
+            return True
+        else:
+            return False
     except Exception as e:
         print(f"Error inserting user: {str(e)}")
         return False
@@ -54,3 +57,16 @@ def fetch_user_by_email(db_connection, email):
         return None
     finally:
         cursor.close()
+
+def send_email_to_user(email):
+    try:
+        subject = "Welcome to Our Platform"
+        message = "Thank you for registering with us!"
+        recipient_list = [email]  
+
+        send_email(subject, message, recipient_list)
+        return True
+
+    except Exception as e:
+        print(f"Error fetching user: {e}")
+        return False
