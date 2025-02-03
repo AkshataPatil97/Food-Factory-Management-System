@@ -1,4 +1,4 @@
-from constants.queries import USER_INSERT_QUERY 
+from constants.queries import USER_INSERT_QUERY, FETCH_ALL_USERS_QUERY
 
 def insert_user(db_connection, data):
     """ Insert a new user into the database.
@@ -32,6 +32,7 @@ def fetchall_users(db_connection):
     try:
         cursor = db_connection.cursor()
         data = cursor.execute(FETCH_ALL_USERS_QUERY)
+        data = cursor.fetchall()
         db_connection.commit()
         return data
     except Exception as e:

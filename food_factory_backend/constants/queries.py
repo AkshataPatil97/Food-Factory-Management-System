@@ -6,6 +6,6 @@ USER_INSERT_QUERY = """
 
 # fetch all user query
 FETCH_ALL_USERS_QUERY = """ 
-    SELECT * FROM users WHERE is_delete != false
+    SELECT * FROM users WHERE is_delete = false;
 """
            
