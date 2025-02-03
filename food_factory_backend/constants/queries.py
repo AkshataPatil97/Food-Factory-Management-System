@@ -8,4 +8,9 @@ USER_INSERT_QUERY = """
 FETCH_ALL_USERS_QUERY = """ 
     SELECT * FROM users WHERE is_delete = false;
 """
+
+# fetch user by email
+FETCH_USER_BY_EMAIL = """ 
+    SELECT * FROM  users WHERE email = %s;
+"""
            
