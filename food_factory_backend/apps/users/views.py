@@ -31,7 +31,7 @@ class UserInsertView(APIView):
                 close_conn(db_connection)
 
 class FetchAllUserView(APIView):
-    def get(self,request):
+    def get(self, request):
         db_connection = None
         try:
             db_connection = get_conn()
@@ -40,7 +40,7 @@ class FetchAllUserView(APIView):
             else:
                 data = fetchall_users(db_connection)
                 if data:
-                    return Response({"message": "Users fetched successfully."}, {"data": data}, status=201)
+                    return Response({"message": "Users fetched successfully", "data": data}, status=200)
                 else:
                     return Response({"error": "Failed to fetch users."}, status=500)
         except Exception as e:
@@ -49,5 +49,4 @@ class FetchAllUserView(APIView):
         finally:
             if db_connection:
                 close_conn(db_connection)
-
 
