@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'food_factory_management_system',
         'USER': 'root',
-        'PASSWORD': 'Monu7070',
+        'PASSWORD': 'akshu',
         'HOST': 'localhost',
         'PORT': '3306',
     }
