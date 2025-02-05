@@ -1,0 +1,34 @@
+<div class="container">
+    <div class="row customGridDiv">
+      <div class="col-12 col-lg-6 col-md-6">
+        Form Guidance/Image
+      </div>
+  
+      <div class="col-12 col-lg-6 col-md-6">
+        <form action="#" method="POST" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Username</label>
+                <p-inputText [(ngModel)]="username" name="username" required class="mt-1 w-full" placeholder="Enter your username"></p-inputText>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Email</label>
+                <p-inputText type="email" [(ngModel)]="email" name="email" required class="mt-1 w-full" placeholder="Enter your email"></p-inputText>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Password</label>
+                <p-password [(ngModel)]="password" name="password" required [toggleMask]="true" class="mt-1 w-full"></p-password>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Role</label>
+                <p-dropdown 
+                [options]="cities" 
+                [(ngModel)]="roleOptions"
+                optionLabel="name" 
+                placeholder="Select a City" />
+            </div>
+            <button pButton type="submit" label="Register" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-300"></button>
+        </form>
+      </div>
+    </div>
+  </div>
+  

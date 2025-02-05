@@ -5,6 +5,7 @@ import { AppComponent } from "./app.component";
 import { PrimeNgModule } from "./shared/prime-ng/prime-ng.module";
 import { AppRoutingModule } from "./app-routing.module";
 import { RouterModule } from "@angular/router"; 
+import { CommonsModule } from "./commons/commons.module";
 
 @NgModule({
   declarations: [
@@ -15,9 +16,10 @@ import { RouterModule } from "@angular/router";
     HttpClientModule,
     PrimeNgModule,
     AppRoutingModule, 
-    RouterModule 
+    RouterModule,
+    CommonsModule
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, CommonsModule],
   providers: [],
   bootstrap: [AppComponent]
 })

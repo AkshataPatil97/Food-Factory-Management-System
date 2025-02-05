@@ -1,0 +1,17 @@
+.container {
+    max-width: 100%;
+    padding: 0 15px;
+
+    .customGridDiv {
+        width: 100%;
+        overflow: hidden;
+        // display: flex;
+
+        .col-12 {
+            word-wrap: break-word;
+            white-space: normal;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+    }
+}
