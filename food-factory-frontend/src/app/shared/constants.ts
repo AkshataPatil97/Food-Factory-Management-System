@@ -1,0 +1,1 @@
+export const USER_INSERT_URL = 'user/insert/';

@@ -6,17 +6,21 @@ import { PrimeNgModule } from "./shared/prime-ng/prime-ng.module";
 import { AppRoutingModule } from "./app-routing.module";
 import { RouterModule } from "@angular/router"; 
 import { CommonsModule } from "./commons/commons.module";
+import { FormsModule } from "@angular/forms";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     HttpClientModule,
     PrimeNgModule,
     AppRoutingModule, 
     RouterModule,
+    FormsModule,
     CommonsModule
   ],
   exports: [RouterModule, CommonsModule],

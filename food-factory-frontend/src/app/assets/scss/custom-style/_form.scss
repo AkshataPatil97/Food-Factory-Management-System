@@ -1,17 +1,31 @@
-.container {
-    max-width: 100%;
-    padding: 0 15px;
+/* General Styling */
 
-    .customGridDiv {
-        width: 100%;
-        overflow: hidden;
-        // display: flex;
+.customGridDiv {
+    display: flex;
+    width: 100%;
 
-        .col-12 {
-            word-wrap: break-word;
-            white-space: normal;
-            padding: 10px;
-            box-sizing: border-box;
+    .left-section {
+        width: 50%;
+    }
+
+    .right-section {
+        width: 50%;
+
+        .form-container {
+            border: solid red 1px;
+            border-radius: 4px;
+            padding: 20px;
+
+            .form-group {
+                display: grid;
+
+                .form-input {
+                    width: 100px;
+                    min-width: 250px;
+                    height: auto;
+                    min-height: 30px;
+                }
+            }
         }
     }
 }

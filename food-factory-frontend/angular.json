@@ -30,7 +30,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/primeflex/primeflex.scss",
+              "node_modules/primeng/resources/themes/lara-light-indigo/theme.css",
+              "node_modules/primeng/resources/primeng.min.css"
             ],
             "scripts": []
           },
@@ -54,6 +58,14 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "staging": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -66,6 +78,9 @@
             },
             "development": {
               "buildTarget": "food-factory-frontend:build:development"
+            },
+            "staging": {
+              "buildTarget": "food-factory-frontend:build:staging"
             }
           },
           "defaultConfiguration": "development"
