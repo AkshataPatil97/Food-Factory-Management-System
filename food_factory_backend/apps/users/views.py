@@ -14,6 +14,7 @@ class UserInsertView(APIView):
                 return Response({"error": "Failed to connect to the database"}, status=500)
             else:
                 data = request.data
+                print('User data - ',data)
                 if not all([data.get('username'), data.get('email'), data.get('password'), data.get('role')]):
                     return Response({"error": "Missing required fields."}, status=400)
 
@@ -76,7 +77,16 @@ class FetchUserByEmailView(APIView):
                 close_conn(db_connection)
 
 
+class SignInUserView(APIView):
+    def post(self, request):
+        db_connection = None
+        try:
+            print(request)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
-
+        finally:
+            if db_connection:
+                close_conn(db_connection)
 
 

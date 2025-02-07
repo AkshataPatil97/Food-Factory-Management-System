@@ -21,16 +21,25 @@ export class RegistrationComponent {
   password: string = '';
   roleOptions = USER_ROLE;
   role: { name: string } = { name: '' };
+  isLoading: Boolean = false;
 
   onSubmit() {
+    this.isLoading = true;
+    console.log('Loading started');
     const formData = createFormData(this.username, this.email, this.password, this.role);
     this.userService.insertUser(formData).subscribe(
-      res=> {
+      res => {
         this.resetForm();
-        alert('Registered successfully! You will be redirected to the login page.');
         this.router.navigate(['/login']);
+      },
+      error => {
+        console.error('Error during registration:', error);
+        this.isLoading = false;
       }
     );
+    setTimeout(() => {
+      this.isLoading = false;  
+    }, 6000);
   }
 
   resetForm() {

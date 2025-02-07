@@ -1,6 +1,9 @@
 from constants.queries import USER_INSERT_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL
+from constants.constant import TRUE
+from constants.bd_config import EMAIL_SEND_TO_USER
 from services.sendemail.sendemail import send_email
 from services.passwordencrypt.passwordencrypt import encrypt_password
+from services.db_config.dbConfigService import fetch_db_config_data
 
 def insert_user(db_connection, data):
     """ Insert a new user into the database.
@@ -20,12 +23,19 @@ def insert_user(db_connection, data):
             data.get('role'),
             data.get('is_delete', 0)  
         ))
-        isEmailSend = send_email_to_user(data.get('email'))
-        if isEmailSend:
+        isEmailSend = fetch_db_config_data(db_connection, EMAIL_SEND_TO_USER)
+        if isEmailSend == TRUE:
+            isSend = send_email_to_user(data.get('email'))
+            if isSend:
+                db_connection.commit()
+                return True
+            else:
+                return False
+        else:
             db_connection.commit()
             return True
-        else:
-            return False
+
+        
     except Exception as e:
         if e.args[0] == 1062:
             print("Duplicate email detected")
