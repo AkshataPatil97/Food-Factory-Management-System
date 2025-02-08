@@ -15,3 +15,4 @@ def send_email(subject, message, recipient_list, sender=None):
         )
     except Exception as e:
         print(f"Error sending email: {str(e)}")
+

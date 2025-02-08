@@ -7,12 +7,16 @@ import { PrimeNgModule } from "../shared/prime-ng/prime-ng.module";
 import { RegistrationComponent } from "./registration/registration.component";
 import { FormsModule } from "@angular/forms";
 import { LoginComponent } from "./login/login.component";
+import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
+import { CustomerDashboardComponent } from "./customer-dashboard/customer-dashboard.component";
 
 @NgModule({
     declarations: [
         HomeComponent,
         RegistrationComponent,
-        LoginComponent
+        LoginComponent,
+        AdminDashboardComponent,
+        CustomerDashboardComponent
     ],
     imports: [
         CommonModule,
@@ -24,7 +28,9 @@ import { LoginComponent } from "./login/login.component";
     exports: [
         HomeComponent,
         RegistrationComponent,
-        LoginComponent
+        LoginComponent,
+        AdminDashboardComponent,
+        CustomerDashboardComponent
     ]
 })
 export class HomeModule { }

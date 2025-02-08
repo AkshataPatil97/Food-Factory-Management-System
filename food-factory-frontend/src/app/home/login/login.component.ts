@@ -15,18 +15,30 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   onSubmit() {
     this.authService.loginWithEmailAndPassword(this.email, this.password).subscribe(
       (response: any) => {
-        this.authService.storeToken(response.token);
-        console.log('Logged in');
-        
-        // this.router.navigate(['/dashboard']);
+        if (response.token) {
+          this.authService.storeToken(response.token); // ✅ Store token only
+
+          const user = this.authService.getUser();  // ✅ Decode token and get user details
+          if (user?.role === 'Admin') {
+            this.router.navigate(['/admin-dashboard']);
+          } else if (user?.role === 'Customer') {
+            this.router.navigate(['/customer-dashboard']);
+          } else {
+            alert("Unknown user role. Please contact support.");
+          }
+        }
       },
       (error) => {
-        console.error('Login failed!', error);
+        if (error.error && error.error.error) {
+          alert(error.error.error);
+        } else {
+          alert("Something went wrong. Please try again.");
+        }
       }
     );
   }

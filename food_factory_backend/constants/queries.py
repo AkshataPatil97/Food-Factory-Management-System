@@ -18,4 +18,21 @@ FETCH_USER_BY_EMAIL = """
 FETCH_DB_CONFIG_DATA = """
     SELECT map_to FROM db_config WHERE map_from = %s; 
 """
-           
+
+# Insert OTP into DB
+OTP_INSERT_QUERY = """
+    INSERT INTO otp_verification (email, otp, expires_at) 
+    VALUES (%s, %s, DATE_ADD(NOW(), INTERVAL 5 MINUTE));
+"""
+
+# Fetch by email for OTP
+FETCH_EMAIL_FOR_OTP = """
+    SELECT * FROM otp_verification WHERE email = %s;
+"""
+
+# Update new OTP in DB
+UPDATE_NEW_OTP = """
+    UPDATE otp_verification 
+    SET otp = %s, expires_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE) 
+    WHERE email = %s;
+"""

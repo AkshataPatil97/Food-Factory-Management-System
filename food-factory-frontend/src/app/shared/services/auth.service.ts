@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { SIGN_IN_URL } from '../constants';
+import { jwtDecode } from 'jwt-decode';  
+
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,19 @@ export class AuthService {
     return localStorage.getItem('auth_token');
   }
 
+  getUser(): any {
+    const token = this.getToken();
+    if (token) {
+      try {
+        return jwtDecode(token)  
+      } catch (error) {
+        console.error("Invalid token", error);
+        return null;
+      }
+    }
+    return null;
+  }
+
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }
@@ -32,10 +47,11 @@ export class AuthService {
   }
 
   loginWithEmailAndPassword(email: string, password: string): Observable<any> {
-    const headers = new HttpHeaders()
-      .set('Authorization', `Basic ${btoa(email + ':' + password)}`);
-    console.log(headers);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
     let signInUrl = this.apiUrl + SIGN_IN_URL;
-    return this.http.post(signInUrl, {}, { headers });
+    return this.http.post(signInUrl, { email, password }, { headers });
   }
 }
