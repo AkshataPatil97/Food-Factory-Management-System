@@ -33,6 +33,13 @@ FETCH_EMAIL_FOR_OTP = """
 # Update new OTP in DB
 UPDATE_NEW_OTP = """
     UPDATE otp_verification 
-    SET otp = %s, expires_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE) 
+    SET otp = %s, 
+        expires_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE),
+        updated_at = NOW() 
     WHERE email = %s;
+"""
+
+# Update Password
+UPDATE_PASSWORD_QUERY = """
+    UPDATE users SET password = %s WHERE email = %s;
 """

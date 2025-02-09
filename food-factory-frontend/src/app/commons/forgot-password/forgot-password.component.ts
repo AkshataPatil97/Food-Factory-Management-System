@@ -13,11 +13,11 @@ export class ForgotPasswordComponent {
   email: string = '';
   otp: string = '';
   newPassword: string = '';
-  step: number = 1; 
+  step: number = 1;
   isLoading: Boolean = false;
 
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private router: Router,
     private userService: UsersService
   ) { }
@@ -34,27 +34,50 @@ export class ForgotPasswordComponent {
       }
     );
     setTimeout(() => {
-      this.isLoading = false;  
+      this.isLoading = false;
     }, 3000);
   }
 
   verifyOTP() {
-    this.http.post('/api/verify-otp/', { email: this.email, otp: this.otp }).subscribe(
-      () => {
-        alert('OTP Verified. Set a new password.');
-        this.step = 3; // ✅ Move to password reset step
+    this.isLoading = true;
+    this.userService.verifyOTP(this.email, this.otp).subscribe(
+      (res: any) => {
+        if (res.success) {          
+          this.step = 3;
+        } else {
+          console.error("OTP verification failed:", res.message);
+          alert(res.message);
+        }
       },
-      (error) => alert(error.error.error)
+      (error) => {
+        console.error("Error during OTP verification:", error);
+        alert(error.error?.message || "An unexpected error occurred. Please try again.");
+      }
     );
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000);
   }
+  
 
   resetPassword() {
-    this.http.post('/api/reset-password/', { email: this.email, password: this.newPassword }).subscribe(
-      () => {
-        alert('Password reset successful. Please login.');
-        this.router.navigate(['/login']);
+    this.isLoading = true;
+    this.userService.resetPassword(this.email, this.newPassword).subscribe(
+      (res: any) => {
+        if (res.success) {          
+          this.router.navigate(['/login']);
+        } else {
+          console.error("Reset password failed:", res.message);
+          alert(res.message);
+        }
       },
-      (error) => alert(error.error.error)
+      (error) => {
+        console.error("Error during reset password:", error);
+        alert(error.error?.message || "An unexpected error occurred. Please try again.");
+      }
     );
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000);
   }
 }

@@ -1,10 +1,11 @@
-from constants.queries import USER_INSERT_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL, OTP_INSERT_QUERY, FETCH_EMAIL_FOR_OTP, UPDATE_NEW_OTP
+from constants.queries import USER_INSERT_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL, OTP_INSERT_QUERY, FETCH_EMAIL_FOR_OTP, UPDATE_NEW_OTP, UPDATE_PASSWORD_QUERY
 from constants.constant import TRUE
 from constants.bd_config import EMAIL_SEND_TO_USER
 from services.sendemail.sendemail import send_email
 from services.passwordencrypt.passwordencrypt import encrypt_password
 from services.db_config.dbConfigService import fetch_db_config_data
 from django.utils.crypto import get_random_string
+from datetime import datetime
 
 def insert_user(db_connection, data):
     """ Insert a new user into the database.
@@ -136,3 +137,66 @@ def fetch_user_for_otp(cursor, email):
     except Exception as e:
         print(f"Error fetching user: {e}")
         return None
+
+def verify_otp(db_connection, request):
+    try:
+        cursor = db_connection.cursor(dictionary=True)  
+        email = request.data.get("email")
+        otp = request.data.get("otp")
+        current_time_str = request.data.get("currentTime")  
+
+        try:
+            current_time = datetime.strptime(current_time_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            print("Invalid datetime format for currentTime.")
+            return False
+
+        user = fetch_user_for_otp(cursor, email)
+        
+        if not user:
+            print("Email not found in OTP records.")
+            return False 
+
+        stored_otp = user["otp"]
+        updated_at = user["updated_at"]
+        expires_at = user["expires_at"]
+        
+        if isinstance(updated_at, str):
+            updated_at = datetime.strptime(updated_at, "%Y-%m-%d %H:%M:%S")
+
+        if isinstance(expires_at, str):
+            expires_at = datetime.strptime(expires_at, "%Y-%m-%d %H:%M:%S")
+
+        print(f"Updated At: {updated_at}, Expires At: {expires_at}, Current Time: {current_time}")
+
+        if stored_otp != otp:
+            print("OTP does not match.")
+            return False
+
+        if not (updated_at <= current_time <= expires_at):
+            print("OTP expired or invalid time range.")
+            return False
+        return True
+
+    except Exception as e:
+        print(f"Error verifying OTP: {str(e)}")
+        return False
+    finally:
+        cursor.close()
+
+def password_reset(db_connection, request):
+    try:
+        email = request.data.get("email")
+        password = request.data.get("password")
+        cursor = db_connection.cursor()
+        user = fetch_user_by_email(db_connection, email)
+        if not user:
+            return False
+        cursor.execute(UPDATE_PASSWORD_QUERY, (encrypt_password(password), email))
+        db_connection.commit()
+        return True
+    except Exception as e:
+        print(f"Error in reseting password: {str(e)}")
+        return False
+    finally:
+        cursor.close() 

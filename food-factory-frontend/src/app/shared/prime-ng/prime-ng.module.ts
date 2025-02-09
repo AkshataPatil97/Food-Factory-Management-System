@@ -5,8 +5,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';   
 import { PasswordModule } from 'primeng/password'; 
 import { MultiSelectModule } from 'primeng/multiselect';
-import { ToastModule } from 'primeng/toast';
 import { InputMaskModule } from 'primeng/inputmask';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
     declarations:[],
@@ -19,8 +19,8 @@ import { InputMaskModule } from 'primeng/inputmask';
         DropdownModule,
         PasswordModule,
         MultiSelectModule,
-        ToastModule,
-        InputMaskModule
+        InputMaskModule,
+        ToastModule
     ]
 })
 
