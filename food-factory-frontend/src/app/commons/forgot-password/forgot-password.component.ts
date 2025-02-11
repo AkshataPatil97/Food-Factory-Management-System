@@ -12,7 +12,8 @@ export class ForgotPasswordComponent {
 
   email: string = '';
   otp: string = '';
-  newPassword: string = '';
+  password: string = '';
+  confirmPassword: string = '';
   step: number = 1;
   isLoading: Boolean = false;
 
@@ -62,7 +63,7 @@ export class ForgotPasswordComponent {
 
   resetPassword() {
     this.isLoading = true;
-    this.userService.resetPassword(this.email, this.newPassword).subscribe(
+    this.userService.resetPassword(this.email, this.password).subscribe(
       (res: any) => {
         if (res.success) {          
           this.router.navigate(['/login']);

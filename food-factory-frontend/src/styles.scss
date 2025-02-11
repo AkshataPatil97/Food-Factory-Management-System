@@ -3,3 +3,11 @@
 @import 'primeflex/primeflex.scss';
 @import "../src/app/assets/scss/custom-style/form";
 @import "../src/app/assets/scss/custom-style/waveloader";
+@import "../src/app/assets/scss/custom-style/button";
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}

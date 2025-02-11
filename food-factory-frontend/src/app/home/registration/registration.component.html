@@ -1,41 +1,73 @@
-<div class="row customGridDiv">
+<app-header></app-header>
 
-  <!-- Left Section for Form -->
-  <div class="col-12 sm:col-12 md:col-6 lg:col-6 xl:col-6 left-section">
+<div class="customGridDiv p-grid">
+  <!-- Left Section -->
+  <div class="p-col-12 p-md-6 left-section">
     <div class="image-container">
-      <!-- <img src="your-image-url.jpg" alt="Form Image" class="form-image" /> -->
+      <!-- Add an image or text -->
       Form data / Image
     </div>
   </div>
 
-  <!-- Right Section for Form -->
-  <div class="col-12 sm:col-12 md:col-6 lg:col-6 xl:col-6 right-section">
-    <form (ngSubmit)="onSubmit()" class="form-container space-y-5">
+  <!-- Vertical Divider for Large Screens -->
+  <div class="verticle-line"></div>
+
+  <!-- Right Section -->
+  <div class="p-col-12 p-md-6 right-section">
+    <form #signupForm="ngForm" (ngSubmit)="onSubmit()" class="form-container">
       <div class="form-group">
-        <label class="form-label">Username</label>
+        <label class="form-label">Full Name</label>
         <input type="text" pInputText [(ngModel)]="username" name="username" required class="form-input"
-          placeholder="Enter your username" />
+          placeholder="Enter your username" #usernameField="ngModel" />
       </div>
+
       <div class="form-group">
         <label class="form-label">Email</label>
         <input type="email" pInputText [(ngModel)]="email" name="email" required class="form-input"
-          placeholder="Enter your email" />
+          placeholder="Enter your email" #emailField="ngModel" />
       </div>
+
       <div class="form-group">
         <label class="form-label">Password</label>
-        <p-password [(ngModel)]="password" name="password" required [toggleMask]="true" class="form-input" />
+        <p-password [(ngModel)]="password" name="password" required [toggleMask]="true" class="form-password-input"
+          placeholder="Enter Password" #passwordField="ngModel" />
       </div>
+
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <p-password [(ngModel)]="confirmPassword" name="confirmPassword" required [toggleMask]="true"
+          class="form-password-input confirmPass" placeholder="Confirm Password" #confirmPasswordField="ngModel" />
+        <span *ngIf="password && confirmPassword && password !== confirmPassword" class="pass-not-match-text">
+          Passwords do not match!
+        </span>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Role</label>
         <p-dropdown [options]="roleOptions" [(ngModel)]="role" optionLabel="name" name="role"
-          placeholder="Select Role" />
+          class="form-dropdown-input" placeholder="Select Role" #roleField="ngModel" />
       </div>
-      <button pButton type="submit" label="Sign Up" class="form-submit-button"></button>
+
+      <hr>
+
+      <div class="form-button-div">
+        <!-- Submit button is disabled if any field is empty or passwords do not match -->
+        <button pButton type="submit" label="Sign Up" class="form-submit-button"
+          [disabled]="!signupForm.valid || password !== confirmPassword">
+        </button>
+
+        <!-- Reset button is disabled only if all fields are empty -->
+        <button pButton type="button" label="Reset" class="form-reset-button" (click)="resetForm()"
+          [disabled]="isFormEmpty()">
+        </button>
+      </div>
     </form>
   </div>
-
-  <!-- Full-screen loader overlay -->
-  <div *ngIf="isLoading" class="full-screen-loader">
-    <app-wave-loader></app-wave-loader>
-  </div>
 </div>
+
+<!-- Full-screen loader -->
+<div *ngIf="isLoading" class="full-screen-loader">
+  <app-wave-loader></app-wave-loader>
+</div>
+
+<app-footer></app-footer>

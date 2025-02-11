@@ -14,38 +14,49 @@ export class RegistrationComponent {
   constructor(
     private userService: UsersService,
     private router: Router
-  ){}
+  ) { }
 
   username: string = '';
   email: string = '';
   password: string = '';
+  confirmPassword: string = '';
   roleOptions = USER_ROLE;
   role: { name: string } = { name: '' };
   isLoading: Boolean = false;
 
   onSubmit() {
-    this.isLoading = true;
-    console.log('Loading started');
-    const formData = createFormData(this.username, this.email, this.password, this.role);
-    this.userService.insertUser(formData).subscribe(
-      res => {
-        this.resetForm();
-        this.router.navigate(['/login']);
-      },
-      error => {
-        console.error('Error during registration:', error);
+    if (this.password !== this.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    } else {
+      this.isLoading = true;
+      console.log('Loading started');
+      const formData = createFormData(this.username, this.email, this.password, this.role);
+      this.userService.insertUser(formData).subscribe(
+        res => {
+          this.resetForm();
+          this.router.navigate(['/login']);
+        },
+        error => {
+          console.error('Error during registration:', error);
+          this.isLoading = false;
+        }
+      );
+      setTimeout(() => {
         this.isLoading = false;
-      }
-    );
-    setTimeout(() => {
-      this.isLoading = false;  
-    }, 6000);
+      }, 6000);
+    }
   }
 
   resetForm() {
     this.username = '';
     this.email = '';
     this.password = '';
-    this.role = { name: '' };  
+    this.confirmPassword = '';
+    this.role = { name: '' };
+  }
+
+  isFormEmpty(): boolean {
+    return !this.username && !this.email && !this.password && !this.confirmPassword && !this.role;
   }
 }

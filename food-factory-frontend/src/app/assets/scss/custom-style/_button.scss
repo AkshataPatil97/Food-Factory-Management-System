@@ -1,0 +1,53 @@
+@import "../partials/_variables";
+
+.form-button-div{
+    display: flex;
+    gap: 30px;
+
+    .form-submit-button{
+        border-radius: 4px;
+        border: 1px solid $button-color-submit;
+        padding: 8px 20px;
+        background: $button-color-submit;
+    
+        .p-button-label{
+            font-size: 14px;
+            color: $color-white;
+        }
+    }
+    
+    .form-reset-button{
+        border-radius: 4px;
+        border: 1px solid $button-color-reset;
+        padding: 8px 20px;
+        background: $button-color-reset;
+    
+        .p-button-label{
+            font-size: 14px;
+            color: $color-white;
+        }
+    }
+    
+    
+    .p-button:focus {
+        box-shadow: none;
+    }
+    
+    .form-submit-button:hover{
+        border: 1px solid $button-color-text;
+        background: $button-color-submit-hover;
+
+        .p-button-label{
+            color: $color-black;
+        }
+    }
+    
+    .form-reset-button:hover{
+        border: 1px solid $button-color-reset-hover;
+        background: $button-color-reset-hover;
+    
+        .p-button-label{
+            color: $color-black;
+        }
+    }
+}

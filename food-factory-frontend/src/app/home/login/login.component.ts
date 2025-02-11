@@ -21,9 +21,9 @@ export class LoginComponent {
     this.authService.loginWithEmailAndPassword(this.email, this.password).subscribe(
       (response: any) => {
         if (response.token) {
-          this.authService.storeToken(response.token); // ✅ Store token only
+          this.authService.storeToken(response.token); 
 
-          const user = this.authService.getUser();  // ✅ Decode token and get user details
+          const user = this.authService.getUser();  
           if (user?.role === 'Admin') {
             this.router.navigate(['/admin-dashboard']);
           } else if (user?.role === 'Customer') {
