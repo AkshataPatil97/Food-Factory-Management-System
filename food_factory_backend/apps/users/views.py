@@ -3,8 +3,8 @@ from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from services.user.users import insert_user, fetchall_users, fetch_user_by_email, send_otp_email, verify_otp, password_reset, insert_dealer_details, fetch_dealer_details, update_dealer_details, fetch_user_details, insert_admin_details
-from services.db_config.dbConfigService import fetch_db_config_data, update_db_config_data
+from services.users import insert_user, fetchall_users, fetch_user_by_email, send_otp_email, verify_otp, password_reset, insert_dealer_details, fetch_dealer_details, update_dealer_details, fetch_user_details, insert_admin_details
+from services.dbConfigService import fetch_db_config_data, update_db_config_data
 from config.connection import get_conn, close_conn
 from apps.users.auth_backend import CustomAuthBackend
 import json

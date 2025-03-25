@@ -1,9 +1,9 @@
 from constants.queries import USER_INSERT_QUERY, UPDATE_ADMIN_DETAILS_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL, FETCH_USER_BY_ID, OTP_INSERT_QUERY, FETCH_EMAIL_FOR_OTP, UPDATE_NEW_OTP, UPDATE_PASSWORD_QUERY, DEALER_DATA_INSERT_QUERY, FETCH_DEALER_DETAILS_QUERY, UPDATE_DEALER_DETAILS_QUERY, UPDATE_USER_DETAILS_QUERY, ADMIN_DATA_INSERT_QUERY, FETCH_ADMIN_DETAILS_QUERY
 from constants.constant import TRUE, DEALER_ADMIN_DETAILS, DEALER_ADMIN_DETAILS_COLUMNS, USER_DETAILS, USER_DETAILS_COLUMNS
 from constants.bd_config import EMAIL_SEND_TO_USER
-from services.sendemail.sendemail import send_email
-from services.passwordencrypt.passwordencrypt import encrypt_password
-from services.db_config.dbConfigService import fetch_db_config_data
+from services.sendemail import send_email
+from services.passwordencrypt import encrypt_password
+from services.dbConfigService import fetch_db_config_data
 from django.utils.crypto import get_random_string
 from datetime import datetime
 from logger import LOGGER

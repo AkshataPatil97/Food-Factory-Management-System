@@ -2,8 +2,8 @@
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.hashers import check_password
 from constants.queries import FETCH_USER_BY_EMAIL
-from services.user.users import fetch_user_by_email
-from services.passwordencrypt.passwordencrypt import decrypt_password 
+from services.users import fetch_user_by_email
+from services.passwordencrypt import decrypt_password 
 from logger import LOGGER
 
 class CustomAuthBackend(BaseBackend):
