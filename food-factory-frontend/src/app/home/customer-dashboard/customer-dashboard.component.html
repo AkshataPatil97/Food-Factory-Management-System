@@ -1,0 +1,108 @@
+<app-header [userName]="userName" [userId]="userId" [userRole]="userRole"></app-header>
+
+<div class="customGridDiv">
+    <!-- Left Section (Sidebar) - 25% width -->
+    <div class="col-12 md:col-3 left-section leftNavePart">
+        <p-panel header="Menu" class="custom-p-panel">
+            <ul class="menu-list">
+                <li><i class="pi pi-home"></i> Dashboard</li>
+                <li (click)="setActiveComponent('profile')"><i class="pi pi-user"></i> Profile</li>
+                <li (click)="setActiveComponent('products')"><i class="pi pi-box"></i> Product</li>
+                <li (click)="setActiveComponent('cart')"><i class="pi pi-wallet"></i> Cart
+                    <span class="cart-count" *ngIf="cart.length > 0">({{ cart.length }})</span>
+                </li>
+                <li><i class="pi pi-file"></i> Invoices</li>
+                <li (click)="setActiveComponent('settings')"><i class="pi pi-cog"></i> Settings</li>
+                <li (click)="logout()"><i class="pi pi-sign-out"></i> Log-out</li>
+            </ul>
+        </p-panel>
+    </div>
+
+    <div class="rightDashboardPard right-section">
+        <app-profile *ngIf="activeComponent === 'profile'"></app-profile>
+        
+        <div *ngIf="activeComponent === 'products'" class="customCardsDiv">
+            <div class="col-12 md:col-6 lg:col-3 cardDiv" *ngFor="let product of products">
+                <p-card [header]="product.product_name">
+                    <div class="product-info">
+                        <img *ngIf="!product.showDetails" src="assets/images/Snaks.jpeg" alt="Product Image" class="product-image">
+                        <div *ngIf="product.showDetails">
+                            <p class="customData">Product Code: {{ product.product_code }}</p>
+                            <p class="customData">Category ID: {{ product.category_id }}</p>
+                            <p class="customData">Manufacturing Date: {{ product.manufacturing_date }}</p>
+                            <p class="customData">Expiry Date: {{ product.expiry_date }}</p>
+                            <p class="customData">Price: Rs: {{ product.price }}</p>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button pButton icon="pi pi-eye" class="p-button-info" (click)="toggleProductDetails(product)"></button>
+                        <button pButton icon="pi pi-cart-plus" class="p-button-warning" (click)="addToCart(product)"></button>
+                    </div>
+                </p-card>
+            </div>
+        </div>
+
+        <app-settings *ngIf="activeComponent === 'settings'"></app-settings>
+
+        <div *ngIf="cart.length == 0 && activeComponent === 'cart'" class="cart-container emptyCart">
+            No data <i class="pi pi-wallet"></i>
+        </div>
+        
+        <div *ngIf="activeComponent === 'cart' && cart.length > 0" class="cart-container">
+            <div class="cart-header">Your Cart</div>
+            <div class="cart-items">
+                <div class="cart-card" *ngFor="let item of cart">
+                    <p-card>
+                        <div class="cart-card-header">
+                            <h3>{{ item.product.product_name }}</h3>
+                            <button pButton icon="pi pi-trash" class="p-button-danger remove-btn" (click)="removeFromCart(item)"></button>
+                        </div>
+                        <div class="cart-product-info">
+                            <img src="assets/images/Snaks.jpeg" alt="Product Image" class="cart-product-image">
+                            <div class="cart-details">
+                                <p><strong>Mfg:</strong> {{ item.product.manufacturing_date }}</p>
+                                <p><strong>Expiry:</strong> {{ item.product.expiry_date }}</p>
+                                <p><strong>Price:</strong> Rs: {{ item.product.price }}</p>
+                                <p class="quantity-control">
+                                    <strong>Quantity (Kg):</strong> <span>{{ item.quantity }}</span>
+                                </p>
+                                <p class="plusMinusButton">
+                                    <button pButton icon="pi pi-minus" class="quantity-btn" (click)="updateQuantity(item, -1)"></button>
+                                    <button pButton icon="pi pi-plus" class="quantity-btn" (click)="updateQuantity(item, 1)"></button>
+                                </p>
+                                <p><strong>Total:</strong> Rs: {{ item.sub_total }}</p>
+                            </div>
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+            <div class="cart-footer">
+                Total Amount: Rs: {{ getTotalPrice() }}
+                <!-- <button pButton label="Checkout" class="checkout-button" (click)="setActiveComponent('checkout')"></button> -->
+                <button pButton label="Checkout" class="checkout-button" (click)="checkout()"></button>
+            </div>
+        </div>
+
+        <div *ngIf="activeComponent === 'checkout'" class="checkout-container">
+            <div class="checkout-header">
+                <h2>Checkout</h2>
+                <button pButton icon="pi pi-times" class="p-button-danger close-btn" (click)="setActiveComponent('cart')"></button>
+            </div>
+            <div class="checkout-items">
+                <div class="checkout-item" *ngFor="let item of cart">
+                    <p>{{ item.product.product_name }} ({{ item.quantity }} kg) - Rs: {{ item.sub_total }}</p>
+                </div>
+            </div>
+            <div class="checkout-footer">
+                <h3>Total Amount: Rs: {{ getTotalPrice() }}</h3>
+                <button pButton label="Place Order" class="p-button-success" (click)="placeOrder()"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card flex justify-content-center">
+    <p-toast></p-toast>
+</div>
+
+<app-footer></app-footer>

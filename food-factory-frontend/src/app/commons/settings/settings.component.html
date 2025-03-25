@@ -1,0 +1,37 @@
+<div class="customGridDiv removePadding">
+    <div class="col-12 md:col-9 rightSettingPart">
+        <div class="settingsHeading">Settings</div>
+
+        <div class="settings-item" *ngIf="userRole === 'Admin'">
+            <div>
+                <label for="adminRegistration">Allow Admin Registration</label>
+            </div>
+            <div class="settingButton">
+                <input type="checkbox" id="adminRegistration" [(ngModel)]="allowAdminRegistration" class="option"/>
+                <button pButton (click)="updateAllowAdminRegisterSettings()" [disabled]="!allowAdminRegistration">Update</button>
+            </div>
+        </div>
+        <!-- <div class="settings-item" *ngIf="userRole === 'Admin'">
+            <div>
+                <label for="adminRegistration">Allow Admin Registration</label>
+            </div>
+            <div class="settingButton">
+                <input type="checkbox" id="adminRegistration" [(ngModel)]="allowAdminRegistration" class="option"/>
+                <button pButton (click)="updateAllowAdminRegisterSettings()" [disabled]="!allowAdminRegistration">Update</button>
+            </div>
+        </div> -->
+        <!-- <div class="settings-item" *ngIf="userRole === 'Dealer'">
+            <div>
+                <label for="adminRegistration">Add Details</label>
+            </div>
+            <div class="settingButton"> -->
+                <!-- <input type="checkbox" id="adminRegistration" [(ngModel)]="allowAdminRegistration" class="option"/> -->
+                <!--<button pButton (click)="updateAllowAdminRegisterSettings()">Add</button>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<div class="card flex justify-content-center">
+    <p-toast />
+</div>

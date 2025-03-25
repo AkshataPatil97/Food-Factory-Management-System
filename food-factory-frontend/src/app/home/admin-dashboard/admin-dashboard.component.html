@@ -1,0 +1,83 @@
+<app-header [userName]="userName" [userId]="userId" [userRole]="userRole"></app-header>
+
+<div class="customGridDiv">
+    <!-- Left Section (Sidebar) -->
+    <div class="col-12 md:col-3 left-section leftNavePart">
+        <p-panel header="Menu" class="custom-p-panel">
+            <ul class="menu-list">
+                <li (click)="setActiveComponent('dashboard')"><i class="pi pi-home"></i> Dashboard</li>
+                <li (click)="setActiveComponent('profile')"><i class="pi pi-user"></i> Profile</li>
+                <li class="dropdown">
+                    <i class="pi pi-box"></i> Product
+                    <ul class="dropdown-menu">
+                        <li (click)="setActiveComponent('product', 'add')"><i class="pi pi-plus"></i> Add</li>
+                        <li (click)="setActiveComponent('product', 'edit')"><i class="pi pi-pencil"></i> Update</li>
+                    </ul>
+                </li>
+                <li><i class="pi pi-wallet"></i> Wallet</li>
+                <li><i class="pi pi-file"></i> Invoices</li>
+                <li (click)="setActiveComponent('settings')"><i class="pi pi-cog"></i> Settings</li>
+                <li (click)="logout()"><i class="pi pi-sign-out"></i> Log out</li>
+            </ul>
+        </p-panel>
+    </div>
+
+    <!-- Right Section (Main Content) -->
+    <div class="col-12 md:col-9 right-section rightDashboardPard">
+
+        <app-profile *ngIf="activeComponent === 'profile'"></app-profile>
+        <app-product *ngIf="activeComponent === 'product'" [productAction]="selectedProductAction"></app-product>
+        <app-settings *ngIf="activeComponent === 'settings'"></app-settings>
+
+        <!-- Dashboard Overview -->
+        <div *ngIf="activeComponent === 'dashboard'">
+            <div class="customCardsDiv">
+                <div class="col-12 md:col-6 lg:col-3 cardDiv">
+                    <p-card header="Total Invoices"><h2>2478</h2></p-card>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3 cardDiv">
+                    <p-card header="Paid Invoices"><h2>983</h2></p-card>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3 cardDiv">
+                    <p-card header="Unpaid Invoices"><h2>1256</h2></p-card>
+                </div>
+                <div class="col-12 md:col-6 lg:col-3 cardDiv">
+                    <p-card header="Total Sent"><h2>652</h2></p-card>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="customTableDiv">
+                <div class="col-12">
+                    <p-card header="Recent Transactions">
+                        <p-table [value]="transactions" [paginator]="true" [rows]="5">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-transaction>
+                                <tr>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.type }}</td>
+                                    <td>{{ transaction.amount | currency }}</td>
+                                    <td>
+                                        <span [ngClass]="{
+                                            'status-paid': transaction.status === 'Paid',
+                                            'status-pending': transaction.status === 'Pending'
+                                        }">{{ transaction.status }}</span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-footer></app-footer>

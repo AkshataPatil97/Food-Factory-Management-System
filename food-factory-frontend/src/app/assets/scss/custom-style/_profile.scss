@@ -1,0 +1,142 @@
+.profile-right-section{
+    padding-top: 0px !important;
+    margin-top: 4px;
+    padding: 20px 0px;
+    height: auto !important;
+    justify-content: left !important;
+}
+
+.profile-container {
+    width: 100%;
+    min-height: 78vh;
+    overflow-y: auto;
+    padding: 2vh;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+    h2 {
+        margin-bottom: 2vh;
+        margin-top: 2px;
+        color: #333;
+        font-size: 2rem;
+    }
+
+    .profile-photo {
+        margin-bottom: 3vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center; // Centering both image and button
+
+        img {
+            margin-bottom: 4px;
+            width: 12vw;
+            height: 12vw;
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #007bff;
+            transition: transform 0.3s ease-in-out;
+
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        span {
+            color: #555;
+            flex: 2;
+            text-align: left;
+        }
+
+        .customChange {
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .customChange:hover {
+            color: #007bff;
+        }
+
+        .p-button-info {
+            background-color: #39e916;
+            border: none;
+            padding: 4px 10px;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: none;
+        }
+
+        .p-button-info:hover {
+            background-color: #9de295;
+        }
+    }
+
+    .profile-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2vh;
+        font-size: 1.2rem;
+        color: #555;
+
+        .detail-item {
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1vh;
+            border-bottom: 1px solid #ddd;
+
+            .alertField{
+                color: red;
+            }
+
+            label {
+                font-weight: bold;
+                color: #333;
+                flex: 1;
+                text-align: left;
+            }
+
+            span {
+                color: #555;
+                flex: 2;
+                text-align: left;
+            }
+
+            .customChange {
+                cursor: pointer;
+                text-decoration: none;
+                font-size: 14px;
+                color: #555;
+            }
+
+            .customChange:hover {
+                color: #007bff;
+            }
+
+            .p-button-info {
+                background-color: #39e916;
+                border: none;
+                padding: 4px 10px;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: 0.3s;
+                box-shadow: none;
+            }
+
+            .p-button-info:hover {
+                background-color: #9de295;
+            }
+        }
+    }
+}

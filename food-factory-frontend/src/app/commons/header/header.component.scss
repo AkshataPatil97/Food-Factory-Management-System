@@ -1,0 +1,27 @@
+.customHeader {
+    display: flex;
+    justify-content: space-between; /* Pushes items to opposite ends */
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #1E2A48; /* Dark blue background */
+    color: white;
+    height: 60px;
+  }
+  
+  .company-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .profile {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid
+  }  

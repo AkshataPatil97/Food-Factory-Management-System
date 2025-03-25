@@ -1,0 +1,117 @@
+<div class="product-container">
+    <div class="customProductHeader">Product Management</div>
+
+    <div *ngIf="productAction === 'add' || isEditing" class="insertProductDiv">
+        <form #productForm="ngForm" (ngSubmit)="isEditing ? onUpdate() : onSubmit()" class="form-container">
+
+            <!-- Form Fields -->
+            <div class="form-group">
+                <label class="form-label">Product Name</label>
+                <input type="text" pInputText [(ngModel)]="product_name" name="product_name" required class="form-input"
+                    placeholder="Enter product name" #productNameField="ngModel" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Product Code</label>
+                <input type="text" pInputText [(ngModel)]="product_code" name="product_code" required class="form-input"
+                    placeholder="Enter product code" #productCodeField="ngModel" [readonly]="isEditing" />
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <p-dropdown [options]="categoryOptions" [(ngModel)]="category_id" optionLabel="name" optionValue="value"
+                    name="category_id" class="form-dropdown-input" placeholder="Select Category"
+                    #categoryField="ngModel">
+                </p-dropdown>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Manufacturing Date</label>
+                <input type="date" pInputText [(ngModel)]="manufacturing_date" name="manufacturing_date" required
+                    class="form-input" #manufacturingDateField="ngModel" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Expiry Date</label>
+                <input type="date" pInputText [(ngModel)]="expiry_date" name="expiry_date" required class="form-input"
+                    #expiryDateField="ngModel" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Price</label>
+                <input type="number" pInputText [(ngModel)]="price" name="price" required class="form-input"
+                    placeholder="Enter price" #priceField="ngModel" />
+            </div>
+
+            <hr>
+
+            <div class="form-button-div">
+                <!-- Show Add or Update Button based on isEditing -->
+                <button pButton type="submit" label="Add Product" class="form-submit-button" *ngIf="!isEditing"
+                    [disabled]="!productForm.valid">
+                </button>
+
+                <button pButton type="submit" label="Update Product" class="form-submit-button" *ngIf="isEditing"
+                    [disabled]="!productForm.valid">
+                </button>
+
+                <button pButton type="button" label="Reset" class="form-reset-button"
+                    (click)="resetForm(); isEditing = false;" [disabled]="isFormEmpty()">
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+    <div *ngIf="productAction === 'edit'" class="rightDashboardPard updateProductDiv">
+        <div class="customCardsDiv">
+            <div class="col-12 md:col-6 lg:col-3 cardDiv" *ngFor="let product of products">
+                <p-card [header]="product.product_name">
+                    <div class="product-info">
+                        <!-- Show Image Initially -->
+                        <img *ngIf="!product.showDetails" src="assets/images/Snaks.jpeg" alt="Product Image"
+                            class="product-image">
+
+                        <!-- Show Details When Clicked -->
+                        <div *ngIf="product.showDetails">
+                            <p class="customData">Product Code: {{ product.product_code }}</p>
+                            <p class="customData">Category ID: {{ product.category_id }}</p>
+                            <p class="customData">Manufacturing Date: {{ product.manufacturing_date }}</p>
+                            <p class="customData">Expiry Date: {{ product.expiry_date }}</p>
+                            <p class="customData">Price: ${{ product.price }}</p>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button pButton icon="pi pi-eye" class="p-button-info" (click)="viewProduct(product)"></button>
+                        <button pButton icon="pi pi-pencil" class="p-button-warning"
+                            (click)="updateProduct(product.product_code)"></button>
+                        <button pButton icon="pi pi-trash" class="p-button-danger"
+                            (click)="deleteProduct(product.product_code)"></button>
+                    </div>
+                </p-card>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div *ngIf="productAction === 'edit'">
+        <h3>Delete Product</h3>
+    </div> -->
+</div>
+
+<!-- <div class="card flex justify-center">
+    <p-toast position="bottom-center" key="confirm" (onClose)="onReject()" [baseZIndex]="5000">
+        <ng-template let-message #message>
+            <div class="flex flex-col items-start flex-auto">
+                <div class="flex items-center gap-2"> -->
+                    <!-- <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" /> -->
+                    <!-- <span class="font-bold">Amy Elsner</span>
+                </div>
+                <div class="font-medium text-lg my-4">{{ message.summary }}</div>
+                <p-button severity="success" size="small" label="Reply" (click)="onConfirm()" />
+            </div>
+        </ng-template>
+    </p-toast>
+    <p-button (click)="showConfirm()" label="View" />
+</div> -->

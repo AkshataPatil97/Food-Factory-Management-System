@@ -1,0 +1,81 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@import 'primeflex/primeflex.scss';
+@import "../src/app/assets/scss/custom-style/form";
+@import "../src/app/assets/scss/custom-style/waveloader";
+@import "../src/app/assets/scss/custom-style/button";
+@import "../src/app/assets/scss/custom-style/tieredMenu";
+@import "../src/app/assets/scss/custom-style/cart";
+@import "../src/app/assets/scss/custom-style/setting";
+@import "../src/app/assets/scss/custom-style/profile";
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  overflow: hidden;
+}
+
+.customHeader, .customFooter {
+  width: 100%;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  position: fixed;
+  left: 0;
+  z-index: 1000;
+
+  .footer-toggle {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f8f8f8;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background: #ddd;
+    }
+}
+}
+
+.customHeader {
+  top: 0;
+}
+
+.customFooter {
+  bottom: 0;
+}
+
+.grid {
+  margin: 0px;
+}
+
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px; /* Slimmer width for a sleek look */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 10px; /* Smooth edges */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #6a11cb, #2575fc); /* Gradient for a modern look */
+  border-radius: 10px; 
+  transition: background 0.3s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #ff6a00, #ee0979); /* Changes color on hover */
+}

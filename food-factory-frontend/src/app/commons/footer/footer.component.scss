@@ -1,0 +1,53 @@
+.footer {
+  width: 100%;
+  background: #1e1e1e;
+  color: white;
+  padding: 15px 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  z-index: 1000;
+  transition: transform 0.4s ease-in-out;
+
+  .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+
+      .contact {
+          width: 50%;
+          text-align: left;
+          padding-left: 20px;
+      }
+
+      .about {
+          width: 50%;
+          text-align: left;
+          padding-right: 20px;
+      }
+  }
+
+  /* Footer Toggle Button */
+  .footer-toggle {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f8f8f8;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 20px;
+      transition: background 0.3s ease;
+
+      &:hover {
+          background: #ddd;
+      }
+  }
+}

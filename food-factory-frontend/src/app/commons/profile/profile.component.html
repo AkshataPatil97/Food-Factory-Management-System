@@ -1,0 +1,138 @@
+<div class="p-col-12 p-md-6 right-section profile-right-section" *ngIf="showFieldUpdateForm">
+    <form (ngSubmit)="onSubmit()" class="form-container space-y-5">
+        <div class="form-group">
+            <label class="form-label">{{ updateFieldName }}</label>
+            <input [attr.type]="updateInputType" [(ngModel)]="updatedData" name="updatedData" required
+                    class="form-input" [placeholder]="'Enter your ' + (updateFieldName || 'value')"
+                *ngIf="updateFieldName !== 'Profile Photo'" #updateField="ngModel" />
+        </div>
+        <div class="form-button-div">
+            <button pButton type="submit" label="Submit" class="form-submit-button" [disabled]="!updatedData"
+                *ngIf="updateFieldName !== 'Profile Photo'">
+            </button>
+
+            <p-toast></p-toast>
+
+            <p-fileUpload mode="basic" class="customUploadFile" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
+                *ngIf="updateFieldName === 'Profile Photo'" url="https://www.primefaces.org/cdn/api/upload.php"
+                accept="image/*" [maxFileSize]="1000000" (onUpload)="onUpload($event)">
+            </p-fileUpload>
+
+            <button pButton type="submit" label="Cancel" class="form-cancel-button" (click)="cancelOperation()">
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="p-col-12 p-md-6 right-section profile-right-section" *ngIf="showAddressUpdateForm">
+    <form #signupForm="ngForm" (ngSubmit)="onAddressSubmit()" class="form-container">
+        <div class="form-group">
+            <label class="form-label">Street</label>
+            <input type="text" pInputText [(ngModel)]="street" name="street" required class="form-input"
+                placeholder="Enter your street" #usernameField="ngModel" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Landmark</label>
+            <input type="text" pInputText [(ngModel)]="landmark" name="landmark" required class="form-input"
+                placeholder="Enter your landmark" #emailField="ngModel" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" pInputText [(ngModel)]="city" name="city" required class="form-input"
+                placeholder="Enter your city" #emailField="ngModel" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">State</label>
+            <input type="text" pInputText [(ngModel)]="state" name="state" required class="form-input"
+                placeholder="Enter your state" #emailField="ngModel" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Zip</label>
+            <input type="number" pInputText [(ngModel)]="zip" name="zip" required class="form-input"
+                placeholder="Enter your zip" #emailField="ngModel" />
+        </div>
+
+        <hr>
+
+        <div class="form-button-div">
+            <button pButton type="submit" label="Submit" class="form-submit-button" [disabled]="isFormEmpty()">
+            </button>
+
+            <button pButton type="submit" label="Cancel" class="form-cancel-button" (click)="cancelOperation()">
+            </button>
+
+        </div>
+    </form>
+</div>
+<div class="profile-container">
+    <h2>Dealer Profile</h2>
+
+    <!-- Profile Picture -->
+    <div class="profile-photo">
+        <img [src]="dealer.profile_photo || 'assets/images/Profile.jpg'" alt="User Profile">
+        <a (click)="addDetails('Profile Photo')" class="customChange" *ngIf="dealer.profile_photo">Change</a>
+        <button pButton label="Add" class="p-button-info" *ngIf="!dealer.profile_photo"
+            (click)="addDetails('Profile Photo')"></button>
+    </div>
+
+    <!-- Profile Details -->
+    <div class="profile-details">
+        <div class="detail-item">
+            <label>Name:</label>
+            <span *ngIf="dealer.user_name">{{ dealer.user_name }}</span>
+            <span class="pi pi-exclamation-circle alertField" *ngIf="!dealer.user_name"></span>
+            <a (click)="addDetails('Name')" class="customChange" *ngIf="dealer.user_name">Change</a>
+            <button pButton label="Add" class="p-button-info" *ngIf="!dealer.user_name"
+                (click)="addDetails('Name')"></button>
+        </div>
+
+        <div class="detail-item">
+            <label>Mobile Number:</label>
+            <span *ngIf="dealer.mobile_no">{{ dealer.mobile_no }}</span>
+            <span class="pi pi-exclamation-circle alertField" *ngIf="!dealer.mobile_no"></span>
+            <a (click)="addDetails('Mobile Number')" class="customChange" *ngIf="dealer.mobile_no">Change</a>
+            <button pButton label="Add" class="p-button-info" *ngIf="!dealer.mobile_no"
+                (click)="addDetails('Mobile Number')"></button>
+        </div>
+
+        <div class="detail-item">
+            <label>Email:</label>
+            <span *ngIf="dealer.email">{{ dealer.email }}</span>
+            <span class="pi pi-exclamation-circle alertField" *ngIf="!dealer.email"></span>
+            <a (click)="addDetails('Email')" class="customChange" *ngIf="dealer.email">Change</a>
+            <button pButton label="Add" class="p-button-info" *ngIf="!dealer.email"
+                (click)="addDetails('Email')"></button>
+        </div>
+
+        <div class="detail-item">
+            <label>Business Name:</label>
+            <span *ngIf="dealer.shop_name">{{ dealer.shop_name }}</span>
+            <span class="pi pi-exclamation-circle alertField" *ngIf="!dealer.shop_name"></span>
+            <a (click)="addDetails('Business Name')" class="customChange" *ngIf="dealer.shop_name">Change</a>
+            <button pButton label="Add" class="p-button-info" *ngIf="!dealer.shop_name"
+                (click)="addDetails('Business Name')"></button>
+        </div>
+
+        <div class="detail-item">
+            <label>Address:</label>
+            <span *ngIf="dealer.address_payload">{{ dealer.address_payload }}</span>
+            <span class="pi pi-exclamation-circle alertField" *ngIf="!dealer.address_payload"></span>
+            <a (click)="addAddress()" class="customChange" *ngIf="dealer.address_payload">Change</a>
+            <button pButton label="Add" class="p-button-info" *ngIf="!dealer.address_payload"
+                (click)="addAddress()"></button>
+        </div>
+
+        <div class="detail-item">
+            <label>About:</label>
+            <span *ngIf="dealer.about">{{ dealer.about }}</span>
+            <span class="pi pi-exclamation-circle alertField" *ngIf="!dealer.about"></span>
+            <a (click)="addDetails('About')" class="customChange" *ngIf="dealer.about">Change</a>
+            <button pButton label="Add" class="p-button-info" *ngIf="!dealer.about"
+                (click)="addDetails('About')"></button>
+        </div>
+    </div>
+</div>
