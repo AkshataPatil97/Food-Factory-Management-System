@@ -124,3 +124,142 @@ INSERT_ORDER_DETAIL_QUERY = """
     INSERT INTO orders (user_id, total_price, status, is_cancelled, cancellation_reason) 
     VALUES (%s, %s, %s, %s, %s)
 """ 
+
+# Insert product order details
+INSERT_ORDER_PRODUCT_DETAILS_QUERY = """
+    INSERT INTO order_items (order_id, product_id, quantity, price_at_order)
+    VALUES (%s, %s, %s, %s)
+"""
+
+# Fetch Users all orders
+FETCH_USER_ORDERS_QUERY = """
+    SELECT 
+        o.order_id,
+        o.user_id,
+        o.total_price,
+        o.status,
+        o.order_date,
+        o.updated_at,
+        o.is_cancelled,
+        o.cancellation_reason,
+        oi.order_item_id,
+        oi.product_id,
+        p.product_name,
+        oi.quantity,
+        oi.price_at_order,
+        oi.sub_total
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_code
+    WHERE o.user_id = %s AND o.is_cancelled = FALSE;
+"""
+
+# Cancel Order query
+CANCEL_ORDER_QUERY = """
+    UPDATE orders 
+    SET is_cancelled = TRUE, cancellation_reason = %s 
+    WHERE order_id = %s AND user_id = %s AND status IN ('Pending', 'Processing');
+"""
+
+# Update order details
+UPDATE_ORDER_QUERY = """
+    UPDATE orders
+    SET total_price = %s, status = %s, is_cancelled = %s, cancellation_reason = %s
+    WHERE order_id = %s;
+"""
+
+# Fetch existing order items
+FETCH_EXISTING_ORDER_ITEMS_QUERY = """
+    SELECT product_id FROM order_items WHERE order_id = %s;
+"""
+
+# Update an existing order item
+UPDATE_ORDER_ITEM_QUERY = """
+    UPDATE order_items
+    SET quantity = %s, price_at_order = %s
+    WHERE order_id = %s AND product_id = %s;
+"""
+
+# Delete an order item (if it's not in the updated list)
+DELETE_ORDER_ITEM_QUERY = """
+    DELETE FROM order_items WHERE order_id = %s AND product_id = %s;
+"""
+
+# Fetch all Pending, Processing, Shipped order for admin
+FETCH_ALL_ORDER_QUERY = """
+    SELECT 
+        o.order_id,
+        o.user_id,
+        o.total_price,
+        o.status,
+        o.order_date,
+        o.updated_at,
+        o.is_cancelled,
+        o.cancellation_reason,
+        oi.order_item_id,
+        oi.product_id,
+        p.product_name,
+        oi.quantity,
+        oi.price_at_order,
+        oi.sub_total
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_code
+    WHERE o.is_cancelled = FALSE
+      AND o.status IN ('Pending', 'Processing', 'Shipped');
+"""
+
+# Admin Update order status
+UPDATE_ORDER_STATUS_QUERY = """
+    UPDATE orders 
+    SET status = %s, updated_at = NOW()
+    WHERE order_id = %s
+"""
+
+# Fetch all Delivered order for admin
+FETCH_DELIVERED_ORDER_QUERY = """
+    SELECT 
+        o.order_id,
+        o.user_id,
+        o.total_price,
+        o.status,
+        o.order_date,
+        o.updated_at,
+        o.is_cancelled,
+        o.cancellation_reason,
+        oi.order_item_id,
+        oi.product_id,
+        p.product_name,
+        oi.quantity,
+        oi.price_at_order,
+        oi.sub_total
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_code
+    WHERE o.is_cancelled = FALSE
+      AND o.status IN ('Delivered');
+"""
+
+# Fetch all Delivered order for admin
+FETCH_CANCELED_ORDER_QUERY = """
+    SELECT 
+        o.order_id,
+        o.user_id,
+        o.total_price,
+        o.status,
+        o.order_date,
+        o.updated_at,
+        o.is_cancelled,
+        o.cancellation_reason,
+        oi.order_item_id,
+        oi.product_id,
+        p.product_name,
+        oi.quantity,
+        oi.price_at_order,
+        oi.sub_total
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_code
+    WHERE o.is_cancelled = TRUE
+      AND o.status IN ('Cancelled');
+"""

@@ -11,6 +11,9 @@
                 <li (click)="setActiveComponent('cart')"><i class="pi pi-wallet"></i> Cart
                     <span class="cart-count" *ngIf="cart.length > 0">({{ cart.length }})</span>
                 </li>
+                <li (click)="setActiveComponent('order')"><i class="pi pi-shopping-bag"></i> Orders
+                    <span class="cart-count" *ngIf="cart.length > 0">({{ cart.length }})</span>
+                </li>
                 <li><i class="pi pi-file"></i> Invoices</li>
                 <li (click)="setActiveComponent('settings')"><i class="pi pi-cog"></i> Settings</li>
                 <li (click)="logout()"><i class="pi pi-sign-out"></i> Log-out</li>
@@ -19,13 +22,35 @@
     </div>
 
     <div class="rightDashboardPard right-section">
+
+        <div *ngIf="activeComponent === 'cancel'" class="insertProductDiv">
+            <form #cancelForm="ngForm" (ngSubmit)="confirmCancel()" class="form-container">
+                <div class="form-group">
+                    <label class="form-label">Cancel Reason</label>
+                    <input type="text" pInputText [(ngModel)]="cancel_reason" name="cancel_reason" required
+                        class="form-input" placeholder="Enter cancel reason" />
+                </div>
+
+                <div class="form-button-div">
+                    <button pButton type="submit" label="Submit" class="form-submit-button">
+                    </button>
+
+                    <button pButton type="button" label="Cancel" class="form-reset-button"
+                        (click)="activeComponent = 'order'">
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
         <app-profile *ngIf="activeComponent === 'profile'"></app-profile>
-        
+
         <div *ngIf="activeComponent === 'products'" class="customCardsDiv">
             <div class="col-12 md:col-6 lg:col-3 cardDiv" *ngFor="let product of products">
                 <p-card [header]="product.product_name">
                     <div class="product-info">
-                        <img *ngIf="!product.showDetails" src="assets/images/Snaks.jpeg" alt="Product Image" class="product-image">
+                        <img *ngIf="!product.showDetails" src="assets/images/Snaks.jpeg" alt="Product Image"
+                            class="product-image">
                         <div *ngIf="product.showDetails">
                             <p class="customData">Product Code: {{ product.product_code }}</p>
                             <p class="customData">Category ID: {{ product.category_id }}</p>
@@ -35,8 +60,10 @@
                         </div>
                     </div>
                     <div class="button-group">
-                        <button pButton icon="pi pi-eye" class="p-button-info" (click)="toggleProductDetails(product)"></button>
-                        <button pButton icon="pi pi-cart-plus" class="p-button-warning" (click)="addToCart(product)"></button>
+                        <button pButton icon="pi pi-eye" class="p-button-info"
+                            (click)="toggleProductDetails(product)"></button>
+                        <button pButton icon="pi pi-cart-plus" class="p-button-warning"
+                            (click)="addToCart(product)"></button>
                     </div>
                 </p-card>
             </div>
@@ -47,7 +74,7 @@
         <div *ngIf="cart.length == 0 && activeComponent === 'cart'" class="cart-container emptyCart">
             No data <i class="pi pi-wallet"></i>
         </div>
-        
+
         <div *ngIf="activeComponent === 'cart' && cart.length > 0" class="cart-container">
             <div class="cart-header">Your Cart</div>
             <div class="cart-items">
@@ -55,7 +82,8 @@
                     <p-card>
                         <div class="cart-card-header">
                             <h3>{{ item.product.product_name }}</h3>
-                            <button pButton icon="pi pi-trash" class="p-button-danger remove-btn" (click)="removeFromCart(item)"></button>
+                            <button pButton icon="pi pi-trash" class="p-button-danger remove-btn"
+                                (click)="removeFromCart(item)"></button>
                         </div>
                         <div class="cart-product-info">
                             <img src="assets/images/Snaks.jpeg" alt="Product Image" class="cart-product-image">
@@ -67,8 +95,10 @@
                                     <strong>Quantity (Kg):</strong> <span>{{ item.quantity }}</span>
                                 </p>
                                 <p class="plusMinusButton">
-                                    <button pButton icon="pi pi-minus" class="quantity-btn" (click)="updateQuantity(item, -1)"></button>
-                                    <button pButton icon="pi pi-plus" class="quantity-btn" (click)="updateQuantity(item, 1)"></button>
+                                    <button pButton icon="pi pi-minus" class="quantity-btn"
+                                        (click)="updateQuantity(item, -1)"></button>
+                                    <button pButton icon="pi pi-plus" class="quantity-btn"
+                                        (click)="updateQuantity(item, 1)"></button>
                                 </p>
                                 <p><strong>Total:</strong> Rs: {{ item.sub_total }}</p>
                             </div>
@@ -86,7 +116,8 @@
         <div *ngIf="activeComponent === 'checkout'" class="checkout-container">
             <div class="checkout-header">
                 <h2>Checkout</h2>
-                <button pButton icon="pi pi-times" class="p-button-danger close-btn" (click)="setActiveComponent('cart')"></button>
+                <button pButton icon="pi pi-times" class="p-button-danger close-btn"
+                    (click)="setActiveComponent('cart')"></button>
             </div>
             <div class="checkout-items">
                 <div class="checkout-item" *ngFor="let item of cart">
@@ -98,7 +129,50 @@
                 <button pButton label="Place Order" class="p-button-success" (click)="placeOrder()"></button>
             </div>
         </div>
+
+        <div *ngIf="activeComponent === 'order'" class="orders-container">
+            <h2>My Orders</h2>
+
+            <div *ngIf="fetchUserOrders.length === 0" class="empty-orders">
+                No orders found.
+            </div>
+
+            <div *ngFor="let order of fetchUserOrders" class="order-card">
+                <p-card>
+                    <div class="order-header">
+                        <p>Status: <span class="order-status">{{ order.status }}</span></p>
+                        <p>Order Date: {{ order.order_date }}</p>
+                        <p>Total Price: Rs: {{ order.total_price }}</p>
+                    </div>
+
+                    <div class="order-items">
+                        <h4>Items:</h4>
+                        <ul>
+                            <li *ngFor="let item of order.order_items">
+                                <span>{{ item.product_name }}</span> -
+                                <span>Qty: {{ item.quantity }}</span> -
+                                <span>Price: Rs: {{ item.price_at_order }}</span> -
+                                <span>Subtotal: Rs: {{ item.sub_total }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="order-actions">
+                        <button pButton type="submit" label="Update Order" class="form-submit-button"
+                            *ngIf="order.status === 'Pending'" (click)="updateOrder(order)">
+                        </button>
+
+                        <button class="cancel-btn" *ngIf="order.status === 'Pending' || order.status === 'Processing'"
+                            (click)="cancelOrder(order.order_id)">
+                            Cancel Order
+                        </button>
+                    </div>
+                </p-card>
+            </div>
+        </div>
+
     </div>
+
 </div>
 
 <div class="card flex justify-content-center">

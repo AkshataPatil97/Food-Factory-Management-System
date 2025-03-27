@@ -12,6 +12,14 @@ export const UPDATE_DB_CONFIG_URL = 'user/updateDbConfig/';
 export const FETCH_DEALER_DETAILS_URL = 'user/fetchDealerDetails/';
 export const UPDATE_DEALER_DETAILS_URL = 'user/updateDealerDetails/';
 export const FETCH_USER_DETAILS_URL = 'user/fetchUserById/';
+export const ORDER_INSERT_URL = 'order/insert/';
+export const FETCH_USER_ORDERS_URL = 'order/fetchall/userOrders/';
+export const CANCEL_USER_ORDER_URL = 'order/cancelOrder/';
+export const UPDATE_ORDER_URL = 'order/updateOrder/';
+export const UPDATE_ORDER_STATUS_URL = 'order/updateOrderStatus/';
+export const FETCH_ALL_ORDER_FOR_ADMIN_URL = 'order/fetchAllOrder/';
+export const FETCH_ALL_DELIVERED_ORDER_FOR_ADMIN_URL = 'order/fetchAllDeliveredOrder/';
+export const FETCH_ALL_CANCELLED_ORDER_FOR_ADMIN_URL = 'order/fetchAllCancelledOrder/';
 
 
 // DB Config Constants

@@ -4,6 +4,7 @@ import { ProductService } from '../../shared/services/product.service';
 import { Cart, Product } from '../../shared/interface/product';
 import { MessageService } from 'primeng/api';
 import { UsersService } from '../../shared/services/users.service';
+import { OrdersService } from '../../shared/services/orders.service';
 
 @Component({
   selector: 'app-customer-dashboard',
@@ -17,20 +18,29 @@ export class CustomerDashboardComponent {
   userId: number = 0;
   userName: string = '';
   userRole: string = '';
-
-  activeComponent: 'products' | 'cart' | 'profile' | 'settings' | 'checkout' | null = null;
+  order_data: any = {};
+  isUpdateOrder: boolean = false;
+  fetchUserOrders: any = [];
+  update_order_data: any = {};
+  cancel_reason: string = '';
+  selectedOrderId: number | null = null;
+  activeComponent: 'products' | 'cart' | 'order' | 'profile' | 'settings' | 'checkout' | 'cancel' | null = null;
 
   constructor(
     private authService: AuthService,
     private productService: ProductService,
     private messageService: MessageService,
-    private userService: UsersService
+    private userService: UsersService,
+    private orderService: OrdersService
   ) { }
 
   ngOnInit(): void {
     this.fetchAllProducts();
     this.setUserId();
     this.fetchUserDetails();
+    if (this.userId) {
+      this.fetchUserOrdersData(this.userId)
+    }
   }
 
   private setUserId() {
@@ -72,8 +82,11 @@ export class CustomerDashboardComponent {
     }));
   }
 
-  setActiveComponent(component: 'products' | 'cart' | 'profile' | 'settings' | 'checkout' | null) {
+  setActiveComponent(component: 'products' | 'cart' | 'order' | 'profile' | 'settings' | 'checkout' | 'cancel' | null) {
     this.activeComponent = component;
+    if (component === 'order'){
+      this.fetchUserOrdersData(this.userId)
+    }
   }
 
   addToCart(product: Product) {
@@ -113,6 +126,7 @@ export class CustomerDashboardComponent {
     }
   
     const order = {
+      order_id: this.isUpdateOrder ? this.update_order_data.order_id : null,
       user_id: this.userId,
       total_price: this.getTotalPrice(),
       status: 'Pending',
@@ -120,23 +134,66 @@ export class CustomerDashboardComponent {
       is_cancelled: false,
       cancellation_reason: null,
       order_items: this.cart.map(item => ({
-        product_id: item.product.product_code, // Assuming product_code is unique
+        product_id: item.product.product_code,
         quantity: item.quantity,
         price_at_order: item.product.price,
         sub_total: item.sub_total
       }))
     };
   
-    // Ensure logging before switching the component
-    console.log('--- Order JSON ---');
-    console.log(JSON.stringify([order], null, 2)); // Wrap order in an array to ensure it logs as an array
-    console.table(order.order_items); // Better view of order items in console
-  
+    this.order_data = order;
     this.setActiveComponent('checkout');
   }
-  
+
+  order_handling() {
+    if (this.isUpdateOrder) {
+      this.orderService.updateOrder(this.order_data).subscribe({
+        next: () => {
+          console.log("Order updated successfully!");
+          this.showMessage('success', 'Success', 'Order updated successfully');
+          this.isUpdateOrder = false;
+        },
+        error: (error) => {
+          console.error("Error updating order:", error);
+          this.showMessage('error', 'Error', 'Failed to update order');
+        }
+      });
+    } else {
+      this.orderService.insertOrder(this.order_data).subscribe({
+        next: () => {
+          console.log("Order inserted successfully!");
+          this.showMessage('success', 'Success', 'Order placed successfully');
+        },
+        error: (error) => {
+          console.error("Error inserting order:", error);
+          this.showMessage('error', 'Error', 'Failed to place order');
+        }
+      });
+    }
+  }
+  updateOrder(order: any) {
+    this.update_order_data = { 
+      order_id: order.order_id, 
+      ...order 
+    };
+    this.isUpdateOrder = true;
+    this.cart = order.order_items.map((item: any) => ({
+      product: {
+        product_name: item.product_name,
+        product_code: item.product_id,
+        manufacturing_date: '',
+        expiry_date: '',
+        price: item.price_at_order
+      },
+      quantity: item.quantity,
+      sub_total: item.sub_total
+    }));
+    this.activeComponent = 'cart';
+  }
+
 
   placeOrder() {
+    this.order_handling()
     console.log("Order placed successfully!");
     this.cart = [];
     this.setActiveComponent('products');
@@ -148,6 +205,40 @@ export class CustomerDashboardComponent {
 
   toggleProductDetails(product: Product) {
     product.showDetails = !product.showDetails;
+  }
+
+  fetchUserOrdersData(userId: number) {
+    this.orderService.fetchUserOrders(userId).subscribe({
+        next: (response: any) => {
+            this.fetchUserOrders = response.data; 
+        },
+        error: (error) => console.error("Error fetching orders:", error)
+    });
+}
+
+
+  cancelOrder(order_id: number) {
+    this.activeComponent = 'cancel';
+    this.selectedOrderId = order_id;
+  }
+
+  confirmCancel() {
+    if (!this.cancel_reason || !this.selectedOrderId) {
+      alert("Please enter a cancellation reason.");
+      return;
+    }
+    this.orderService.cancelOrder(this.selectedOrderId, this.cancel_reason, this.userId).subscribe({
+      next: (response) => {
+        alert("Order canceled successfully");
+        this.fetchUserOrdersData(this.userId)
+        this.activeComponent = 'order';
+        this.cancel_reason = '';
+        this.selectedOrderId = null;
+      }, error: (error) => {
+        alert("Failed to cancel order. Please try again.");
+      }
+    });
+    this.fetchUserOrdersData(this.userId)
   }
 
   logout() {
