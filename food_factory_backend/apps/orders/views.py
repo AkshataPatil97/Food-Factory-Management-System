@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from config.connection import get_conn, close_conn
+from constants.constant import SHIPPED_EMAIL
 from services.orderService import (
     insert_order,insert_order_details,fetch_orders_by_userId,
     cancel_order, update_order, update_order_items, fetch_all_order,
-    update_order_status, fetch_delivered_order, fetch_canceled_order
-    #fetch_order_by_id, 
-    # update_order, delete_order
+    update_order_status, fetch_delivered_order, fetch_canceled_order,
+    update_shipped_order_status
 )
+from services.sendemail import send_shipped_email
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
@@ -134,12 +135,19 @@ class UpdateOrderStatusView(APIView):
             if not db_connection:
                 return Response({"error": "Failed to connect to the database"}, status=500)
 
-            success = update_order_status(db_connection, request)
+            status = request.data.get("status")
 
-            if success:
-                return Response({"message": "Order updated successfully"}, status=200)
+            if status == "Shipped":
+                success = update_shipped_order_status(db_connection, request)
+                if success.get("success"):
+                    send_shipped_email(request, SHIPPED_EMAIL)
             else:
-                return Response({"error": "No changes made or order not found."}, status=404)
+                success = update_order_status(db_connection, request)
+
+            if success.get("success"):
+                return Response({"message": success["message"]}, status=200)
+            else:
+                return Response({"error": success.get("error", "No changes made or order not found.")}, status=404)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
@@ -189,3 +197,4 @@ class FetchAllCanceledOrdersView(APIView):
         finally:
             if db_connection:
                 close_conn(db_connection)
+                

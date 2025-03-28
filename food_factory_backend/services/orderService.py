@@ -4,8 +4,9 @@ from constants.queries import(
     FETCH_USER_ORDERS_QUERY, CANCEL_ORDER_QUERY, UPDATE_ORDER_QUERY,
     FETCH_EXISTING_ORDER_ITEMS_QUERY, UPDATE_ORDER_ITEM_QUERY, DELETE_ORDER_ITEM_QUERY,
     FETCH_ALL_ORDER_QUERY, UPDATE_ORDER_STATUS_QUERY, FETCH_CANCELED_ORDER_QUERY,
-    FETCH_DELIVERED_ORDER_QUERY
+    FETCH_DELIVERED_ORDER_QUERY, SET_ORDER_TO_DELIVERY_BOY_QUERY, FETCH_ORDER_BY_ID_QUERY
 )
+from config.connection import get_conn, close_conn
 
 
 def insert_order(db_connection, request):
@@ -191,6 +192,47 @@ def update_order_items(db_connection, order_id, data):
     finally:
         cursor.close()
 
+def fetch_order_by_id(db_connection,order_id):
+    try:
+        with db_connection.cursor(dictionary=True) as cursor:
+            cursor.execute(FETCH_ORDER_BY_ID_QUERY, (order_id,))
+            rows = cursor.fetchall()
+
+        if not rows:
+            return {"error": "Order not found"}
+
+        order_data = None
+        order_items = []
+
+        for row in rows:
+            if not order_data:
+                order_data = {
+                    "order_id": row["order_id"],
+                    "user_id": row["user_id"],
+                    "total_price": float(row["total_price"]),
+                    "status": row["status"],
+                    "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
+                    "updated_at": row["updated_at"].strftime("%Y-%m-%d %H:%M:%S") if row["updated_at"] else None,
+                    "is_cancelled": bool(row["is_cancelled"]),
+                    "cancellation_reason": row["cancellation_reason"],
+                    "order_items": order_items  # Reference the list directly
+                }
+
+            order_items.append({
+                "order_item_id": row["order_item_id"],
+                "product_id": row["product_id"],
+                "product_name": row["product_name"],
+                "quantity": row["quantity"],
+                "price_at_order": float(row["price_at_order"]),
+                "sub_total": float(row["sub_total"]),
+            })
+
+        return order_data  
+
+    except Exception as e:
+        db_connection.rollback()
+        return {"error": str(e)}
+
 def fetch_all_order(db_connection):
     try:
         with db_connection.cursor(dictionary=True) as cursor:
@@ -256,6 +298,33 @@ def update_order_status(db_connection, request):
         db_connection.rollback()
         return {"error": str(e)}
 
+def update_shipped_order_status(db_connection, request):
+    try:
+        order_id = request.data.get("order_id")
+        status = request.data.get("status")
+        staff_id = request.data.get("staff_id")
+        
+        if not order_id or not status:
+            return {"error": "Order ID and Status are required"}
+        
+        with db_connection.cursor() as cursor:
+            # Update order status
+            cursor.execute(UPDATE_ORDER_STATUS_QUERY, (status, order_id))
+            
+            # If staff_id is provided, assign order to delivery staff
+            if staff_id:
+                cursor.execute(SET_ORDER_TO_DELIVERY_BOY_QUERY, (order_id, staff_id))
+
+            if cursor.rowcount == 0:
+                return {"error": "Order not found or status unchanged"}
+
+            db_connection.commit()
+            
+        return {"success": True, "message": "Order status updated successfully"}
+
+    except Exception as e:
+        db_connection.rollback()
+        return {"error": str(e)}
 
 def fetch_delivered_order(db_connection):
     try:

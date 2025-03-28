@@ -82,6 +82,20 @@ def fetch_user_by_email(db_connection, email):
         return None
     finally:
         cursor.close()
+        
+def fetch_user_by_id(db_connection, user_id):
+    cursor = None
+    try:
+        LOGGER.info("fetch_user_by_email! ")
+        cursor = db_connection.cursor(dictionary=True)  
+        cursor.execute(FETCH_USER_BY_ID, (user_id,))
+        user = cursor.fetchone() 
+        return user  
+    except Exception as e:
+        LOGGER.error(f"Error fetching user: {e}")
+        return None
+    finally:
+        cursor.close()
 
 def send_email_to_user(email):
     cursor = None 
@@ -381,3 +395,23 @@ def update_user_data(db_connection, request):
     finally:
         if cursor:
             cursor.close()
+
+def fetch_dealer_details_by_id(db_connection, user_id):
+    cursor = None 
+    try:
+        LOGGER.info("Inside fetch_dealer_details!")
+        cursor = db_connection.cursor(dictionary=True) 
+        cursor.execute(FETCH_DEALER_DETAILS_QUERY, (user_id,))
+        dealer_details = cursor.fetchone()  
+        
+        if dealer_details:
+            return dealer_details 
+        else:
+            return {}  
+        
+    except Exception as e:
+        LOGGER.error(f"Error fetching dealer details: {e}")
+        return {} 
+    
+    finally:
+        cursor.close()

@@ -20,6 +20,11 @@ FETCH_USER_BY_EMAIL = """
     SELECT * FROM users WHERE email = %s;
 """
 
+# fetch user by email
+FETCH_USER_BY_IDL = """ 
+    SELECT * FROM users WHERE id = %s;
+"""
+
 # fetch from db config table
 FETCH_DB_CONFIG_DATA = """
     SELECT map_to FROM db_config WHERE map_from = %s; 
@@ -262,4 +267,48 @@ FETCH_CANCELED_ORDER_QUERY = """
     JOIN products p ON oi.product_id = p.product_code
     WHERE o.is_cancelled = TRUE
       AND o.status IN ('Cancelled');
+"""
+
+# Insert staff query
+INSERT_STAFF_QUERY = """
+    INSERT INTO staff (name, phone, alternate_phone, address, staff_type)
+    VALUES (%s, %s, %s, %s, %s);
+"""
+
+# Set Shipped Order id to delivery Boy
+SET_ORDER_TO_DELIVERY_BOY_QUERY = """
+    UPDATE staff
+    SET order_id = %s, updated_at = NOW()
+    WHERE id = %s AND staff_type = 'Delivery';
+"""
+# Check if exist
+CHECK_STAFF_QUERY = """
+    SELECT id FROM staff WHERE id = %s AND staff_type = 'Delivery' AND is_deleted = FALSE;
+"""
+
+# fetch staff by id
+FETCH_STAFF_BY_ID_QUERY = """
+    SELECT * FROM staff WHERE id = %s;
+"""
+# SQL Query to Fetch Order by ID
+FETCH_ORDER_BY_ID_QUERY = """
+    SELECT 
+        o.order_id,
+        o.user_id,
+        o.total_price,
+        o.status,
+        o.order_date,
+        o.updated_at,
+        o.is_cancelled,
+        o.cancellation_reason,
+        oi.order_item_id,
+        oi.product_id,
+        p.product_name,
+        oi.quantity,
+        oi.price_at_order,
+        oi.sub_total
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    JOIN products p ON oi.product_id = p.product_code
+    WHERE o.order_id = %s;
 """
