@@ -3,6 +3,7 @@ from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.hashers import check_password
 from constants.queries import FETCH_USER_BY_EMAIL
 from services.users import fetch_user_by_email
+from services.staffService import fetch_staff_by_phone
 from services.passwordencrypt import decrypt_password 
 from logger import LOGGER
 
@@ -28,3 +29,19 @@ class CustomAuthBackend(BaseBackend):
 
             LOGGER.info("User Authenticated...")
             return user, None  
+
+    def authenticate_staff(self, request, connection, phone_number=None, **kwargs):
+        LOGGER.info("Inside authenticate_staff!")
+        if not connection:
+            LOGGER.info("Database connection is None!")
+            return None, "Database connection failed"
+
+        with connection.cursor() as cursor:
+            staff = fetch_staff_by_phone(connection, phone_number)
+
+            if not staff:
+                LOGGER.info("Staff Not Found")
+                return None, "Staff Not Found. Please check your phone number."
+
+            LOGGER.info("Staff Authenticated...")
+            return staff, None

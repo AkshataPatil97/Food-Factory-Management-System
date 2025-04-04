@@ -1,0 +1,787 @@
+/* Staff Dialog Custom Styles */
+
+.staff-dialog {
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 40wh;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+
+    /* Header Styling */
+    & .staff-dialog-header {
+        background-color: #007bff;
+        color: #ffffff;
+        border-radius: 8px 8px 0 0;
+        padding: 15px;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .p-dialog {
+        width: 40vw !important;
+    }
+
+    /* Footer Styling */
+    & .staff-dialog-footer {
+        background-color: #f7f7f7;
+        padding: 10px;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        justify-content: flex-end;
+
+        button {
+            margin-left: 10px;
+        }
+    }
+
+    /* Content Section */
+    & .staff-dialog-content {
+        padding: 0px;
+
+        .p-field {
+            margin-bottom: 8px;
+        }
+
+        /* Form Labels */
+        label {
+            font-weight: bold;
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Input Fields */
+        .p-inputtext,
+        .p-dropdown,
+        .p-inputtextarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+
+        /* Textarea specific styling */
+        .p-inputtextarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Dropdown Styling */
+        .p-dropdown {
+            margin-top: 10px;
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        width: 90vw;
+
+        .staff-dialog-header {
+            font-size: 1rem;
+            padding: 12px;
+        }
+
+        .staff-dialog-footer {
+            padding: 10px;
+        }
+
+        .staff-dialog-content {
+            .p-field {
+                margin-bottom: 15px;
+            }
+        }
+    }
+
+    /* Button Styles */
+    & .staff-dialog-footer {
+        button.p-button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+
+        /* Save Button (Success) */
+        .p-button-success {
+            background-color: #28a745;
+            border-color: #28a745;
+
+            &:hover {
+                background-color: #218838;
+                border-color: #1e7e34;
+            }
+        }
+
+        /* Cancel Button (Text) */
+        .p-button-text {
+            color: #007bff;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        /* Optional Delete Button */
+        .p-button-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+
+            &:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+        }
+    }
+}
+
+
+/* Wrapper for the table container */
+.customTableDiv {
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* Styling the header card */
+    .p-card {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Styling the button container */
+    .text-right {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Custom button styling */
+    .p-button {
+        font-size: 14px;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+
+        &.p-button-success {
+            background-color: #28a745;
+            border-color: #28a745;
+
+            &:hover {
+                background-color: #218838;
+                border-color: #1e7e34;
+            }
+        }
+
+        &.p-button-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            margin-right: 4px;
+            box-shadow: none;
+            height: 32px;
+            width: 38px;
+
+            &:hover {
+                background-color: #e0a800;
+                border-color: #d39e00;
+            }
+        }
+
+        &.p-button-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            box-shadow: none;
+            height: 32px;
+            width: 38px;
+
+            &:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+        }
+    }
+
+    /* Table styling */
+    .p-table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+
+        /* Table Header Styling */
+        thead {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        th {
+            padding: 12px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        /* Table Body Styling */
+        tbody {
+            background-color: #ffffff;
+
+            tr:hover {
+                background-color: #f1f1f1;
+            }
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Actions column */
+        .actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    /* Pagination Styling */
+    .p-paginator {
+        margin-top: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        /* Adjust paginator size */
+        .p-paginator-page {
+            height: 28px;
+            width: 28px;
+            font-size: 14px;
+            margin: 0 4px;
+            border-radius: 50%;
+            color: rgb(255 127 0);
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            // display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.2s ease;
+
+            &:hover {
+                background-color: #007bff;
+                color: #fff;
+                transform: scale(1.1);
+            }
+
+            &.p-highlight {
+                background-color: rgb(255 127 0);
+                color: #fff;
+            }
+
+            &.p-disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+        }
+
+        /* Styling for next/previous buttons */
+        .p-paginator-prev,
+        .p-paginator-next {
+            height: 28px;
+            width: 28px;
+            font-size: 16px;
+            border-radius: 50%;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            color: rgb(255 127 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.2s ease;
+
+            &:hover {
+                background-color: #007bff;
+                color: #fff;
+                transform: scale(1.1);
+            }
+
+            &.p-disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        /* Styling for the paginator first/last buttons */
+        .p-paginator-first,
+        .p-paginator-last {
+            height: 28px;
+            width: 28px;
+            font-size: 16px;
+            border-radius: 50%;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            color: #007bff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.2s ease;
+
+            &:hover {
+                background-color: #007bff;
+                color: #fff;
+                transform: scale(1.1);
+            }
+
+            &.p-disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+        .p-table {
+            font-size: 12px;
+        }
+
+        .p-table th,
+        .p-table td {
+            padding: 8px;
+        }
+
+        .text-right {
+            justify-content: flex-start;
+        }
+
+        .p-paginator {
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .p-paginator-page {
+            height: 24px;
+            width: 24px;
+            font-size: 12px;
+        }
+
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-first,
+        .p-paginator-last {
+            height: 24px;
+            width: 24px;
+            font-size: 14px;
+        }
+    }
+}
+
+.p-card {
+    .p-card-content {
+        padding: 0px;
+
+    }
+
+    .p-card-body {
+        padding: 0px;
+    }
+}
+
+.staff-login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f4f4f4;
+
+    .login-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 350px;
+        text-align: center;
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            margin-bottom: 15px;
+
+            label {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            input {
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+
+            &:hover {
+                background: #218838;
+            }
+
+            &:disabled {
+                background: gray;
+                cursor: not-allowed;
+            }
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    }
+}
+
+.staff-dashboard {
+    padding: 16px;
+    font-family: Arial, sans-serif;
+
+    h2 {
+        text-align: center;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+
+        li {
+            background: #f8f9fa;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: block;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        margin-top: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}
+
+.dialog-container {
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: 90%;
+    margin: auto;
+
+    h3 {
+        text-align: center;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+}
+
+
+/* General dialog container styling */
+.order-details-dialog {
+    max-width: 100%;
+    /* Allow it to take full width */
+    padding: 10px;
+
+
+    .order-details-container {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+
+        // Title Styling
+        .order-details-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        // Total Price
+        p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 15px;
+
+            strong {
+                color: #333;
+            }
+        }
+
+        // Order Items Table Styling
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+
+            // Table Header Styling
+            thead {
+                background-color: #f4f4f4;
+
+                th {
+                    font-size: 16px;
+                    color: #333;
+                    text-align: left;
+                    padding: 8px;
+                    border-bottom: 1px solid #ddd;
+                }
+            }
+
+            // Table Body Styling
+            tbody {
+                tr {
+                    background-color: #fff;
+
+                    &:nth-child(even) {
+                        background-color: #f9f9f9;
+                    }
+
+                    td {
+                        font-size: 14px;
+                        padding: 8px;
+                        border-bottom: 1px solid #ddd;
+                    }
+                }
+            }
+        }
+
+        // Set as Delivered Button
+        .set-delivered-button {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+
+    // Mobile-specific styling
+    @media (max-width: 768px) {
+        .order-details-container {
+            padding: 15px;
+
+            .order-details-title {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+
+            .order-items-table {
+                font-size: 14px;
+
+                th,
+                td {
+                    padding: 6px;
+                }
+            }
+
+            .set-delivered-button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        .order-details-container {
+            padding: 10px;
+
+            .order-details-title {
+                font-size: 18px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            .order-items-table {
+                font-size: 12px;
+
+                th,
+                td {
+                    padding: 5px;
+                }
+            }
+
+            .set-delivered-button {
+                font-size: 12px;
+                padding: 8px;
+            }
+        }
+    }
+}
+
+
+/* General OTP dialog container styling for custom dialog */
+.custom-otp-dialog {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+
+    /* Description within OTP dialog */
+    .custom-otp-description {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    /* OTP input field styling */
+    .custom-otp-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* Button for OTP verification */
+    .custom-verify-button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}
+
+/* Mobile-specific styling for OTP dialog */
+@media (max-width: 768px) {
+    .custom-otp-dialog {
+        padding: 15px;
+
+        /* Description styling on mobile */
+        .custom-otp-description {
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* OTP input field on mobile */
+        .custom-otp-input {
+            font-size: 14px;
+            padding: 10px;
+            margin-bottom: 18px;
+        }
+
+        /* OTP verification button on mobile */
+        .custom-verify-button {
+            font-size: 14px;
+            padding: 12px;
+        }
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .custom-otp-dialog {
+        padding: 10px;
+
+        /* Description styling for very small screens */
+        .custom-otp-description {
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        /* OTP input field styling for very small screens */
+        .custom-otp-input {
+            font-size: 12px;
+            padding: 8px;
+            margin-bottom: 14px;
+        }
+
+        /* OTP button styling for very small screens */
+        .custom-verify-button {
+            font-size: 12px;
+            padding: 10px;
+        }
+    }
+}
+
+
+.orders-dialog-custom {
+    .p-dialog {
+
+        width: 96vw !important;
+
+        .p-dialog-content{
+            padding: 10px;
+
+            .orders-dialog-custom-container {
+                .orders-table-custom{
+                    tr{
+                        td{
+                            .p-button{
+                                padding: 6px;
+                            }
+
+                            .p-button:hover {
+                                color: rgb(201, 252, 48);
+                                background-color: #d39e00;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+:host ::ng-deep .p-toast {
+    width: 300px !important; /* Adjust the width as needed */
+}
+
+:host ::ng-deep .p-toast-message {
+    max-width: 280px !important; /* Adjust to fit the content */
+}

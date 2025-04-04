@@ -20,7 +20,20 @@ export const UPDATE_ORDER_STATUS_URL = 'order/updateOrderStatus/';
 export const FETCH_ALL_ORDER_FOR_ADMIN_URL = 'order/fetchAllOrder/';
 export const FETCH_ALL_DELIVERED_ORDER_FOR_ADMIN_URL = 'order/fetchAllDeliveredOrder/';
 export const FETCH_ALL_CANCELLED_ORDER_FOR_ADMIN_URL = 'order/fetchAllCancelledOrder/';
-
-
+export const FETCH_ALL_DELIVERY_BOY_URL = 'staff/fetchAllDeliveryStaff/';
+export const FETCH_INVOICES_FOR_USER_URL = 'order/fetchUserInvoices/';
+export const FETCH_ALL_INVOICES_URL = 'order/fetchAllInvoices/';
+export const FETCH_COMPANY_DETAILS_URL = 'user/fetchCompanyDetails/';
+export const FETCH_ALL_STAFF_URL = 'staff/fetchAllStaff/';
+export const INSERT_STAFF_URL = 'staff/insert/';
+export const UPDATE_STAFF_URL = 'staff/update/';
+export const DELETE_STAFF_URL = 'staff/delete/';
+export const STAFF_LOGIN_URL = 'staff/login/';
+export const FETCH_DELIVERY_URL = 'order/fetchDelivery/';
+export const STAFF_OTP_URL = 'staff/sendOtp/';
+export const STAFF_VERIFY_OTP_URL = 'staff/verifyOTP/';
+export const INSERT_COMPANY_URL = 'user/insertCompany/';
+export const UPDATE_COMPANY_URL = 'user/updateCompany/';
+export const DELETE_COMPANY_URL = 'user/deleteCompany/';
 // DB Config Constants
 export const ALLOW_ADMIN_REGISTER = 'allow.admin.register';

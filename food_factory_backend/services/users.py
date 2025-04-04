@@ -1,4 +1,8 @@
-from constants.queries import USER_INSERT_QUERY, UPDATE_ADMIN_DETAILS_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL, FETCH_USER_BY_ID, OTP_INSERT_QUERY, FETCH_EMAIL_FOR_OTP, UPDATE_NEW_OTP, UPDATE_PASSWORD_QUERY, DEALER_DATA_INSERT_QUERY, FETCH_DEALER_DETAILS_QUERY, UPDATE_DEALER_DETAILS_QUERY, UPDATE_USER_DETAILS_QUERY, ADMIN_DATA_INSERT_QUERY, FETCH_ADMIN_DETAILS_QUERY
+from constants.queries import (
+    USER_INSERT_QUERY, UPDATE_ADMIN_DETAILS_QUERY, FETCH_ALL_USERS_QUERY ,FETCH_USER_BY_EMAIL, FETCH_USER_BY_ID, OTP_INSERT_QUERY, 
+    FETCH_EMAIL_FOR_OTP, UPDATE_NEW_OTP, UPDATE_PASSWORD_QUERY, DEALER_DATA_INSERT_QUERY, FETCH_DEALER_DETAILS_QUERY, UPDATE_DEALER_DETAILS_QUERY,
+    UPDATE_USER_DETAILS_QUERY, ADMIN_DATA_INSERT_QUERY, FETCH_ADMIN_DETAILS_QUERY, FETCH_COMPANY_DETAILS_QUERY, INSER_COMPANY_DETAIL
+)
 from constants.constant import TRUE, DEALER_ADMIN_DETAILS, DEALER_ADMIN_DETAILS_COLUMNS, USER_DETAILS, USER_DETAILS_COLUMNS
 from constants.bd_config import EMAIL_SEND_TO_USER
 from services.sendemail import send_email
@@ -140,8 +144,9 @@ def send_otp_email(db_connection, email):
 def set_otp_in_db(db_connection, otp, email):
     cursor = None 
     try:
+        print(email)
         cursor = db_connection.cursor(dictionary=True)  
-        user = fetch_user_for_otp(cursor, email)
+        user = fetch_user_for_otp(db_connection, email)
         
         if not user:
             # Insert new OTP entry
@@ -160,14 +165,15 @@ def set_otp_in_db(db_connection, otp, email):
         cursor.close()
 
 
-def fetch_user_for_otp(cursor, email):
+def fetch_user_for_otp(db_connection, email):
     cursor = None 
     try:
+        cursor = db_connection.cursor(dictionary=True)  
         cursor.execute(FETCH_EMAIL_FOR_OTP, (email,))
         return cursor.fetchone()  # Fetch the user record
     except Exception as e:
         print(f"Error fetching user: {e}")
-        return None
+        return {}
     finally:
         cursor.close()
 
@@ -185,7 +191,7 @@ def verify_otp(db_connection, request):
             print("Invalid datetime format for currentTime.")
             return False
 
-        user = fetch_user_for_otp(cursor, email)
+        user = fetch_user_for_otp(db_connection, email)
         
         if not user:
             print("Email not found in OTP records.")
@@ -292,27 +298,25 @@ def fetch_dealer_details(db_connection, request):
     finally:
         cursor.close()
         
-def fetch_user_details(db_connection, request):
+def fetch_user_details(db_connection, user_id):
     cursor = None 
     try:
         LOGGER.info("Inside fetch_user_details!")
-        
-        data = json.loads(request.body)
+        print(user_id)
         cursor = db_connection.cursor(dictionary=True) 
-        cursor.execute(FETCH_USER_BY_ID, (data.get('user_id'),))
+        cursor.execute(FETCH_USER_BY_ID, (user_id,))  # Use user_id directly
         user_details = cursor.fetchone() 
         
-        if user_details:
-            return user_details 
-        else:
-            return {}  
+        return user_details if user_details else {}  
         
     except Exception as e:
         LOGGER.error(f"Error fetching user details: {e}")
         return {} 
     
     finally:
-        cursor.close()
+        if cursor:
+            cursor.close()
+
         
 def update_dealer_details(db_connection, request):
     cursor = None  
@@ -334,8 +338,8 @@ def update_dealer_details(db_connection, request):
 
         if not column_name:
             raise ValueError("Invalid update field")
-
-        user = fetch_user_details(db_connection, request)
+        
+        user = fetch_user_details(db_connection, user_id)
         print(user)
         if user["role"] == "Dealer":
             user_details_update_query = f"{UPDATE_DEALER_DETAILS_QUERY} {column_name} = %s WHERE user_id = %s"
@@ -415,3 +419,150 @@ def fetch_dealer_details_by_id(db_connection, user_id):
     
     finally:
         cursor.close()
+
+
+def fetch_company_details(db_connection):
+    cursor = None 
+    try:
+        LOGGER.info("Inside fetch_company_details!")
+        cursor = db_connection.cursor(dictionary=True) 
+        cursor.execute(FETCH_COMPANY_DETAILS_QUERY)
+        company_details = cursor.fetchone()  
+        
+        if company_details:
+            return company_details 
+        else:
+            return {}  
+        
+    except Exception as e:
+        LOGGER.error(f"Error fetching company details: {e}")
+        return {} 
+    
+    finally:
+        cursor.close()
+        
+def insert_company_details(db_connection, request):
+    cursor = None
+    try:
+        LOGGER.info("Inside insert_company_details!")
+        data = json.loads(request.body)
+
+        name = data.get('name')
+        email = data.get('email')
+        phone = data.get('phone')
+        alternate_phone = data.get('alternate_phone')
+        address = data.get('address')
+        company_logo = data.get('company_logo')
+        founded_in = data.get('founded_in')
+
+        cursor = db_connection.cursor(dictionary=True)
+
+        insert_query = """
+            INSERT INTO companydetail 
+            (name, email, phone, alternate_phone, address, company_logo, founded_in)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+
+        cursor.execute(insert_query, (
+            name, email, phone, alternate_phone, address, company_logo, founded_in
+        ))
+        db_connection.commit()
+
+        # Optionally fetch and return the inserted row
+        cursor.execute("SELECT * FROM companydetail WHERE id = LAST_INSERT_ID()")
+        company_details = cursor.fetchone()
+
+        return company_details if company_details else {}
+
+    except Exception as e:
+        LOGGER.error(f"Error inserting company details: {e}")
+        return {}
+
+    finally:
+        if cursor:
+            cursor.close()
+
+def update_company_details(db_connection, request):
+    cursor = None
+    try:
+        LOGGER.info("Inside update_company_details!")
+        data = json.loads(request.body)
+
+        company_id = data.get('id')
+        name = data.get('name')
+        email = data.get('email')
+        phone = data.get('phone')
+        alternate_phone = data.get('alternate_phone')
+        address = data.get('address')
+        company_logo = data.get('company_logo')
+        founded_in = data.get('founded_in')
+
+        if not company_id:
+            LOGGER.error("Company ID not provided for update.")
+            return {}
+
+        cursor = db_connection.cursor(dictionary=True)
+
+        update_query = """
+            UPDATE companydetail
+            SET name = %s,
+                email = %s,
+                phone = %s,
+                alternate_phone = %s,
+                address = %s,
+                company_logo = %s,
+                founded_in = %s,
+                is_updated = 1
+            WHERE id = %s
+        """
+
+        cursor.execute(update_query, (
+            name, email, phone, alternate_phone, address, company_logo, founded_in, company_id
+        ))
+        db_connection.commit()
+
+        cursor.execute("SELECT * FROM companydetail WHERE id = %s", (company_id,))
+        updated_company = cursor.fetchone()
+
+        return updated_company if updated_company else {}
+
+    except Exception as e:
+        LOGGER.error(f"Error updating company details: {e}")
+        return {}
+
+    finally:
+        if cursor:
+            cursor.close()
+
+def delete_company_details(db_connection, request):
+    cursor = None
+    try:
+        LOGGER.info("Inside delete_company_details!")
+        data = json.loads(request.body)
+
+        company_id = data.get('id')
+
+        if not company_id:
+            LOGGER.error("Company ID not provided for deletion.")
+            return {"success": False, "message": "Company ID is required"}
+
+        cursor = db_connection.cursor(dictionary=True)
+
+        delete_query = "DELETE FROM companydetail WHERE id = %s"
+        cursor.execute(delete_query, (company_id,))
+        db_connection.commit()
+
+        if cursor.rowcount > 0:
+            LOGGER.info(f"Company with ID {company_id} deleted successfully.")
+            return {"success": True, "message": "Company deleted successfully"}
+        else:
+            LOGGER.warning(f"No company found with ID {company_id} to delete.")
+            return {"success": False, "message": "Company not found"}
+
+    except Exception as e:
+        LOGGER.error(f"Error deleting company details: {e}")
+        return {"success": False, "message": "Internal server error"}
+
+    finally:
+        if cursor:
+            cursor.close()

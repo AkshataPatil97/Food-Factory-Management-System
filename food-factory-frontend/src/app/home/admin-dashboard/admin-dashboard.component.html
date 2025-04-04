@@ -5,22 +5,45 @@
     <div class="col-12 md:col-3 left-section leftNavePart">
         <p-panel header="Menu" class="custom-p-panel">
             <ul class="menu-list">
-                <li (click)="setActiveComponent('dashboard')"><i class="pi pi-home"></i> Dashboard</li>
-                <li (click)="setActiveComponent('profile')"><i class="pi pi-user"></i> Profile</li>
-                <li class="dropdown">
+                <li [class.active]="isActiveComponent('dashboard')" (click)="setActiveComponent('dashboard')">
+                    <i class="pi pi-home"></i> Dashboard
+                </li>
+                <li [class.active]="isActiveComponent('profile')" (click)="setActiveComponent('profile')">
+                    <i class="pi pi-user"></i> Profile
+                </li>
+                <li class="dropdown" [class.active]="isActiveComponent('product')">
                     <i class="pi pi-box"></i> Product
                     <ul class="dropdown-menu">
-                        <li (click)="setActiveComponent('product', 'add')"><i class="pi pi-plus"></i> Add</li>
-                        <li (click)="setActiveComponent('product', 'edit')"><i class="pi pi-pencil"></i> Update</li>
+                        <li [class.active]="isSubActiveComponent('add')" (click)="setActiveComponent('product', 'add')">
+                            <i class="pi pi-plus"></i> Add
+                        </li>
+                        <li [class.active]="isSubActiveComponent('edit')"
+                            (click)="setActiveComponent('product', 'edit')">
+                            <i class="pi pi-pencil"></i> Update
+                        </li>
                     </ul>
                 </li>
-                <li><i class="pi pi-wallet"></i> Wallet</li>
-                <li><i class="pi pi-file"></i> Invoices</li>
-                <li (click)="setActiveComponent('settings')"><i class="pi pi-cog"></i> Settings</li>
+                <li [class.active]="isActiveComponent('report')" (click)="setActiveComponent('report')">
+                    <i class="pi pi-book"></i> Report
+                </li>
+                <li [class.active]="isActiveComponent('invoices')" (click)="setActiveComponent('invoices')">
+                    <i class="pi pi-file"></i> Invoices
+                </li>
+                <li [class.active]="isActiveComponent('company')" (click)="setActiveComponent('company')">
+                    <i class="pi pi-home"></i> Company
+                </li>
+                <li [class.active]="isActiveComponent('settings')" (click)="setActiveComponent('settings')">
+                    <i class="pi pi-cog"></i> Settings
+                </li>
+                <li [class.active]="isActiveComponent('staff')" (click)="setActiveComponent('staff')">
+                    <i class="pi pi-users"></i> Staff
+                </li>
                 <li (click)="logout()"><i class="pi pi-sign-out"></i> Log out</li>
             </ul>
         </p-panel>
     </div>
+
+
 
     <!-- Right Section (Main Content) -->
     <div class="col-12 md:col-9 right-section rightDashboardPard">
@@ -33,42 +56,221 @@
         <div *ngIf="activeComponent === 'dashboard'">
             <div class="customCardsDiv">
                 <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Total Invoices"><h2>2478</h2></p-card>
+                    <p-card header="Total Invoices">
+                        <h2>2478</h2>
+                    </p-card>
                 </div>
                 <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Paid Invoices"><h2>983</h2></p-card>
+                    <p-card header="Paid Invoices">
+                        <h2>983</h2>
+                    </p-card>
                 </div>
                 <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Unpaid Invoices"><h2>1256</h2></p-card>
+                    <p-card header="Unpaid Invoices">
+                        <h2>1256</h2>
+                    </p-card>
                 </div>
                 <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Total Sent"><h2>652</h2></p-card>
+                    <p-card header="Total Sent">
+                        <h2>652</h2>
+                    </p-card>
                 </div>
             </div>
 
             <!-- Transactions Table -->
             <div class="customTableDiv">
                 <div class="col-12">
-                    <p-card header="Recent Transactions">
-                        <p-table [value]="transactions" [paginator]="true" [rows]="5">
+                    <p-card header="Recent Orders - {{currentOrders.length}}">
+                        <p-table [value]="currentOrders" [paginator]="currentOrders.length > 0" [rows]="5"
+                            sortField="date" [sortOrder]="-1">
                             <ng-template pTemplate="header">
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Amount</th>
+                                    <th>Action</th>
+                                    <th>Dealer</th>
+                                    <th pSortableColumn="date">Date <i class="pi pi-sort"></i></th>
+                                    <th>Total Price</th>
                                     <th>Status</th>
                                 </tr>
                             </ng-template>
-                            <ng-template pTemplate="body" let-transaction>
+
+                            <ng-template pTemplate="body" let-order>
                                 <tr>
-                                    <td>{{ transaction.date }}</td>
-                                    <td>{{ transaction.type }}</td>
-                                    <td>{{ transaction.amount | currency }}</td>
+                                    <td>
+                                        <i class="pi pi-truck text-primary cursor-pointer"
+                                            (click)="showOrderDetails(order)" title="View Order Details">
+                                        </i>
+                                    </td>
+                                    <td>
+                                        <span class="dealer-name text-primary cursor-pointer"
+                                            (click)="showDealerDetails(order.user)">
+                                            {{ order.user.username }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.date | date:'dd-MM-yyyy hh:mm a' }}</td>
+                                    <td>{{ order.totalPrice | currency:'INR' }}</td>
                                     <td>
                                         <span [ngClass]="{
-                                            'status-paid': transaction.status === 'Paid',
-                                            'status-pending': transaction.status === 'Pending'
-                                        }">{{ transaction.status }}</span>
+                                            'status-delivered': order.status === 'Delivered',
+                                            'status-cancelled': order.status === 'Cancelled',
+                                            'status-pending': order.status === 'Pending',
+                                            'status-shipped': order.status === 'Shipped',
+                                            'status-processing': order.status === 'Processing',
+                                            'status-processed': order.status === 'Processed'
+                                        }" class="status-badge">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <div *ngIf="currentOrders.length === 0" class="text-center p-3">
+                            No recent orders found
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+
+            <div class="customTableDiv">
+                <div class="col-12">
+                    <p-card header="Delivered Orders">
+                        <p-table [value]="deliveredOrders" [paginator]="deliveredOrders.length > 0" [rows]="5"
+                            sortField="date" [sortOrder]="-1">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Dealer</th>
+                                    <th pSortableColumn="date">Date <i class="pi pi-sort"></i></th>
+                                    <th>Total Price</th>
+                                    <th>Status</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-order>
+                                <tr>
+                                    <td>
+                                        <i class="pi pi-truck text-primary cursor-pointer"
+                                            (click)="showOrderDetails(order)" title="View Order Details">
+                                        </i>
+                                    </td>
+                                    <td>
+                                        <span class="dealer-name text-primary cursor-pointer"
+                                            (click)="showDealerDetails(order.user)">
+                                            {{ order.user.username }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.date | date:'dd-MM-yyyy hh:mm a' }}</td>
+                                    <td>{{ order.totalPrice | currency:'INR' }}</td>
+                                    <td>
+                                        <span [ngClass]="{
+                                            'status-delivered': order.status === 'Delivered',
+                                            'status-cancelled': order.status === 'Cancelled',
+                                            'status-pending': order.status === 'Pending',
+                                            'status-shipped': order.status === 'Shipped',
+                                            'status-processing': order.status === 'Processing'
+                                        }" class="status-badge">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <div *ngIf="deliveredOrders.length === 0" class="text-center p-3">
+                            No delivered orders found
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+
+
+
+            <div class="customTableDiv">
+                <div class="col-12">
+                    <p-card header="Cancelled Orders">
+                        <p-table [value]="cancelledOrders" [paginator]="cancelledOrders.length > 0" [rows]="5"
+                            sortField="date" [sortOrder]="-1">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Dealer</th>
+                                    <th>Reason</th>
+                                    <th pSortableColumn="date">Date <i class="pi pi-sort"></i></th>
+                                    <th>Total Price</th>
+                                    <th>Status</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-order>
+                                <tr>
+                                    <td>
+                                        <i class="pi pi-info-circle text-danger cursor-pointer"
+                                            (click)="showOrderDetails(order)" title="View Order Details">
+                                        </i>
+                                    </td>
+                                    <td>
+                                        <span class="dealer-name text-primary cursor-pointer"
+                                            (click)="showDealerDetails(order.user)">
+                                            {{ order.user.username }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.reason }}</td>
+                                    <td>{{ order.date | date:'dd-MM-yyyy hh:mm a' }}</td>
+                                    <td>{{ order.totalPrice | currency:'INR' }}</td>
+                                    <td>
+                                        <span [ngClass]="{
+                                            'status-delivered': order.status === 'Delivered',
+                                            'status-cancelled': order.status === 'Cancelled',
+                                            'status-pending': order.status === 'Pending',
+                                            'status-shipped': order.status === 'Shipped',
+                                            'status-processing': order.status === 'Processing'
+                                        }" class="status-badge">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                        <div *ngIf="cancelledOrders.length === 0" class="text-center p-3">
+                            No cancelled orders found
+                        </div>
+                    </p-card>
+                </div>
+            </div>
+
+
+
+        </div>
+        <!-- Staff Management Section -->
+        <div *ngIf="activeComponent === 'staff'">
+            <div class="customTableDiv">
+                <div class="col-12">
+                    <p-card header="Staff Management">
+                        <div class="text-right mb-3">
+                            <button pButton label="Add Staff" icon="pi pi-user-plus" class="p-button-success"
+                                (click)="openStaffDialog('add')"></button>
+                        </div>
+                        <p-table [value]="staffList" [paginator]="true" [rows]="5" [sortField]="'id'" [sortOrder]="-1">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Staff Type</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-staff>
+                                <tr>
+                                    <td>{{ staff.name }}</td>
+                                    <td>{{ staff.phone }}</td>
+                                    <td>{{ staff.staff_type }}</td>
+                                    <td>
+                                        <button pButton icon="pi pi-pencil" class="p-button-warning"
+                                            (click)="openStaffDialog('update', staff)"></button>
+                                        <button pButton icon="pi pi-trash" class="p-button-danger"
+                                            (click)="deleteStaff(staff.id)"></button>
                                     </td>
                                 </tr>
                             </ng-template>
@@ -77,7 +279,258 @@
                 </div>
             </div>
         </div>
+
+        <div *ngIf="activeComponent === 'invoices'" class="invoices-container">
+            <h2>Invoices</h2>
+
+            <div *ngIf="allInvoices.length === 0" class="empty-invoices">
+                No invoices found.
+            </div>
+
+            <table class="invoice-table" *ngIf="allInvoices.length > 0">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Shop Name</th>
+                        <th>Status</th>
+                        <th>Issued At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let invoice of allInvoices">
+                        <td>{{ invoice.userData.username }}</td>
+                        <td>{{ invoice.userData.shop_name }}</td>
+                        <td>
+                            <span [ngClass]="{
+                                'status-delivered': invoice.status === 'Paid',
+                                'status-cancelled': invoice.status === 'Cancelled',
+                                'status-pending': invoice.status === 'Pending'
+                            }" class="status-badge">
+                                {{ invoice.status }}
+                            </span>
+                        </td>
+                        <td>{{ invoice.issued_at }}</td>
+                        <td>
+                            <button pButton label="Download" class="p-button-success"
+                                (click)="downloadInvoicePDF(invoice)"></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div *ngIf="activeComponent === 'report'" class="report-container">
+            <h2>Generate Reports</h2>
+
+            <div class="report-filters">
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-4">
+                        <label for="startDate">Start Date:</label>
+                        <p-calendar [(ngModel)]="reportFilters.startDate" dateFormat="yy-mm-dd"></p-calendar>
+                    </div>
+                    <div class="p-col-12 p-md-4">
+                        <label for="endDate">End Date:</label>
+                        <p-calendar [(ngModel)]="reportFilters.endDate" dateFormat="yy-mm-dd"></p-calendar>
+                    </div>
+                    <div class="p-col-12 p-md-4">
+                        <label for="reportType">Select Report Type:</label>
+                        <p-dropdown [(ngModel)]="reportFilters.type" [options]="reportTypes"
+                            placeholder="Select Type"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="p-grid">
+                    <div class="p-col-12 p-md-4">
+                        <label for="sortField">Sort By:</label>
+                        <p-dropdown [(ngModel)]="reportFilters.sortField" [options]="sortOptions"
+                            placeholder="Select Field"></p-dropdown>
+                    </div>
+                    <div class="p-col-12 p-md-4">
+                        <label for="sortOrder">Sort Order:</label>
+                        <p-dropdown [(ngModel)]="reportFilters.sortOrder" [options]="sortOrderOptions"
+                            placeholder="Select Order"></p-dropdown>
+                    </div>
+                    <div class="p-col-12 p-md-4 text-right">
+                        <button pButton label="Generate Report" icon="pi pi-file-pdf" class="p-button-primary"
+                            (click)="generatePDFReport()"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-table" *ngIf="reportData.length > 0">
+                <p-card header="Report Preview">
+                    <p-table [value]="reportData" [paginator]="true" [rows]="5">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th *ngFor="let col of reportColumns">{{ col.header }}</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td *ngFor="let col of reportColumns">{{ row[col.field] }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-card>
+            </div>
+
+            <div *ngIf="reportData.length === 0" class="text-center p-3">
+                No data available for the selected criteria.
+            </div>
+        </div>
+
+        <div *ngIf="activeComponent === 'company'">
+            <!-- View Mode -->
+            <div class="company-container" *ngIf="companyDetails && !updateCompanyDetail; else formBlock">
+              <div class="company-card">
+                <h2>{{ companyDetails.name }}</h2>
+                <p><strong>Email:</strong> {{ companyDetails.email }}</p>
+                <p><strong>Phone:</strong> {{ companyDetails.phone }}</p>
+                <p><strong>Address:</strong> {{ companyDetails.address }}</p>
+          
+                <div class="action-buttons">
+                  <button (click)="editDetails()">Edit</button>
+                  <button class="danger" (click)="deleteDetails()">Delete</button>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Form Block for Add / Update -->
+            <ng-template #formBlock>
+              <div class="company-add-form">
+                <h3>{{ updateCompanyDetail ? 'Update Company Details' : 'Add Company Details' }}</h3>
+          
+                <form (ngSubmit)="updateCompanyDetail ? updateCompany() : addCompany()">
+                  <input type="text" placeholder="Company Name" [(ngModel)]="company.name" name="name" required />
+                  <input type="email" placeholder="Email" [(ngModel)]="company.email" name="email" required />
+                  <input type="text" placeholder="Phone" [(ngModel)]="company.phone" name="phone" required />
+                  <input type="text" placeholder="Alternate Phone" [(ngModel)]="company.alternate_phone" name="alternate_phone" />
+                  <input type="text" placeholder="Address" [(ngModel)]="company.address" name="address" required />
+                  <input type="url" placeholder="Company Logo URL" [(ngModel)]="company.company_logo" name="company_logo" />
+                  <input type="number" placeholder="Founded In" [(ngModel)]="company.founded_in" name="founded_in" />
+          
+                  <button type="submit">{{ updateCompanyDetail ? 'Update' : 'Add' }}</button>
+                  <button type="button" class="danger" (click)="cancelEdit()">Cancel</button>
+                </form>
+              </div>
+            </ng-template>
+          </div>
+          
+
     </div>
 </div>
 
 <app-footer></app-footer>
+
+
+<p-dialog [(visible)]="isOrderDetailsVisible" [modal]="true" header="Order Details" [style]="{width: '50vw'}"
+    (onHide)="isOrderDetailsVisible = false">
+    <ng-container *ngIf="selectOrderDetails">
+        <p><strong>Date:</strong> {{ selectOrderDetails.date | date:'dd-MM-yyyy hh:mm a' }}</p>
+        <p><strong>Total Price:</strong> {{ selectOrderDetails.totalPrice | currency:'INR' }}</p>
+        <p><strong>Status:</strong> <span [ngClass]="'status-' + selectOrderDetails.status.toLowerCase()">{{
+                selectOrderDetails.status }}</span></p>
+
+        <p><strong>Order Items:</strong></p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of selectOrderDetails.order_items">
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price_at_order | currency:'INR' }}</td>
+                    <td>{{ item.sub_total | currency:'INR' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Ship Order Button -->
+        <div class="text-center mt-3" *ngIf="selectOrderDetails.status === 'Processed'">
+            <button pButton label="Ship Order" icon="pi pi-truck" class="p-button-success"
+                [disabled]="!isDeliveryBoyAvailable" (click)="openDeliveryBoySelection()">
+            </button>
+            <p *ngIf="!isDeliveryBoyAvailable" class="text-danger mt-2">No delivery boy available</p>
+        </div>
+    </ng-container>
+</p-dialog>
+
+<!-- Delivery Boy Selection Modal -->
+<p-dialog [(visible)]="isDeliveryBoyModalVisible" [modal]="true" header="Select Delivery Boy" [style]="{width: '30vw'}">
+    <ng-container *ngIf="availableDeliveryBoys.length > 0">
+        <p-dropdown [options]="availableDeliveryBoys" [(ngModel)]="selectedDeliveryBoy" optionLabel="name"
+            placeholder="Select a delivery boy" appendTo="body"> <!-- Ensures dropdown appears above other elements -->
+        </p-dropdown>
+
+        <div class="text-center mt-3">
+            <button pButton label="Confirm & Ship" icon="pi pi-check" class="p-button-success"
+                [disabled]="!selectedDeliveryBoy" (click)="markAsShipped(selectOrderDetails, selectedDeliveryBoy.id)">
+            </button>
+        </div>
+    </ng-container>
+
+    <p *ngIf="availableDeliveryBoys.length === 0" class="text-danger text-center">No delivery boys available</p>
+</p-dialog>
+
+
+<p-dialog [(visible)]="dealerDialogVisible" header="Dealer Details" [modal]="true" [closable]="true">
+    <div *ngIf="selectedDealer">
+        <div class="dealer-details">
+            <img *ngIf="selectedDealer.dealer_details?.profile_photo"
+                [src]="'data:image/jpeg;base64,' + selectedDealer.dealer_details.profile_photo" alt="Dealer Photo"
+                class="dealer-photo">
+            <h3>{{ selectedDealer.username }}</h3>
+            <p><strong>Email:</strong> {{ selectedDealer.email }}</p>
+            <!-- <p><strong>Role:</strong> {{ selectedDealer.role }}</p> -->
+            <p><strong>Shop Name:</strong> {{ selectedDealer.shop_name }}</p>
+            <p><strong>Mobile:</strong> {{ selectedDealer.mobile_no }}</p>
+            <p><strong>Address:</strong> {{ formattedAddress }}</p>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- Staff Dialog for Add/Update -->
+<p-dialog [(visible)]="staffDialogVisible" [modal]="true" header="{{ isAddMode ? 'Add Staff' : 'Update Staff' }}"
+    [style]="{width: '50vw'}" (onHide)="resetStaffForm()" class="staff-dialog">
+    <div class="staff-dialog-content p-fluid">
+        <div class="p-field">
+            <label for="name">Name</label>
+            <input id="name" type="text" pInputText [(ngModel)]="staffForm.name" />
+        </div>
+        <div class="p-field">
+            <label for="phone">Phone</label>
+            <input id="phone" type="text" pInputText [(ngModel)]="staffForm.phone" />
+        </div>
+        <div class="p-field">
+            <label for="alternatePhone">Alternate Phone</label>
+            <input id="alternatePhone" type="text" pInputText [(ngModel)]="staffForm.alternate_phone" />
+        </div>
+        <div class="p-field">
+            <label for="address">Address</label>
+            <textarea id="address" pInputTextarea [(ngModel)]="staffForm.address"></textarea>
+        </div>
+        <div class="p-field">
+            <label for="staffType">Staff Type</label>
+            <p-dropdown [options]="staffTypes" [(ngModel)]="staffForm.staff_type" optionLabel="label"
+                placeholder="Select Staff Type"></p-dropdown>
+        </div>
+    </div>
+
+    <p-footer class="staff-dialog-footer">
+        <button pButton label="Save" icon="pi pi-check" class="p-button-success" (click)="saveStaff()"></button>
+        <button pButton label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="staffDialogVisible = false"></button>
+    </p-footer>
+</p-dialog>
+
+
+<div class="card flex justify-content-center">
+    <p-toast />
+</div>

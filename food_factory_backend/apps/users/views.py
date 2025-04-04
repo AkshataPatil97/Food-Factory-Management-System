@@ -3,7 +3,11 @@ from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from services.users import insert_user, fetchall_users, fetch_user_by_email, send_otp_email, verify_otp, password_reset, insert_dealer_details, fetch_dealer_details, update_dealer_details, fetch_user_details, insert_admin_details
+from services.users import (
+    insert_user, fetchall_users, fetch_user_by_email, send_otp_email, verify_otp, password_reset, 
+    insert_dealer_details, fetch_dealer_details, update_dealer_details, fetch_user_details, insert_admin_details,
+    fetch_company_details, insert_company_details, update_company_details, delete_company_details
+)
 from services.dbConfigService import fetch_db_config_data, update_db_config_data
 from config.connection import get_conn, close_conn
 from apps.users.auth_backend import CustomAuthBackend
@@ -301,9 +305,10 @@ class FetchDealerDetailsView(APIView):
             if not db_connection:
                 LOGGER.error("Failed to connect to the database")
                 return Response({"error": "Failed to connect to the database"}, status=500)
-            
+            data = json.loads(request.body)
+            user_id = data.get('user_id')
             fetchedDealerDetails = fetch_dealer_details(db_connection, request)
-            fetchedUserDetails = fetch_user_details(db_connection, request) 
+            fetchedUserDetails = fetch_user_details(db_connection, user_id) 
             fetchedDetails = {**fetchedDealerDetails, **fetchedUserDetails}
 
             if fetchedDetails:
@@ -349,12 +354,117 @@ class FetchUserDetailsView(APIView):
                 LOGGER.error("Failed to connect to the database")
                 return Response({"error": "Failed to connect to the database"}, status=500)
             
-            fetchedUserDetails = fetch_user_details(db_connection, request) 
+            data = json.loads(request.body)
+            user_id = data.get('user_id')
+            fetchedUserDetails = fetch_user_details(db_connection, user_id) 
 
             if fetchedUserDetails:
                 return Response({"message": "User feached successfully.", "user_details": fetchedUserDetails }, status=201)
         except Exception as e:
             LOGGER.error("Error in DBConfigView : ", str(e))
+            return Response({"error": str(e)}, status=500)
+
+        finally:
+            if db_connection:
+                close_conn(db_connection)
+                
+class FetchComapnyDetailsView(APIView):
+    def get(self, request):
+        LOGGER.info("Inside FetchUserDetailsView!")
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                LOGGER.error("Failed to connect to the database")
+                return Response({"error": "Failed to connect to the database"}, status=500)
+            
+            fetchedCompanyDetails = fetch_company_details(db_connection) 
+
+            if fetchedCompanyDetails:
+                return Response({"message": "User feached successfully.", "data": fetchedCompanyDetails }, status=201)
+        except Exception as e:
+            LOGGER.error("Error in DBConfigView : ", str(e))
+            return Response({"error": str(e)}, status=500)
+
+        finally:
+            if db_connection:
+                close_conn(db_connection)
+                
+class InsertCompanyDetailView(APIView):
+    def post(self, request):
+        LOGGER.info("Inside InsertCompanyDetailView!")
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                LOGGER.error("Failed to connect to the database")
+                return Response({"error": "Failed to connect to the database"}, status=500)
+            
+            inserted_company = insert_company_details(db_connection, request)
+
+            if inserted_company:
+                return Response({
+                    "message": "Company details inserted successfully.",
+                    "data": inserted_company
+                }, status=201)
+            else:
+                return Response({"message": "Company not inserted."}, status=400)
+                
+        except Exception as e:
+            LOGGER.error("Error in InsertCompanyDetailView: %s", str(e))
+            return Response({"error": str(e)}, status=500)
+        
+        finally:
+            if db_connection:
+                close_conn(db_connection)
+
+class UpdateCompanyDetailView(APIView):
+    def put(self, request):
+        LOGGER.info("Inside UpdateCompanyDetailView!")
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                LOGGER.error("Failed to connect to the database")
+                return Response({"error": "Failed to connect to the database"}, status=500)
+
+            updated_company = update_company_details(db_connection, request)
+
+            if updated_company:
+                return Response({
+                    "message": "Company details updated successfully.",
+                    "data": updated_company
+                }, status=200)
+            else:
+                return Response({"message": "Company not updated."}, status=400)
+        
+        except Exception as e:
+            LOGGER.error("Error in UpdateCompanyDetailView: %s", str(e))
+            return Response({"error": str(e)}, status=500)
+
+        finally:
+            if db_connection:
+                close_conn(db_connection)
+
+class DeleteCompanyDetailView(APIView):
+    def delete(self, request):
+        LOGGER.info("Inside DeleteCompanyDetailView!")
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                LOGGER.error("Failed to connect to the database")
+                return Response({"error": "Failed to connect to the database"}, status=500)
+
+            deleted = delete_company_details(db_connection, request)
+
+            if deleted.get("message"):
+                return Response(deleted, status=200)
+            else:
+                return Response({"error": "Company not deleted."}, status=400)
+
+        except Exception as e:
+            LOGGER.error("Error in DeleteCompanyDetailView: %s", str(e))
             return Response({"error": str(e)}, status=500)
 
         finally:

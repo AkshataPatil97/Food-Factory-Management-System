@@ -62,6 +62,7 @@ def insert_order_details(db_connection, order_id, request):
         cursor.close()
 def fetch_orders_by_userId(db_connection, request):
     try:
+        from .users import fetch_user_details
         user_id = request.data.get("user_id")  # Use request.data instead of json.loads(request.body)
         if not user_id:
             return {"error": "User ID is required"}
@@ -85,6 +86,7 @@ def fetch_orders_by_userId(db_connection, request):
                 order_data = {
                     "order_id": order_id,
                     "user_id": row["user_id"],
+                    "user": fetch_user_details(db_connection, row["user_id"]),
                     "total_price": float(row["total_price"]),
                     "status": row["status"],
                     "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
@@ -194,6 +196,7 @@ def update_order_items(db_connection, order_id, data):
 
 def fetch_order_by_id(db_connection,order_id):
     try:
+        from .users import fetch_user_details
         with db_connection.cursor(dictionary=True) as cursor:
             cursor.execute(FETCH_ORDER_BY_ID_QUERY, (order_id,))
             rows = cursor.fetchall()
@@ -209,6 +212,7 @@ def fetch_order_by_id(db_connection,order_id):
                 order_data = {
                     "order_id": row["order_id"],
                     "user_id": row["user_id"],
+                    "user": fetch_user_for_order(db_connection, row["user_id"]),
                     "total_price": float(row["total_price"]),
                     "status": row["status"],
                     "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
@@ -235,6 +239,7 @@ def fetch_order_by_id(db_connection,order_id):
 
 def fetch_all_order(db_connection):
     try:
+        from .users import fetch_user_details
         with db_connection.cursor(dictionary=True) as cursor:
             cursor.execute(FETCH_ALL_ORDER_QUERY)
             rows = cursor.fetchall()
@@ -252,6 +257,7 @@ def fetch_all_order(db_connection):
                 order_data = {
                     "order_id": order_id,
                     "user_id": row["user_id"],
+                    "user": fetch_user_for_order(db_connection, row["user_id"]),
                     "total_price": float(row["total_price"]),
                     "status": row["status"],
                     "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
@@ -272,7 +278,8 @@ def fetch_all_order(db_connection):
                 "sub_total": float(row["sub_total"]),
             })
 
-        return orders  
+        return orders
+
 
     except Exception as e:
         db_connection.rollback()
@@ -328,6 +335,7 @@ def update_shipped_order_status(db_connection, request):
 
 def fetch_delivered_order(db_connection):
     try:
+        from .users import fetch_user_details
         with db_connection.cursor(dictionary=True) as cursor:
             cursor.execute(FETCH_DELIVERED_ORDER_QUERY)
             rows = cursor.fetchall()
@@ -345,6 +353,7 @@ def fetch_delivered_order(db_connection):
                 order_data = {
                     "order_id": order_id,
                     "user_id": row["user_id"],
+                    "user": fetch_user_for_order(db_connection, row["user_id"]),
                     "total_price": float(row["total_price"]),
                     "status": row["status"],
                     "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
@@ -373,6 +382,7 @@ def fetch_delivered_order(db_connection):
     
 def fetch_canceled_order(db_connection):
     try:
+        from .users import fetch_user_details
         with db_connection.cursor(dictionary=True) as cursor:
             cursor.execute(FETCH_CANCELED_ORDER_QUERY)
             rows = cursor.fetchall()
@@ -390,6 +400,7 @@ def fetch_canceled_order(db_connection):
                 order_data = {
                     "order_id": order_id,
                     "user_id": row["user_id"],
+                    "user": fetch_user_for_order(db_connection, row["user_id"]),
                     "total_price": float(row["total_price"]),
                     "status": row["status"],
                     "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
@@ -415,3 +426,53 @@ def fetch_canceled_order(db_connection):
     except Exception as e:
         db_connection.rollback()
         return {"error": str(e)}
+
+def fetch_order_by_id_invoice(db_connection, order_id):
+    try:
+        with db_connection.cursor(dictionary=True) as cursor:
+            cursor.execute(FETCH_ORDER_BY_ID_QUERY, (order_id,))
+            rows = cursor.fetchall()
+
+        if not rows:
+            return []  # ✅ Return an empty list instead of an error dict
+
+        order_data = None
+        order_items = []
+
+        for row in rows:
+            if not order_data:
+                order_data = {
+                    "order_id": row["order_id"],
+                    "user_id": row["user_id"],
+                    "total_price": float(row["total_price"]),
+                    "status": row["status"],
+                    "order_date": row["order_date"].strftime("%Y-%m-%d %H:%M:%S") if row["order_date"] else None,
+                    "updated_at": row["updated_at"].strftime("%Y-%m-%d %H:%M:%S") if row["updated_at"] else None,
+                    "is_cancelled": bool(row["is_cancelled"]),
+                    "cancellation_reason": row["cancellation_reason"],
+                    "order_items": order_items  # Reference the list directly
+                }
+
+            order_items.append({
+                "order_item_id": row["order_item_id"],
+                "product_id": row["product_id"],
+                "product_name": row["product_name"],
+                "quantity": row["quantity"],
+                "price_at_order": float(row["price_at_order"]),
+                "sub_total": float(row["sub_total"]),
+            })
+
+        return order_data  # ✅ Return the order object
+
+    except Exception as e:
+        db_connection.rollback()
+        return {"error": str(e)}
+
+
+def fetch_user_for_order(db_connection, user_id):
+    from .users import fetch_user_by_id,fetch_dealer_details_by_id
+    user_data = fetch_user_by_id(db_connection, user_id) or {}
+    dealer_details = fetch_dealer_details_by_id(db_connection, user_id) or {}
+
+    user = {**user_data, **dealer_details}     
+    return user

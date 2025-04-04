@@ -5,18 +5,32 @@
     <div class="col-12 md:col-3 left-section leftNavePart">
         <p-panel header="Menu" class="custom-p-panel">
             <ul class="menu-list">
-                <li><i class="pi pi-home"></i> Dashboard</li>
-                <li (click)="setActiveComponent('profile')"><i class="pi pi-user"></i> Profile</li>
-                <li (click)="setActiveComponent('products')"><i class="pi pi-box"></i> Product</li>
-                <li (click)="setActiveComponent('cart')"><i class="pi pi-wallet"></i> Cart
+                <!-- <li [class.active]="isActiveComponent('dashboard')" (click)="setActiveComponent('dashboard')">
+                    <i class="pi pi-home"></i> Dashboard
+                </li> -->
+                <li [class.active]="isActiveComponent('products')" (click)="setActiveComponent('products')">
+                    <i class="pi pi-box"></i> Products
+                </li>
+                <li [class.active]="isActiveComponent('profile')" (click)="setActiveComponent('profile')">
+                    <i class="pi pi-user"></i> Profile
+                </li>
+                <li [class.active]="isActiveComponent('cart')" (click)="setActiveComponent('cart')">
+                    <i class="pi pi-wallet"></i> Cart
                     <span class="cart-count" *ngIf="cart.length > 0">({{ cart.length }})</span>
                 </li>
-                <li (click)="setActiveComponent('order')"><i class="pi pi-shopping-bag"></i> Orders
-                    <span class="cart-count" *ngIf="cart.length > 0">({{ cart.length }})</span>
+                <li [class.active]="isActiveComponent('order')" (click)="setActiveComponent('order')">
+                    <i class="pi pi-shopping-bag"></i> Orders
+                    <span class="cart-count" *ngIf="totalActiveOrdersCount > 0">({{ totalActiveOrdersCount }})</span>
                 </li>
-                <li><i class="pi pi-file"></i> Invoices</li>
-                <li (click)="setActiveComponent('settings')"><i class="pi pi-cog"></i> Settings</li>
-                <li (click)="logout()"><i class="pi pi-sign-out"></i> Log-out</li>
+                <li [class.active]="isActiveComponent('invoices')" (click)="setActiveComponent('invoices')">
+                    <i class="pi pi-file"></i> Invoices
+                </li>
+                <!-- <li [class.active]="isActiveComponent('settings')" (click)="setActiveComponent('settings')">
+                    <i class="pi pi-cog"></i> Settings
+                </li> -->
+                <li (click)="logout()">
+                    <i class="pi pi-sign-out"></i> Log-out
+                </li>
             </ul>
         </p-panel>
     </div>
@@ -69,7 +83,7 @@
             </div>
         </div>
 
-        <app-settings *ngIf="activeComponent === 'settings'"></app-settings>
+        <!-- <app-settings *ngIf="activeComponent === 'settings'"></app-settings> -->
 
         <div *ngIf="cart.length == 0 && activeComponent === 'cart'" class="cart-container emptyCart">
             No data <i class="pi pi-wallet"></i>
@@ -114,21 +128,31 @@
         </div>
 
         <div *ngIf="activeComponent === 'checkout'" class="checkout-container">
-            <div class="checkout-header">
-                <h2>Checkout</h2>
-                <button pButton icon="pi pi-times" class="p-button-danger close-btn"
-                    (click)="setActiveComponent('cart')"></button>
-            </div>
-            <div class="checkout-items">
-                <div class="checkout-item" *ngFor="let item of cart">
-                    <p>{{ item.product.product_name }} ({{ item.quantity }} kg) - Rs: {{ item.sub_total }}</p>
+            <div class="checkout-card">
+                <div class="checkout-header">
+                    <h2>Checkout</h2>
+                    <button pButton icon="pi pi-times" class="p-button-rounded p-button-danger close-btn"
+                        (click)="setActiveComponent('cart')"></button>
+                </div>
+
+                <div class="checkout-items">
+                    <div class="checkout-item" *ngFor="let item of cart">
+                        <div class="item-name">{{ item.product.product_name }}</div>
+                        <div class="item-details">
+                            <span>{{ item.quantity }} kg</span>
+                            <span>Rs: {{ item.sub_total }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-footer">
+                    <h3>Total: <span>Rs: {{ getTotalPrice() }}</span></h3>
+                    <button pButton label="Place Order" class="p-button-success place-order-btn"
+                        (click)="placeOrder()"></button>
                 </div>
             </div>
-            <div class="checkout-footer">
-                <h3>Total Amount: Rs: {{ getTotalPrice() }}</h3>
-                <button pButton label="Place Order" class="p-button-success" (click)="placeOrder()"></button>
-            </div>
         </div>
+
 
         <div *ngIf="activeComponent === 'order'" class="orders-container">
             <h2>My Orders</h2>
@@ -140,25 +164,44 @@
             <div *ngFor="let order of fetchUserOrders" class="order-card">
                 <p-card>
                     <div class="order-header">
-                        <p>Status: <span class="order-status">{{ order.status }}</span></p>
+                        <p>Status: <span [ngClass]="{
+                            'status-delivered': order.status === 'Delivered',
+                            'status-cancelled': order.status === 'Cancelled',
+                            'status-pending': order.status === 'Pending',
+                            'status-shipped': order.status === 'Shipped',
+                            'status-processing': order.status === 'Processing',
+                            'status-processed': order.status === 'Processed'
+                        }" class="status-badge">
+                                {{ order.status }}
+                            </span></p>
                         <p>Order Date: {{ order.order_date }}</p>
                         <p>Total Price: Rs: {{ order.total_price }}</p>
                     </div>
 
                     <div class="order-items">
                         <h4>Items:</h4>
-                        <ul>
-                            <li *ngFor="let item of order.order_items">
-                                <span>{{ item.product_name }}</span> -
-                                <span>Qty: {{ item.quantity }}</span> -
-                                <span>Price: Rs: {{ item.price_at_order }}</span> -
-                                <span>Subtotal: Rs: {{ item.sub_total }}</span>
-                            </li>
-                        </ul>
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of order.order_items">
+                                    <td>{{ item.product_name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>Rs: {{ item.price_at_order }}</td>
+                                    <td>Rs: {{ item.sub_total }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="order-actions">
-                        <button pButton type="submit" label="Update Order" class="form-submit-button"
+                        <button pButton type="submit" label="Update Order" class="form-update-btn"
                             *ngIf="order.status === 'Pending'" (click)="updateOrder(order)">
                         </button>
 
@@ -170,6 +213,48 @@
                 </p-card>
             </div>
         </div>
+
+
+        <div *ngIf="activeComponent === 'invoices'" class="invoices-container">
+            <h2>Invoices</h2>
+
+            <div *ngIf="userInvoices.length === 0" class="empty-invoices">
+                No invoices found.
+            </div>
+
+            <table class="invoice-table" *ngIf="userInvoices.length > 0">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Shop Name</th>
+                        <th>Status</th>
+                        <th>Issued At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let invoice of userInvoices">
+                        <td>{{ invoice.userData.username }}</td>
+                        <td>{{ invoice.userData.shop_name }}</td>
+                        <td>
+                            <span [ngClass]="{
+                                'status-delivered': invoice.status === 'Paid',
+                                'status-cancelled': invoice.status === 'Cancelled',
+                                'status-pending': invoice.status === 'Pending'
+                            }" class="status-badge">
+                                {{ invoice.status }}
+                            </span>
+                        </td>
+                        <td>{{ invoice.issued_at }}</td>
+                        <td>
+                            <button pButton label="Download" class="p-button-success"
+                                (click)="downloadInvoicePDF(invoice)"></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
 
     </div>
 

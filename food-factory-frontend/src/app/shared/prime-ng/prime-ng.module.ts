@@ -13,6 +13,8 @@ import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { FileUploadModule } from 'primeng/fileupload';
+import { DialogModule } from 'primeng/dialog';
+import { MessageModule } from 'primeng/message';
 
 @NgModule({
     declarations:[],
@@ -32,7 +34,9 @@ import { FileUploadModule } from 'primeng/fileupload';
         TableModule,
         ChartModule,
         TieredMenuModule,
-        FileUploadModule
+        FileUploadModule,
+        DialogModule,
+        MessageModule
     ]
 })
 

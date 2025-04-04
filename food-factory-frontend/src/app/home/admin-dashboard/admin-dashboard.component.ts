@@ -1,5 +1,12 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../shared/services/auth.service';
+import { OrdersService } from '../../shared/services/orders.service';
+import { CancelledOrder, Order } from '../../shared/interface/order';
+import { MessageService } from 'primeng/api';
+import { DeliveryboyService } from '../../shared/services/deliveryboy.service';
+import { UsersService } from '../../shared/services/users.service';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,31 +20,38 @@ export class AdminDashboardComponent {
   userName: string = '';
   userId: number = 0;
   userRole: string = '';
+  currentOrders: Order[] = [];
+  companyDetails: any = {};
+  cancelledOrders: CancelledOrder[] = [];
+  deliveredOrders: Order[] = [];
 
-  constructor(private authService: AuthService) {
-    this.chartData = {
-      labels: ['Sun', 'Mon', 'Tue', 'Wed'],
-      datasets: [
-        { label: 'Income', backgroundColor: '#66BB6A', data: [40, 60, 80, 100] },
-        { label: 'Outcome', backgroundColor: '#EF5350', data: [50, 70, 90, 110] }
-      ]
-    };
-  }
+  constructor(
+    private authService: AuthService,
+    private orderService: OrdersService,
+    private messageService: MessageService,
+    private deliveryBoyService: DeliveryboyService,
+    private userService: UsersService
+  ) { }
 
   ngOnInit(): void {
     this.setUserId();
+    this.refreshData();
+    this.fetchInvoices()
+    this.fetchComapnyDetails()
+  }
+
+  refreshData() {
+    this.fetchAllOrders();
+    this.fetchAllCancelledOrders();
+    this.fetchAllDeliveredOrders();
+    this.checkDeliveryBoyAvailability();
+    this.loadStaff();
+    this.fetchInvoices
   }
 
   logout() {
     this.authService.logout();
   }
-
-  transactions = [
-    { date: '2025-03-01', type: 'Invoice', amount: 1200, status: 'Paid' },
-    { date: '2025-03-02', type: 'Subscription', amount: 250, status: 'Pending' },
-    { date: '2025-03-03', type: 'Purchase', amount: 430, status: 'Paid' },
-    { date: '2025-03-04', type: 'Withdrawal', amount: 800, status: 'Pending' }
-  ];
 
   setUserId() {
     const user = this.authService.getUser();
@@ -53,16 +67,421 @@ export class AdminDashboardComponent {
     this.selectedProductAction = productAction;
   }
 
-  isDashboardActive() {
-    return this.activeComponent === 'dashboard';
+  // Check if the main component is active
+  isActiveComponent(component: string): boolean {
+    return this.activeComponent === component;
   }
-  isProfileActive() {
-    return this.activeComponent === 'profile';
+
+  // Check if the sub-menu is active
+  isSubActiveComponent(action: string): boolean {
+    return this.activeComponent === 'product' && this.selectedProductAction === action;
   }
-  isSettingsActive() {
-    return this.activeComponent === 'settings';
+
+  fetchComapnyDetails() {
+    this.userService.fetchCompanyDetails().subscribe({
+      next: (res) => {
+        this.companyDetails = res.data;
+      }
+    })
   }
-  isProductActive() {
-    return this.activeComponent === 'product';
+
+  fetchAllOrders() {
+    this.orderService.fetchAllOrderForAdmin().subscribe({
+      next: (response) => {
+        this.currentOrders = response.data.map((order: any) => ({
+          orderId: order.order_id,
+          date: order.order_date,
+          totalPrice: order.total_price,
+          status: order.status,
+          order_items: order.order_items || [],
+          user: order.user
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+
   }
+
+
+  fetchAllCancelledOrders() {
+    this.orderService.fetchAllCancelledOrderForAdmin().subscribe({
+      next: (response) => {
+        this.cancelledOrders = response.data.map((order: any) => ({
+          reason: order.cancellation_reason,
+          date: order.order_date,
+          totalPrice: order.total_price,
+          status: order.status,
+          user: order.user
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+
+  fetchAllDeliveredOrders() {
+    this.orderService.fetchAllDeliveredOrderForAdmin().subscribe({
+      next: (response) => {
+        this.deliveredOrders = response.data.map((order: any) => ({
+          orderId: order.order_id,
+          date: order.order_date,
+          totalPrice: order.total_price,
+          status: order.status,
+          order_items: order.order_items || [],
+          user: order.user
+        }));
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+  }
+  allInvoices: any = {};
+  fetchInvoices() {
+    this.orderService.fetchAllInvoices().subscribe({
+      next: (res) => {
+        this.allInvoices = res.data.map((invoice: any) => {
+          const userData = JSON.parse(invoice.user_data);
+          const orderData = JSON.parse(invoice.order_data);
+          return {
+            ...invoice,
+            userData,
+            orderData
+          };
+        });
+      }
+    });
+  }
+  selectOrderDetails: any = null;
+  isOrderDetailsVisible: boolean = false;
+
+  showOrderDetails(order: any) {
+    this.selectOrderDetails = order;
+    this.isOrderDetailsVisible = true;
+  }
+
+  dealerDialogVisible: boolean = false;
+  selectedDealer: any = null;
+  showDealerDetails(dealer: any) {
+    this.selectedDealer = dealer;
+    this.dealerDialogVisible = true;
+  }
+
+  get formattedAddress(): string {
+    if (this.selectedDealer?.address_payload) {
+      const address = JSON.parse(this.selectedDealer.address_payload);
+      return this.getFormattedAddress(address);
+    }
+    return 'Address not available';
+  }
+
+  getFormattedAddress(address: any): string {
+    if (address && Object.keys(address).length > 0) {
+      const { street, landmark, city, state, zip } = address;
+      return `${street}, ${landmark}, ${city}, ${state} - ${zip}`;
+    }
+    return 'Address not available';
+  }
+
+  isDeliveryBoyAvailable: boolean = false;
+  availableDeliveryBoys: any = [];
+
+  checkDeliveryBoyAvailability() {
+    this.deliveryBoyService.fetchAllDeliveryBoy().subscribe({
+      next: (res) => {
+        if (res.staff && Array.isArray(res.staff)) {
+          this.availableDeliveryBoys = res.staff.filter((boy: any) => boy.order_id === null);
+          if (this.availableDeliveryBoys.length > 0) {
+            this.isDeliveryBoyAvailable = true;
+          } else {
+            this.isDeliveryBoyAvailable = false;
+          }
+        }
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
+  }
+
+  isDeliveryBoyModalVisible: boolean = false;
+  selectedDeliveryBoy: any = null;
+
+  openDeliveryBoySelection() {
+    this.isDeliveryBoyModalVisible = true;
+  }
+
+  markAsShipped(order: any, deliveryBoyId: number) {
+    if (!deliveryBoyId) {
+      this.showMessage('warn', 'Warn', 'Please select a delivery boy first!')
+      return;
+    }
+
+    this.orderService.updateOrderStatus(order.orderId, 'Shipped', deliveryBoyId).subscribe(() => {
+      order.status = 'Shipped';
+      this.isOrderDetailsVisible = false;
+      this.isDeliveryBoyModalVisible = false;
+      this.showMessage('warn', 'Warn', `Order has been shipped successfully and assigned to ${this.selectedDeliveryBoy.name}!`)
+      this.refreshData()
+    });
+  }
+
+  staffList: any[] = [];
+  staffDialogVisible: boolean = false;
+  isAddMode: boolean = true;
+  staffForm: any = {
+    name: '',
+    phone: '',
+    alternate_phone: '',
+    address: '',
+    staff_type: '',
+  };
+  staffTypes = [
+    { label: 'Manager', value: 'Manager' },
+    { label: 'Clerk', value: 'Clerk' },
+    { label: 'Delivery', value: 'Delivery' },
+    { label: 'Support', value: 'Support' }
+  ];
+
+  loadStaff() {
+    this.userService.fetchAllStaff().subscribe({
+      next: (res) => {
+        this.staffList = res.staff
+      }
+    });
+  }
+
+  openStaffDialog(mode: string, staff: any = null) {
+    this.isAddMode = mode === 'add';
+    if (mode === 'update' && staff) {
+      this.staffForm = { ...staff };  // Pre-fill the form for update
+    } else {
+      this.staffForm = {
+        name: '',
+        phone: '',
+        alternate_phone: '',
+        address: '',
+        staff_type: ''
+      };  // Clear the form for adding a new staff
+    }
+    this.staffDialogVisible = true;
+  }
+
+  saveStaff() {
+    if (this.isAddMode) {
+      this.staffForm.staff_type = this.staffForm.staff_type.value;
+      this.userService.insertStaff(this.staffForm).subscribe(() => {
+        this.loadStaff();
+        this.showMessage('success', 'Success', 'Staff Added!!!')
+        this.staffDialogVisible = false;
+      });
+    } else {
+      this.staffForm.staff_type = this.staffForm.staff_type.value;
+      this.userService.updateStaff(this.staffForm).subscribe(() => {
+        this.loadStaff();
+        this.showMessage('success', 'Success', 'Staff Updated!!!')
+        this.staffDialogVisible = false;
+      });
+    }
+  }
+
+  deleteStaff(id: number) {
+    this.userService.deleteStaff(id).subscribe(() => {
+      this.loadStaff();
+      this.showMessage('warn', 'Warn', 'Staff Deleted!!!')
+    });
+  }
+
+  resetStaffForm() {
+    this.staffForm = {
+      name: '',
+      phone: '',
+      alternate_phone: '',
+      address: '',
+      staff_type: '',
+      is_available: true,
+    };
+  }
+
+  showMessage(strSeverity: string, strSummary: string, strDetail: string) {
+    this.messageService.add({ severity: strSeverity, summary: strSummary, detail: strDetail });
+  }
+
+  async downloadInvoicePDF(invoice: any) {
+    const doc = new jsPDF();
+
+    // Parse the user_data and order_data strings to JSON objects
+    const userData = JSON.parse(invoice.user_data);
+    const orderData = JSON.parse(invoice.order_data);
+
+    // Header background
+    doc.setFillColor(180, 180, 180); // Slightly darker gray background
+    doc.rect(0, 0, doc.internal.pageSize.width, 30, 'F');
+    doc.setFontSize(18);
+    doc.setTextColor(40, 40, 40);
+    doc.text(this.companyDetails.name || 'Company Name', 15, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Invoice ID: ${invoice.id}`, 15, 35);
+    doc.text(`Customer: ${userData.username}`, 15, 45);
+    doc.text(`Shop Name: ${userData.shop_name}`, 15, 55);
+    doc.text(`Email: ${userData.email}`, 15, 65);
+    doc.text(`Order Date: ${orderData.order_date}`, 15, 75);
+
+    // Status with color background
+    doc.setFillColor(orderData.status === 'PAID' ? 46 : 255, orderData.status === 'PAID' ? 204 : 204, 113); // Green for paid, yellow for pending
+    doc.rect(15, 90, 50, 8, 'F');
+    doc.setTextColor(255);
+    doc.text(`Status: ${orderData.status}`, 18, 96);
+    doc.setTextColor(0);
+
+    // Order items table
+    autoTable(doc, {
+      startY: 105,
+      head: [['Product Name', 'Quantity', 'Price', 'Subtotal']],
+      headStyles: { fillColor: [100, 100, 100] },
+      body: orderData.order_items.map((item: any) => [
+        item.product_name,
+        item.quantity,
+        `Rs. ${item.price_at_order}`,
+        `Rs. ${item.sub_total}`
+      ]),
+    });
+
+    // Get last table Y position
+    const finalY = (doc as any).lastAutoTable?.finalY || 120;
+    doc.setFontSize(12);
+    doc.text(`Total Amount: Rs. ${orderData.total_price}`, 15, finalY + 10);
+
+    // Footer background
+    doc.setFillColor(180, 180, 180);
+    doc.rect(0, doc.internal.pageSize.height - 30, doc.internal.pageSize.width, 30, 'F');
+    doc.setFontSize(10);
+    doc.text(`Contact: ${this.companyDetails.phone} | ${this.companyDetails.alternate_phone}`, 15, doc.internal.pageSize.height - 20);
+    doc.text(`Address: ${this.companyDetails.address}`, 15, doc.internal.pageSize.height - 10);
+
+    doc.save(`Invoice_${invoice.id}.pdf`);
+  }
+
+  reportFilters = {
+    startDate: null,
+    endDate: null,
+    type: null,
+    sortField: null,
+    sortOrder: 'asc'
+  };
+
+  reportTypes = [
+    { label: 'Dealers', value: 'dealers' },
+    { label: 'Staff', value: 'staff' },
+    { label: 'Orders', value: 'orders' },
+    { label: 'Invoices', value: 'invoices' }
+  ];
+
+  sortOptions = [
+    { label: 'Name', value: 'name' },
+    { label: 'Date', value: 'date' },
+    { label: 'Amount', value: 'total_amount' }
+  ];
+
+  sortOrderOptions = [
+    { label: 'Ascending', value: 'asc' },
+    { label: 'Descending', value: 'desc' }
+  ];
+
+  reportData: any[] = [];
+  reportColumns: any[] = [];
+
+  fetchReportData() {
+    // Simulating API Call
+    setTimeout(() => {
+      if (this.reportFilters.type === 'orders') {
+        this.reportColumns = [
+          { field: 'dealer', header: 'Dealer' },
+          { field: 'date', header: 'Date' },
+          { field: 'total_price', header: 'Total Price' },
+          { field: 'status', header: 'Status' }
+        ];
+        this.reportData = [
+          { dealer: 'Dealer 1', date: '2024-04-01', total_price: 1000, status: 'Delivered' },
+          { dealer: 'Dealer 2', date: '2024-03-30', total_price: 500, status: 'Pending' }
+        ];
+      } else if (this.reportFilters.type === 'invoices') {
+        this.reportColumns = [
+          { field: 'user', header: 'User' },
+          { field: 'shop', header: 'Shop' },
+          { field: 'amount', header: 'Amount' },
+          { field: 'status', header: 'Status' }
+        ];
+        this.reportData = [
+          { user: 'User 1', shop: 'Shop A', amount: 1200, status: 'Paid' },
+          { user: 'User 2', shop: 'Shop B', amount: 800, status: 'Pending' }
+        ];
+      }
+    }, 1000);
+  }
+
+  generatePDFReport() {
+    const doc = new jsPDF();
+    doc.text("Generated Report", 10, 10);
+
+    const headers = this.reportColumns.map(col => col.header);
+    const data = this.reportData.map(row => this.reportColumns.map(col => row[col.field]));
+
+    autoTable(doc,{
+      head: [headers],
+      body: data
+    });
+
+    doc.save("report.pdf");
+  }
+
+  company: any = {
+    name: '',
+    email: '',
+    phone: '',
+    alternate_phone: '',
+    address: '',
+    company_logo: '',
+    founded_in: ''
+  };
+
+  updateCompanyDetail = false;
+
+  addCompany() {
+    this.userService.insertCompany(this.company).subscribe(() => {
+      this.fetchComapnyDetails(); // Refresh after adding
+      this.company = { name: '', email: '', phone: '', address: '' }; // Reset form
+    });
+  }
+  
+  editDetails() {
+    this.updateCompanyDetail = true;
+    this.company = { ...this.companyDetails }; // Populate form with existing details
+  }
+  
+  updateCompany() {
+    this.userService.updateCompany(this.company).subscribe(() => {
+      this.fetchComapnyDetails(); // Refresh data
+      this.updateCompanyDetail = false;
+    });
+  }
+  
+  cancelEdit() {
+    this.updateCompanyDetail = false;
+    this.company = { name: '', email: '', phone: '', address: '' };
+  }
+  
+  deleteDetails() {
+    if (confirm('Are you sure you want to delete this company?')) {
+      this.userService.deleteCompany(this.companyDetails.id).subscribe(() => {
+        this.companyDetails = null;
+        this.company = { name: '', email: '', phone: '', address: '' };
+      });
+    }
+  }
+  
 }

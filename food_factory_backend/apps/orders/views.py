@@ -5,8 +5,9 @@ from services.orderService import (
     insert_order,insert_order_details,fetch_orders_by_userId,
     cancel_order, update_order, update_order_items, fetch_all_order,
     update_order_status, fetch_delivered_order, fetch_canceled_order,
-    update_shipped_order_status
+    update_shipped_order_status, fetch_order_by_id
 )
+from services.invoiceService import invoice_details, fetch_invoices_user_id, fetch_all_invoices
 from services.sendemail import send_shipped_email
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,12 +22,15 @@ class OrderInsertView(APIView):
                 return Response({"error": "Failed to connect to the database"}, status=500)
 
             order_id = insert_order(db_connection, request)
+            user_id = request.data.get('user_id')
             if order_id:
                 order_details_response = insert_order_details(db_connection, order_id, request)
                 if "error" in order_details_response:
                     return Response(order_details_response, status=500)
                 
-                return Response({"message": "Order inserted successfully", "order_id": order_id}, status=201)
+                invoice_id = invoice_details(db_connection, order_id, user_id)
+                if invoice_id:
+                    return Response({"message": "Order inserted successfully", "order_id": order_id}, status=201)
             else:
                 return Response({"error": "Failed to insert order"}, status=500)
         except Exception as e:
@@ -35,7 +39,7 @@ class OrderInsertView(APIView):
             if db_connection:
                 close_conn(db_connection)
 
-class FetchAllOrdersView(APIView):
+class FetchAllOrdersIdView(APIView):
     def post(self, request):
         db_connection = None
         try:
@@ -53,8 +57,9 @@ class FetchAllOrdersView(APIView):
             return Response({"error": str(e)}, status=500)
         
         finally:
-            if db_connection:
+            if db_connection is not None:
                 close_conn(db_connection)
+
                 
 class CancelOrderView(APIView):
     def post(self, request):
@@ -106,7 +111,7 @@ class OrderUpdateView(APIView):
             if db_connection:
                 close_conn(db_connection)
 
-class FetchAllOrdersIdView(APIView):
+class FetchAllOrdersView(APIView):
     def get(self, request):
         db_connection = None
         try:
@@ -116,9 +121,15 @@ class FetchAllOrdersIdView(APIView):
 
             data = fetch_all_order(db_connection)
             if data:
-                return Response({"message": "Orders fetched successfully", "data": data}, status=200)
+                return Response({
+                    "message": "Orders fetched successfully",
+                    "data": data
+                }, status=200)
             else:
-                return Response({"error": "Failed to fetch order."}, status=404)
+                return Response({
+                    "message": "No orders found",
+                    "data": []
+                }, status=200)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
@@ -166,9 +177,15 @@ class FetchAllDeleiveredOrdersView(APIView):
 
             data = fetch_delivered_order(db_connection)
             if data:
-                return Response({"message": "Orders fetched successfully", "data": data}, status=200)
+                return Response({
+                    "message": "Orders fetched successfully",
+                    "data": data
+                }, status=200)
             else:
-                return Response({"error": "Failed to fetch order."}, status=404)
+                return Response({
+                    "message": "No delivered orders found",
+                    "data": []
+                }, status=200)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
@@ -183,18 +200,120 @@ class FetchAllCanceledOrdersView(APIView):
         try:
             db_connection = get_conn()
             if not db_connection:
-                return Response({"error": "Failed to connect to the database"}, status=500)
+                return Response({"error": "Database connection failed"}, status=500)
 
             data = fetch_canceled_order(db_connection)
             if data:
-                return Response({"message": "Orders fetched successfully", "data": data}, status=200)
+                return Response({
+                    "message": "Orders fetched successfully",
+                    "data": data
+                }, status=200)
             else:
-                return Response({"error": "Failed to fetch order."}, status=404)
+                return Response({
+                    "message": "No canceled orders found",
+                    "data": []
+                }, status=200)
 
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return Response({"error": f"Server error: {str(e)}"}, status=500)
 
         finally:
             if db_connection:
                 close_conn(db_connection)
                 
+                
+class FetchDeliveryOrdersView(APIView):
+    def post(self, request):
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                return Response({"error": "Database connection failed"}, status=500)
+
+            # Parsing the JSON body of the request
+            try:
+                data = json.loads(request.body)  # Parse raw request body to JSON
+            except json.JSONDecodeError:
+                return Response({"error": "Invalid JSON in request body"}, status=400)
+
+            order_id = data.get("order_id")
+            if not order_id:
+                return Response({"error": "order_id is required"}, status=400)
+
+            # Fetch the order using the order_id
+            order_data = fetch_order_by_id(db_connection, order_id)
+
+            if order_data:
+                return Response({
+                    "message": "Orders fetched successfully",
+                    "data": order_data
+                }, status=200)
+            else:
+                return Response({
+                    "message": "No orders found",
+                    "data": {}
+                }, status=404)
+
+        except Exception as e:
+            return Response({"error": f"Server error: {str(e)}"}, status=500)
+
+        finally:
+            if db_connection:
+                close_conn(db_connection)
+
+                
+class FetchUserInvoicesView(APIView):
+    def post(self, request):
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                return Response({"error": "Database connection failed"}, status=500)
+
+            invoices = fetch_invoices_user_id(db_connection, request)
+
+            if invoices:
+                return Response({
+                        "message": "Invoices fetched successfully",
+                        "data": invoices
+                    }, status=200)
+            
+            return Response({
+                    "message": "Invoices fetched successfully",
+                    "data": []
+                }, status=200)
+
+        except Exception as e:
+            return Response({"error": f"Server error: {str(e)}"}, status=500)
+
+        finally:
+            if db_connection:
+                close_conn(db_connection)
+                
+class FetchAllInvoices(APIView):
+    def get(self, request):
+        db_connection = None
+        try:
+            db_connection = get_conn()
+            if not db_connection:
+                return Response({"error": "Database connection failed"}, status=500)
+
+            invoices = fetch_all_invoices(db_connection,)
+
+            if invoices:
+                return Response({
+                        "message": "Invoices fetched successfully",
+                        "data": invoices
+                    }, status=200)
+            
+            return Response({
+                    "message": "Invoices fetched successfully",
+                    "data": []
+                }, status=200)
+
+        except Exception as e:
+            return Response({"error": f"Server error: {str(e)}"}, status=500)
+
+        finally:
+            if db_connection:
+                close_conn(db_connection)

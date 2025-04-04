@@ -1,0 +1,155 @@
+// Dialog Global Styles
+p-dialog {
+    .p-dialog-header {
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .p-dialog-content {
+        padding: 20px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .p-dialog-footer {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .p-dialog-header-icon {
+        color: black;
+    }
+}
+
+// Order Details Dialog
+.order-details-dialog {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+
+        thead {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+
+            tr {
+                th {
+                    padding: 10px;
+                    text-align: left;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                &:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+
+                td {
+                    padding: 8px;
+                    border-bottom: 1px solid #ddd;
+                }
+            }
+        }
+    }
+}
+
+// Dealer Details Dialog
+// Dealer Details Dialog
+.dealer-details-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+
+    .dealer-details {
+        text-align: center;
+        padding: 20px;
+
+        // Ensuring the parent container enforces the styling
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+
+            strong {
+                color: #007bff;
+            }
+        }
+
+        .address-container {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #444;
+            text-align: left;
+            width: 80%;
+            margin: 10px auto;
+        }
+    }
+}
+
+
+.p-dialog {
+    .p-dialog-content {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+
+            thead {
+                background-color: #007bff;
+                color: white;
+                font-weight: bold;
+
+                tr {
+                    th {
+                        padding: 10px;
+                        text-align: left;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    &:nth-child(even) {
+                        background-color: #f8f9fa;
+                    }
+
+                    td {
+                        padding: 8px;
+                        border-bottom: 1px solid #ddd;
+                    }
+                }
+            }
+        }
+
+        .dealer-details {
+            .dealer-photo {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #007bff;
+                margin-bottom: 15px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+                display: block; // Ensures it's properly rendered
+            }
+        }
+    }
+}

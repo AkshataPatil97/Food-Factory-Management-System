@@ -18,7 +18,8 @@
     }
 
     // Ensure the right section is scrollable when content overflows
-    .right-section { // Align content at the top
+    .right-section {
+        // Align content at the top
         height: 100%; // Prevents it from exceeding the viewport
         overflow-y: auto; // Enables vertical scrolling when content overflows
         padding-top: 10px;
@@ -174,8 +175,20 @@
             }
 
             li:hover {
-                background: #e0e0e0;
-                border-radius: 5px;
+                background: linear-gradient(90deg, #ff9966, #ff5e62);
+                color: #fff;
+                border-radius: 4px;
+            }
+
+            li.active {
+                background: linear-gradient(90deg, #6a11cb, #2575fc);
+                color: #fff;
+                font-weight: bold;
+                border-radius: 4px;
+            }
+
+            li.dropdown {
+                position: relative;
             }
 
             .dropdown {
@@ -186,7 +199,7 @@
                     padding: 0;
                     margin: 0;
                     display: none;
-                    background: #f9f9f9;
+                    background: #6f6d6d;
                     border-radius: 5px;
                     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
                     position: absolute;
@@ -204,10 +217,13 @@
                     padding: 8px 12px;
                     font-size: 14px;
                     white-space: nowrap;
+                    border-radius: 4px;
                 }
 
                 .dropdown-menu li:hover {
-                    background: #ddd;
+                    background: linear-gradient(90deg, #ff9966, #ff5e62);
+                    color: #fff;
+                    border-radius: 4px;
                 }
             }
         }
@@ -279,14 +295,56 @@
             border-radius: 10px;
         }
 
-        .status-paid {
-            color: green;
+        /* General status styling */
+        .status-badge {
+            padding: 6px 10px;
+            border-radius: 12px;
             font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            min-width: 80px;
         }
 
+        /* Delivered Status */
+        .status-delivered {
+            background-color: #edd4d4;
+            color: #bd0606;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Cancelled Status */
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Pending Status */
         .status-pending {
-            color: orange;
-            font-weight: bold;
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Shipped Status */
+        .status-shipped {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Processing Status */
+        .status-processing {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        /* Processed Status */
+        .status-processed {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         .customCardsDiv {
@@ -401,4 +459,15 @@
 
     }
 
+}
+
+
+.customProductHeader {
+    text-align: center;
+    border-radius: 15px;
+    padding: 20px;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    margin-bottom: 10px;
+    color: white;
+    font-weight: bold;
 }

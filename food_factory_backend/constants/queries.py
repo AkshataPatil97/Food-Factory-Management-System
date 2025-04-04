@@ -211,7 +211,7 @@ FETCH_ALL_ORDER_QUERY = """
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN products p ON oi.product_id = p.product_code
     WHERE o.is_cancelled = FALSE
-      AND o.status IN ('Pending', 'Processing', 'Shipped');
+      AND o.status IN ('Pending', 'Processing', 'Processed', 'Shipped');
 """
 
 # Admin Update order status
@@ -276,20 +276,34 @@ INSERT_STAFF_QUERY = """
 """
 
 # Set Shipped Order id to delivery Boy
+SET_ORDER_TO_NULL_DELIVERY_BOY_QUERY = """
+    UPDATE staff
+    SET order_id = NULL, updated_at = NOW()
+    WHERE id = %s AND staff_type = 'Delivery';
+"""
+
+# Set Shipped Order id null to delivery Boy
 SET_ORDER_TO_DELIVERY_BOY_QUERY = """
     UPDATE staff
     SET order_id = %s, updated_at = NOW()
     WHERE id = %s AND staff_type = 'Delivery';
 """
+
 # Check if exist
 CHECK_STAFF_QUERY = """
-    SELECT id FROM staff WHERE id = %s AND staff_type = 'Delivery' AND is_deleted = FALSE;
+    SELECT id FROM staff WHERE id = %s AND staff_type = 'Delivery' AND is_deleted = FALSE AND is_available = 1;
 """
 
 # fetch staff by id
 FETCH_STAFF_BY_ID_QUERY = """
     SELECT * FROM staff WHERE id = %s;
 """
+
+# fetch staff by id
+FETCH_STAFF_BY_NUMBER_QUERY = """
+    SELECT * FROM staff WHERE phone = %s;
+"""
+
 # SQL Query to Fetch Order by ID
 FETCH_ORDER_BY_ID_QUERY = """
     SELECT 
@@ -311,4 +325,45 @@ FETCH_ORDER_BY_ID_QUERY = """
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN products p ON oi.product_id = p.product_code
     WHERE o.order_id = %s;
+"""
+
+# Fet All delivery boys
+FETCH_ALL_DELIVERY_BOY_QUERY = """
+    SELECT * FROM staff WHERE staff_type = 'Delivery' AND is_deleted = FALSE AND is_available = 1;
+"""
+
+# Fet All delivery boys
+FETCH_ALL_STAFF_QUERY = """
+    SELECT * FROM staff WHERE is_deleted = FALSE;
+"""
+
+# Insert invoice
+INSERT_INVOICE_QUERY = """
+    INSERT INTO invoices (user_id, order_data, user_data, total_amount, status)
+    VALUES (%s, %s, %s, %s, %s)
+"""
+
+# Fetch user's order invoices
+FETCH_USER_INVOICES_QUERY = """
+    SELECT * FROM invoices WHERE user_id = %s;
+"""
+
+# Fetch all invoices for 7 days
+FETCH_INVOICES_FOR_7_DAYS_QUERY = """
+    SELECT * 
+    FROM invoices 
+    WHERE issued_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
+    ORDER BY issued_at DESC;
+"""
+
+# Fetch Company Details
+FETCH_COMPANY_DETAILS_QUERY = """
+    SELECT * FROM companydetail WHERE id = 1;
+"""
+
+#Insert Company
+INSER_COMPANY_DETAIL = """
+  INSERT INTO companydetail 
+  (name, email, phone, alternate_phone, address, company_logo, founded_in)
+  VALUES ( %s, %s, %s, %s, %s, %s, %s);
 """

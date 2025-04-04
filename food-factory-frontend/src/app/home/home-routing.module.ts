@@ -7,6 +7,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { ForgotPasswordComponent } from '../commons/forgot-password/forgot-password.component';
+import { StaffComponent } from './staff/staff.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard] },  
   { path: 'customer-dashboard', component: CustomerDashboardComponent, canActivate: [AuthGuard] },  
   { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'staff-login', component: StaffComponent }
 ];
 
 @NgModule({

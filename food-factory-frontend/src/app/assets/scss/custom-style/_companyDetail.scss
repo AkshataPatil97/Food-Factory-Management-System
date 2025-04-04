@@ -1,0 +1,82 @@
+.company-container {
+    background: #f7f9fc;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: 'Segoe UI', sans-serif;
+  
+    .company-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+  
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+  
+      p {
+        margin: 6px 0;
+      }
+  
+      .action-buttons {
+        margin-top: 20px;
+  
+        button {
+          padding: 10px 15px;
+          margin-right: 10px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          background: #007bff;
+          color: white;
+          transition: background 0.3s;
+  
+          &:hover {
+            background: #0056b3;
+          }
+  
+          &.danger {
+            background: #dc3545;
+  
+            &:hover {
+              background: #a71d2a;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .company-add-form {
+    background: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 20px auto;
+  
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+  
+    button {
+      background: #28a745;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: white;
+      transition: background 0.3s;
+  
+      &:hover {
+        background: #1c7430;
+      }
+    }
+  }
+  

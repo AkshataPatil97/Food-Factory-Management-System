@@ -1,13 +1,17 @@
-<footer [ngClass]="{'footer': !isFooterHidden, 'customFooter': isFooterHidden}">
-  <div class="footer-content" [hidden]="isFooterHidden">
+<footer [ngClass]="{'app-footer': true, 'collapsed-footer': isFooterHidden}">
+  <div class="footer-content">
     <div class="contact">
-      <p><strong>Address:</strong> 21 Revolution Street, <br> Paris, France</p>
-      <p><strong>Phone:</strong> +1 555 123456</p>
+      <p><strong>Address:</strong> {{companyDetail.address}}
+      <p><strong>Phone:</strong> {{companyDetail.phone}}</p>
     </div>
     <div class="about">
-      <h3>About the company</h3>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce euismod convallis velit, eu auctor lacus vehicula sit amet.</p>
+      <h3>About the Company</h3>
+      <p>{{companyDetail.about}}</p>
     </div>
   </div>
-  <button class="footer-toggle" (click)="toggleFooter()">&#9650;</button>
 </footer>
+
+<!-- Always visible button for toggling -->
+<button class="footer-toggle" (click)="toggleFooter()">
+  <i class="pi" [ngClass]="{'pi-chevron-up': !isFooterHidden, 'pi-chevron-down': isFooterHidden}"></i>
+</button>

@@ -1,0 +1,161 @@
+<div class="staff-login-container" *ngIf="!isLoggedIn">
+    <div class="login-card">
+        <h2>Staff Login</h2>
+        <form (submit)="onSubmit()">
+            <div class="input-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" [(ngModel)]="phoneNumber" name="phoneNumber" required pattern="\d{10}"
+                    placeholder="Enter your phone number" />
+            </div>
+            <button type="submit" [disabled]="loading">Login</button>
+        </form>
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    </div>
+</div>
+
+<!-- Staff Dashboard (Shown after login) -->
+
+<div class="staff-dashboard" *ngIf="isLoggedIn">
+    <h2>Welcome to Staff Dashboard</h2>
+    <p>Your Role: <strong>{{ staffRole }}</strong></p>
+
+    <div *ngIf="staffRole === 'Delivery'">
+        <h3>Assigned Deliveries</h3>
+        <ul>
+            <li *ngIf="assignedDeliveries">
+                <div>
+                    Order ID: {{ assignedDeliveries.order_id }} - Status: {{ assignedDeliveries.status }}
+                </div>
+                <div>
+                    <strong>Dealer Name:</strong> {{ assignedDeliveries.user.username }}
+                </div>
+                <div>
+                    <strong>Mobile Number:</strong> {{ assignedDeliveries.user.mobile_no }}
+                </div>
+                <div>
+                    <strong>Address:</strong>
+                    <p>{{ assignedDeliveries.user.shop_name }}</p>
+                    <p>{{ formattedAddress }}</p>
+                </div>
+                <button (click)="openOrderDialog(assignedDeliveries)">View Details</button>
+            </li>
+            
+        </ul>
+    </div>
+
+    <div *ngIf="staffRole === 'Manager'">
+        <h3>Pending Orders</h3>
+        <button (click)="showPendingOrdersDialog()">View Pending Orders</button>
+    </div>
+
+    <!-- Processing Orders Dialog -->
+    <div *ngIf="staffRole === 'Manager'">
+        <h3>Processing Orders</h3>
+        <button (click)="showProcessingOrdersDialog()">View Processing Orders</button>
+    </div>
+    
+    <button (click)="logout()">Logout</button>
+</div>
+
+<!-- Order Details Dialog -->
+<p-dialog [(visible)]="showDetailDialog" [modal]="true" [closable]="true" [style]="{width: '90vw'}" [header]="'Order Details'" class="order-details-dialog">
+    <div class="order-details-container">
+        <h3 class="order-details-title">Order Details</h3>
+        
+        <!-- Display only the Total Price -->
+        <p><strong>Total Price:</strong> {{ orderDialog?.total_price }}</p>
+        
+        <!-- Table for Order Items -->
+        <table class="order-items-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of orderDialog?.order_items" class="order-item">
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price_at_order }}</td>
+                    <td>{{ item.sub_total }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Button to set the order as delivered -->
+        <button *ngIf="orderDialog?.status !== 'Delivered'" pButton type="button" label="Set as Delivered" (click)="openOtpDialog(orderDialog?.order_id, orderDialog.user.email)" class="set-delivered-button"></button>
+    </div>
+</p-dialog>
+
+
+
+
+<!-- OTP Verification Dialog -->
+<p-dialog [(visible)]="showOtpDialog" [modal]="true" [closable]="true" [style]="{width: '50vw'}" [header]="'Verify Delivery'">
+    <div class="custom-otp-dialog">
+        <p class="custom-otp-description">Enter OTP sent to customer</p>
+        <input type="text" [(ngModel)]="otpCode" class="custom-otp-input" placeholder="Enter OTP" />
+        <button pButton type="button" label="Verify" (click)="verifyOtp(email)" class="custom-verify-button"></button>
+    </div>
+</p-dialog>
+
+
+
+<!-- Pending Orders Dialog -->
+<p-dialog [(visible)]="showPendingOrders" [modal]="true" [closable]="true" [style]="{width: '90vw'}" [header]="'Pending Orders'" class="orders-dialog-custom">
+    <div class="orders-dialog-custom-container">
+        <table class="orders-table-custom">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Dealer Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let order of pendingOrders">
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        <button pButton label="Update" (click)="updateStatus(order, 'Processing')"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</p-dialog>
+
+<!-- Processing Orders Dialog -->
+<p-dialog [(visible)]="showProcessingOrders" [modal]="true" [closable]="true" [style]="{width: '90vw'}" [header]="'Processing Orders'" class="orders-dialog-custom">
+    <div class="orders-dialog-custom-container">
+        <table class="orders-table-custom">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Dealer Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let order of processingOrders">
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        <button pButton label="Update" (click)="updateStatus(order, 'Processed')"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</p-dialog>
+
+<div class="card flex justify-content-right">
+    <p-toast position="top-right"></p-toast>
+</div>

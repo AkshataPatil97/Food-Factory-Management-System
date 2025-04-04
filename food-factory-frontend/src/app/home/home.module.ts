@@ -10,6 +10,7 @@ import { LoginComponent } from "./login/login.component";
 import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
 import { CustomerDashboardComponent } from "./customer-dashboard/customer-dashboard.component";
 import { ProductComponent } from "./product/product.component";
+import { StaffComponent } from "./staff/staff.component";
 
 @NgModule({
     declarations: [
@@ -18,7 +19,8 @@ import { ProductComponent } from "./product/product.component";
         LoginComponent,
         AdminDashboardComponent,
         CustomerDashboardComponent,
-        ProductComponent
+        ProductComponent,
+        StaffComponent
     ],
     imports: [
         CommonModule,
@@ -32,7 +34,8 @@ import { ProductComponent } from "./product/product.component";
         RegistrationComponent,
         LoginComponent,
         AdminDashboardComponent,
-        CustomerDashboardComponent
+        CustomerDashboardComponent,
+        StaffComponent
     ]
 })
 export class HomeModule { }

@@ -13,18 +13,18 @@ export class HeaderComponent {
   @Input() userRole: string='';
 
   dealerDetails: any;
+  companyDetail: any = {};
 
   constructor(
     private userService : UsersService
-  ) {}
+  ){}
+  
 
   ngOnInit(): void {
     if (this.userId) {
       this.userService.fetchDealerData(this.userId, this.userRole).subscribe({
         next: (response) => {
           if (response) {
-            console.log("Dealer Details fetched!!");
-
             // let addressData = response.dealer_details.address_payload
             //   ? JSON.parse(response.dealer_details.address_payload)
             //   : {};
@@ -54,5 +54,11 @@ export class HeaderComponent {
         }
       });
     }
+
+    this.userService.fetchCompanyDetails().subscribe({
+      next: (res)=>{
+        this.companyDetail = res.data;
+      }
+    })
   }
 }

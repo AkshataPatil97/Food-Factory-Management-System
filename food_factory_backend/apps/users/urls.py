@@ -1,5 +1,9 @@
 from django.urls import path
-from .views import UserInsertView, FetchAllUserView, FetchUserByEmailView, SignInUserView, ForgotPasswordView, VerifyOTPView, ResetPasswordView, DBConfigView, UpdateDBConfigView, FetchDealerDetailsView, UpdateDealerDetailsView, FetchUserDetailsView
+from .views import (
+    UserInsertView, FetchAllUserView, FetchUserByEmailView, SignInUserView, ForgotPasswordView, VerifyOTPView, 
+    ResetPasswordView, DBConfigView, UpdateDBConfigView, FetchDealerDetailsView, UpdateDealerDetailsView, FetchUserDetailsView,
+    FetchComapnyDetailsView, InsertCompanyDetailView, UpdateCompanyDetailView, DeleteCompanyDetailView
+)
 
 urlpatterns = [
     path('insert/', UserInsertView.as_view(), name='user-insert'),
@@ -13,5 +17,9 @@ urlpatterns = [
     path('updateDbConfig/', UpdateDBConfigView.as_view(), name='update_db_config'),
     path('fetchDealerDetails/', FetchDealerDetailsView.as_view(), name='fetch_dealer_details'),
     path('updateDealerDetails/', UpdateDealerDetailsView.as_view(), name='update_dealer_details'),
-    path('fetchUserById/', FetchUserDetailsView.as_view(), name='fetch_user_byId')
+    path('fetchUserById/', FetchUserDetailsView.as_view(), name='fetch_user_byId'),
+    path('fetchCompanyDetails/', FetchComapnyDetailsView.as_view(), name='fecth-company-details'),
+    path('insertCompany/', InsertCompanyDetailView.as_view(), name='insert-company'),
+    path('updateCompany/', UpdateCompanyDetailView.as_view(), name='update-company'),
+    path('deleteCompany/', DeleteCompanyDetailView.as_view(), name='delete-company')
 ]

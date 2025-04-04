@@ -1,136 +1,218 @@
 .orders-container {
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
-    h2 {
-        text-align: center;
-        color: #333;
-    }
+  h2 {
+      text-align: center;
+      color: #333;
+  }
 
-    .empty-orders {
-        text-align: center;
-        font-size: 18px;
-        color: #888;
-        padding: 20px;
-    }
+  .order-card {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
-    .order-card {
-        background: white;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      .p-card{
+        box-shadow: none;
+      }
+  }
 
-        .order-actions {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px;
-            gap: 10px;
+  .order-header {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
 
-            .cancel-btn {
-                background-color: #ff4d4d;
-                color: white;
-                border: none;
-                padding: 8px 12px;
-                border-radius: 5px;
-                cursor: pointer;
-                font-weight: bold;
-                transition: 0.3s;
-                border: 1px solid #ff4d4d;
+      p {
+          margin: 5px 0;
+          font-size: 16px;
+          color: #222;
+      }
+  }
 
-                &:hover {
-                    background-color: #e45757;
-                    color: black;
-                    border: 1px solid #ff4d4d;
-                }
-            }
+  .order-status {
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 5px;
+      text-align: center;
+      &.pending {
+          background: #ffcc00;
+          color: #333;
+      }
+      &.processing {
+          background: #4da6ff;
+          color: white;
+      }
+      &.completed {
+          background: #4caf50;
+          color: white;
+      }
+      &.cancelled {
+          background: #ff4d4d;
+          color: white;
+      }
+  }
 
-            .form-submit-button {
-                border-radius: 4px;
-                border: 1px solid $button-color-submit;
-                padding: 8px 20px;
-                background: $button-color-submit;
-        
-                .p-button-label {
-                    font-size: 14px;
-                    color: $color-white;
-                }
-            }
-            
-            .form-submit-button:hover {
-                border: 1px solid $button-color-text;
-                background: $button-color-submit-hover;
-        
-                .p-button-label {
-                    color: $color-black;
-                }
-            }
-        
-        }
+  .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
 
-        .order-header {
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+      thead {
+          background: #2a5298;
+          color: white;
 
-            h3 {
-                margin: 0;
-                font-size: 20px;
-                color: #222;
-            }
-        }
+          th {
+              padding: 10px;
+              text-align: left;
+          }
+      }
 
-        .order-status {
-            font-weight: bold;
-            color: #ff6600;
-        }
+      tbody {
+          tr {
+              border-bottom: 1px solid #ddd;
+              &:hover {
+                  background: #f1f1f1;
+              }
 
-        .order-items {
-            padding: 10px;
+              td {
+                  padding: 10px;
+                  font-size: 14px;
+                  color: #333;
+              }
+          }
+      }
+  }
 
-            h4 {
-                margin: 10px 0;
-                color: #555;
-            }
+  .order-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 10px 0;
 
-            ul {
-                list-style: none;
-                padding: 0;
+      .form-update-btn {
+          background: #46a65c;
+          color: white;
+          padding: 5px 10px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: 0.3s;
 
-                li {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 5px 0;
-                    border-bottom: 1px solid #eee;
+          .p-button-label{
+            font-size: 12px;
+            font-weight: 700;
+          }
 
-                    span {
-                        font-size: 14px;
-                        color: #333;
-                    }
-                }
-            }
-        }
-    }
+          &:hover {
+              background: #218838;
+              color: black;
+          }
+      }
 
-    @media (max-width: 768px) {
-        width: 95%;
+      .cancel-btn {
+          background: #ff6666;
+          color: white;
+          border: none;
+          padding: 5px 10px;
+          font-weight: 700;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: 0.3s;
 
-        .order-card {
-            .order-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .order-items {
-                ul {
-                    li {
-                        flex-direction: column;
-                        align-items: flex-start;
-                    }
-                }
-            }
-        }
-    }
+          &:hover {
+              background: #e32121;
+              color: black;
+          }
+      }
+  }
 }
+
+
+.invoices-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: auto; /* Makes width dynamic */
+    max-width: 100%; /* Ensures the container takes full width on smaller screens */
+    margin: 20px auto;
+  
+    h2 {
+      text-align: center;
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  
+    .empty-invoices {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+      padding: 20px;
+    }
+  
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+  
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        font-size: 14px;
+      }
+  
+      th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+      }
+  
+      td {
+        background-color: #ffffff;
+        border-bottom: 1px solid #f2f2f2;
+      }
+  
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+  
+      td button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: none;
+        transition: background-color 0.3s;
+
+        .p-button-label {
+          font-size: 12px;
+      }
+      }
+  
+      td button:hover {
+        background-color: #218838;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .invoice-table {
+      th,
+      td {
+        font-size: 12px;
+        padding: 10px;
+      }
+    }
+  
+    .invoices-container {
+      padding: 10px;
+      width: 100%; /* Makes the container take full width on smaller screens */
+    }
+  }
+  
