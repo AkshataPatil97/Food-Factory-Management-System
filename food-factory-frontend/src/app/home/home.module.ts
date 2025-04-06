@@ -11,6 +11,7 @@ import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.compo
 import { CustomerDashboardComponent } from "./customer-dashboard/customer-dashboard.component";
 import { ProductComponent } from "./product/product.component";
 import { StaffComponent } from "./staff/staff.component";
+import { ReportComponent } from "./report/report.component";
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { StaffComponent } from "./staff/staff.component";
         AdminDashboardComponent,
         CustomerDashboardComponent,
         ProductComponent,
-        StaffComponent
+        StaffComponent,
+        ReportComponent
     ],
     imports: [
         CommonModule,
@@ -35,7 +37,8 @@ import { StaffComponent } from "./staff/staff.component";
         LoginComponent,
         AdminDashboardComponent,
         CustomerDashboardComponent,
-        StaffComponent
+        StaffComponent,
+        ReportComponent
     ]
 })
 export class HomeModule { }

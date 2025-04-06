@@ -15,6 +15,7 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { FileUploadModule } from 'primeng/fileupload';
 import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
     declarations:[],
@@ -36,7 +37,8 @@ import { MessageModule } from 'primeng/message';
         TieredMenuModule,
         FileUploadModule,
         DialogModule,
-        MessageModule
+        MessageModule,
+        CalendarModule
     ]
 })
 

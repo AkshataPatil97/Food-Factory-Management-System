@@ -1,0 +1,99 @@
+.report-container {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+  
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      font-size: 1.8rem;
+    }
+  
+    .report-filters {
+      margin-bottom: 2rem;
+  
+      .p-grid {
+        > div {
+          margin-bottom: 1rem;
+        }
+      }
+  
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #34495e;
+      }
+  
+      .p-dropdown,
+      p-calendar {
+        width: 100% !important;
+      }
+  
+      button.p-button-primary {
+        background-color: #2c3e50;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        font-size: 1rem;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #1a252f;
+        }
+      }
+    }
+  
+    .report-table {
+      margin-top: 2rem;
+  
+      p-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  
+        .p-table {
+          margin-top: 1rem;
+  
+          th {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: bold;
+            text-align: left;
+          }
+  
+          td {
+            color: #2c3e50;
+          }
+        }
+      }
+    }
+  
+    .text-center {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+    }
+  
+    @media screen and (max-width: 768px) {
+      .report-filters {
+        .p-grid {
+          > div {
+            padding: 0 !important;
+          }
+        }
+  
+        button.p-button-primary {
+          width: 100%;
+          margin-top: 1rem;
+        }
+      }
+    }
+  }
+  
