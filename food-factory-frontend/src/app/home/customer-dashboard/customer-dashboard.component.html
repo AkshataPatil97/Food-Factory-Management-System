@@ -66,8 +66,8 @@
             <div class="col-12 md:col-6 lg:col-3 cardDiv" *ngFor="let product of products">
                 <p-card [header]="product.product_name">
                     <div class="product-info">
-                        <img *ngIf="!product.showDetails" src="assets/images/Snaks.jpeg" alt="Product Image"
-                            class="product-image">
+                        <img *ngIf="!product.showDetails" [src]="'data:image/jpeg;base64,' + product.product_img"
+                            alt="Product Image" class="product-image">
                         <div *ngIf="product.showDetails">
                             <p class="customData">Product Code: {{ product.product_code }}</p>
                             <p class="customData">Category ID: {{ product.category_id }}</p>
@@ -103,7 +103,8 @@
                                 (click)="removeFromCart(item)"></button>
                         </div>
                         <div class="cart-product-info">
-                            <img src="assets/images/Snaks.jpeg" alt="Product Image" class="cart-product-image">
+                            <img [src]="'data:image/jpeg;base64,' + item.product.product_img" alt="Product Image"
+                                class="cart-product-image">
                             <div class="cart-details">
                                 <p><strong>Mfg:</strong> {{ item.product.manufacturing_date }}</p>
                                 <p><strong>Expiry:</strong> {{ item.product.expiry_date }}</p>

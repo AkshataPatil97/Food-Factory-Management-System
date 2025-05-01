@@ -82,16 +82,17 @@ export class CustomerDashboardComponent {
     });
   }
 
-  private mapProducts(data: any[]): Product[] {
-    return data.map((productArray: any) => ({
-      product_name: productArray[1],
-      product_code: productArray[2],
-      category_id: productArray[3],
-      manufacturing_date: productArray[4],
-      expiry_date: productArray[5],
-      price: productArray[6],
+  mapProducts(data: any[]): Product[] {
+    return data.map((product: any) => ({
+      product_name: product.product_name,
+      product_code: product.product_code,
+      category_id: product.category_id,
+      manufacturing_date: product.manufacturing_date,
+      expiry_date: product.expiry_date,
+      price: product.price,
       showDetails: false,
-      isEditing: false
+      isEditing: false,
+      product_img: product.product_img ? product.product_img : null
     }));
   }
 

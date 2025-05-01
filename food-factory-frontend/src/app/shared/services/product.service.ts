@@ -12,7 +12,7 @@ export class ProductService {
   constructor(private http: HttpClient) { }
   apiUrl = environment.apiUrl;
 
-  insertProduct(product: Product): Observable<any> {
+  insertProduct(product: FormData): Observable<any> {
     let insertURL = this.apiUrl + PRODUCT_INSERT_URL;
     return this.http.post(insertURL, product);
   }
@@ -22,7 +22,7 @@ export class ProductService {
     return this.http.get<Product[]>(fetchURL);
   }
 
-  updateProduct(product: Product): Observable<any> {
+  updateProduct(product: FormData): Observable<any> {
     const updateURL = this.apiUrl + UPDATE_PRODUCT_URL;
     return this.http.put(updateURL, product);
   }

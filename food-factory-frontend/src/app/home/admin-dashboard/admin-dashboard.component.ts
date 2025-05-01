@@ -38,6 +38,10 @@ export class AdminDashboardComponent {
     this.refreshData();
     this.fetchInvoices()
     this.fetchComapnyDetails()
+
+    setInterval(() => {
+      this.refreshData();
+    }, 300000); // Refresh every 5 minutes
   }
 
   refreshData() {
@@ -46,7 +50,7 @@ export class AdminDashboardComponent {
     this.fetchAllDeliveredOrders();
     this.checkDeliveryBoyAvailability();
     this.loadStaff();
-    this.fetchInvoices
+    this.fetchInvoices();
   }
 
   logout() {
@@ -113,6 +117,7 @@ export class AdminDashboardComponent {
           date: order.order_date,
           totalPrice: order.total_price,
           status: order.status,
+          order_items: order.order_items || [],
           user: order.user
         }));
       },
@@ -159,6 +164,8 @@ export class AdminDashboardComponent {
   isOrderDetailsVisible: boolean = false;
 
   showOrderDetails(order: any) {
+    console.log(order);
+    
     this.selectOrderDetails = order;
     this.isOrderDetailsVisible = true;
   }

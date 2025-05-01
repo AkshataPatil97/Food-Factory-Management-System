@@ -6,7 +6,8 @@ export interface Product {
     expiry_date: string;
     price: number;
     showDetails: boolean;
-    isEditing: boolean
+    isEditing: boolean;
+    product_img: File | null;
 }
 
 export interface Cart {

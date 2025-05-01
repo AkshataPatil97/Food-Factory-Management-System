@@ -62,8 +62,8 @@ UPDATE_PASSWORD_QUERY = """
 
 # Insert Product
 INSERT_PRODUCT_QUERY = """    
-    INSERT INTO products (product_name, product_code, category_id, manufacturing_date, expiry_date, price)  
-    VALUES (%s, %s, %s, %s, %s, %s);
+    INSERT INTO products (product_name, product_code, category_id, manufacturing_date, expiry_date, price, product_img)  
+    VALUES (%s, %s, %s, %s, %s, %s, %s);
 """
 
 # fetch all product query
@@ -84,7 +84,7 @@ DELETE_PRODUCT_BY_CODE = """
 # update product by code
 UPDATE_PRODUCT_BY_CODE = """
     UPDATE products
-    SET product_name = %s, category_id = %s, manufacturing_date = %s, expiry_date = %s, price = %s
+    SET product_name = %s, category_id = %s, manufacturing_date = %s, expiry_date = %s, price = %s, product_img = %s
     WHERE product_code = %s
 """
 

@@ -20,10 +20,11 @@ export class ProductComponent implements OnInit {
   price: number = 0;
   showDetails: boolean = false;
   isEditing: boolean = false;
+  product_img: File | null = null;
   constructor(
     private productService: ProductService,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   categoryOptions = [
     { name: 'Electronics', value: 1 },
@@ -38,6 +39,8 @@ export class ProductComponent implements OnInit {
   fetchAllProducts() {
     this.productService.fetchAllProduct().subscribe({
       next: (response: any) => {
+        console.log("Products fetched successfully:", response);
+
         if (response.data) {
           this.products = this.mapProducts(response.data);
         } else {
@@ -52,32 +55,41 @@ export class ProductComponent implements OnInit {
 
 
   mapProducts(data: any[]): Product[] {
-    return data.map((productArray: any) => ({
-      product_name: productArray[1],
-      product_code: productArray[2],
-      category_id: productArray[3],
-      manufacturing_date: productArray[4],
-      expiry_date: productArray[5],
-      price: productArray[6],
+    return data.map((product: any) => ({
+      product_name: product.product_name,
+      product_code: product.product_code,
+      category_id: product.category_id,
+      manufacturing_date: product.manufacturing_date,
+      expiry_date: product.expiry_date,
+      price: product.price,
       showDetails: false,
-      isEditing: false
+      isEditing: false,
+      product_img: product.product_img ? product.product_img : null
     }));
   }
 
   onSubmit() {
-    const formData = this.createProductFormData(
-      this.product_name, this.product_code, this.category_id,
-      this.manufacturing_date, this.expiry_date, this.price, this.showDetails, this.isEditing
-    );
-    this.productService.insertProduct(formData).subscribe(
-      res => {
+    const formData = new FormData();
+    formData.append('product_name', this.product_name);
+    formData.append('product_code', this.product_code);
+    formData.append('category_id', this.category_id?.toString() || '');
+    formData.append('manufacturing_date', this.manufacturing_date);
+    formData.append('expiry_date', this.expiry_date);
+    formData.append('price', this.price.toString());
+    if (this.product_img) {
+      formData.append('product_img', this.product_img);
+    }
+
+    this.productService.insertProduct(formData).subscribe({
+      next: () => {
         this.resetForm();
-        this.fetchAllProducts(); // Refresh product list after adding new product
+        this.fetchAllProducts();
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product added successfully!' });
       },
-      error => {
-        console.error('Error during registration:', error);
+      error: (err) => {
+        console.error('Error inserting product:', err);
       }
-    );
+    });
   }
 
   resetForm() {
@@ -87,6 +99,7 @@ export class ProductComponent implements OnInit {
     this.manufacturing_date = '';
     this.expiry_date = '';
     this.price = 0;
+    this.product_img = null;
   }
 
   isFormEmpty(): boolean {
@@ -102,9 +115,10 @@ export class ProductComponent implements OnInit {
     expiry_date: string,
     price: number,
     showDetails: boolean,
-    isEditing: boolean
+    isEditing: boolean,
+    product_img: File | null = null
   ): Product {
-    return { product_name, product_code, category_id, manufacturing_date, expiry_date, price, showDetails, isEditing };
+    return { product_name, product_code, category_id, manufacturing_date, expiry_date, price, showDetails, isEditing, product_img };
   }
 
   viewProduct(product: Product) {
@@ -121,25 +135,37 @@ export class ProductComponent implements OnInit {
       this.expiry_date = selectedProduct.expiry_date;
       this.price = selectedProduct.price;
       this.isEditing = true;
+      this.product_img = selectedProduct.product_img;
     }
   }
 
   onUpdate() {
-    const updatedData = this.createProductFormData(
-      this.product_name, this.product_code, this.category_id,
-      this.manufacturing_date, this.expiry_date, this.price, false, false
-    );
-    this.productService.updateProduct(updatedData).subscribe(
-      res => {
-        console.log('Product updated successfully:', res);
+    const formData = new FormData();
+    formData.append('product_name', this.product_name);
+    formData.append('product_code', this.product_code);
+    formData.append('category_id', this.category_id?.toString() || '');
+    formData.append('manufacturing_date', this.manufacturing_date);
+    formData.append('expiry_date', this.expiry_date);
+    formData.append('price', this.price.toString());
+
+    // Append the new product image if available
+    if (this.product_img) {
+      formData.append('product_img', this.product_img);
+    }
+
+    // Call the updateProduct API
+    this.productService.updateProduct(formData).subscribe({
+      next: (response) => {
+        console.log('Product updated successfully:', response);
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product updated successfully!' });
         this.resetForm();
-        this.fetchAllProducts(); 
-        this.isEditing = false; 
+        this.fetchAllProducts();
+        this.isEditing = false;
       },
-      error => {
-        console.error('Error updating product:', error);
+      error: (err) => {
+        console.error('Error updating product:', err);
       }
-    );
+    });
   }
 
 
@@ -147,29 +173,38 @@ export class ProductComponent implements OnInit {
     console.log('Delete Product:', productCode);
     this.productService.deleteProduct(productCode).subscribe(response => {
       console.log('Product deleted successfully:', response);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product deleted successfully!' });
       this.fetchAllProducts(); // Refresh the product list after deletion
     }, error => {
       console.error('Error deleting product:', error);
     });
-    
+
   }
 
   visible: boolean = false;
 
   showConfirm() {
-      if (!this.visible) {
-          this.messageService.add({ key: 'confirm', sticky: true, severity: 'success', summary: 'Can you send me the report?' });
-          this.visible = true;
-      }
+    if (!this.visible) {
+      this.messageService.add({ key: 'confirm', sticky: true, severity: 'success', summary: 'Can you send me the report?' });
+      this.visible = true;
+    }
   }
 
   onConfirm() {
-      this.messageService.clear('confirm');
-      this.visible = false;
+    this.messageService.clear('confirm');
+    this.visible = false;
   }
 
   onReject() {
-      this.messageService.clear('confirm');
-      this.visible = false;
+    this.messageService.clear('confirm');
+    this.visible = false;
   }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.product_img = input.files[0];
+    }
+  }
+
 }
