@@ -13,14 +13,14 @@
         </div>
         <div class="p-col-12 p-md-4">
           <label>Entity:</label>
-          <p-dropdown [(ngModel)]="reportFilters.entityType" [options]="entityOptions" placeholder="Select Entity"></p-dropdown>
+          <p-dropdown [(ngModel)]="reportFilters.entityType" [options]="entityOptions" placeholder="Select Entity" (onChange)="onEntityChange($event)"></p-dropdown>
         </div>
       </div>
-      <div class="p-grid">
+      <!-- <div class="p-grid">
         <div class="p-col-12 text-right">
           <button pButton label="Generate PDF Report" class="p-button-primary" (click)="generateReport()"></button>
         </div>
-      </div>
+      </div> -->
     </div>
   
     <div class="report-table" *ngIf="reportData.length > 0">

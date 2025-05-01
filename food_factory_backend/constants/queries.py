@@ -162,7 +162,7 @@ FETCH_USER_ORDERS_QUERY = """
 # Cancel Order query
 CANCEL_ORDER_QUERY = """
     UPDATE orders 
-    SET is_cancelled = TRUE, cancellation_reason = %s 
+    SET is_cancelled = TRUE, cancellation_reason = %s, status = 'Cancelled'
     WHERE order_id = %s AND user_id = %s AND status IN ('Pending', 'Processing');
 """
 

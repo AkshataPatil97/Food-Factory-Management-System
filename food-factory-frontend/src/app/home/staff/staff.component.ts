@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { UsersService } from '../../shared/services/users.service';
 import { jwtDecode } from 'jwt-decode';
 import { OrdersService } from '../../shared/services/orders.service';
@@ -97,6 +97,15 @@ export class StaffComponent implements OnInit {
         this.fetchAssignedDeliveries();
       }
     }
+    this.refresh();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.refresh();
+  }
+
+  refresh() {
+    this.fetchAssignedDeliveries();
   }
 
   onSubmit() {
@@ -195,6 +204,7 @@ export class StaffComponent implements OnInit {
       staffType: '',
       orderId: null
     };
+    this.showMessage('success', 'Success', 'Logged out successfully.');
   }
   orderDialog: any = {}
   showDetailDialog: boolean = false;
@@ -212,8 +222,8 @@ export class StaffComponent implements OnInit {
     console.log(email);
     this.userService.staffSendOTP(email).subscribe({
       next: (res) => {
-        console.log(res.message);
         this.showOtpDialog = true;
+        this.showMessage('success', 'Success', 'OTP sent to your email.');
       }
     })
     this.orderId = orderId;
@@ -225,7 +235,12 @@ export class StaffComponent implements OnInit {
     let status = 'Delivered'
     this.userService.staffVerifyOTP(email, this.otpCode, this.orderId, status, this.userId).subscribe({
       next: (res) => {
-        console.log(res.message);
+        this.showMessage('success', 'Success', 'OTP Verified.');
+        this.showMessage('success', 'Success', 'Order Delivered!!!.');
+        this.refresh();
+      },
+      error: (err) => {
+        this.showMessage('error', 'Error', 'OTP verification failed.');
       }
     })
     this.showOtpDialog = false;
@@ -254,32 +269,32 @@ export class StaffComponent implements OnInit {
 
   showPendingOrdersDialog() {
     this.orderService.fetchAllOrderForAdmin().subscribe({
-        next: (res: any) => {
-            this.allOrders = res.data; // Store all orders
-            // Filter orders with status 'Pending'
-            this.pendingOrders = this.allOrders.filter(order => order.status === 'Pending');
-            this.showPendingOrders = true;
-        },
-        error: (err) => {
-            console.error('Error fetching all orders:', err);
-        }
+      next: (res: any) => {
+        this.allOrders = res.data; // Store all orders
+        // Filter orders with status 'Pending'
+        this.pendingOrders = this.allOrders.filter(order => order.status === 'Pending');
+        this.showPendingOrders = true;
+      },
+      error: (err) => {
+        console.error('Error fetching all orders:', err);
+      }
     });
-}
+  }
 
-// To show the processing orders dialog
-showProcessingOrdersDialog() {
+  // To show the processing orders dialog
+  showProcessingOrdersDialog() {
     this.orderService.fetchAllOrderForAdmin().subscribe({
-        next: (res: any) => {
-            this.allOrders = res.data; // Store all orders
-            // Filter orders with status 'Processing'
-            this.processingOrders = this.allOrders.filter(order => order.status === 'Processing');
-            this.showProcessingOrders = true;
-        },
-        error: (err) => {
-            console.error('Error fetching all orders:', err);
-        }
+      next: (res: any) => {
+        this.allOrders = res.data; // Store all orders
+        // Filter orders with status 'Processing'
+        this.processingOrders = this.allOrders.filter(order => order.status === 'Processing');
+        this.showProcessingOrders = true;
+      },
+      error: (err) => {
+        console.error('Error fetching all orders:', err);
+      }
     });
-}
+  }
 
   // Update order status
   updateStatus(order: any, status: string) {
@@ -289,7 +304,7 @@ showProcessingOrdersDialog() {
       next: () => {
         console.log(`Order ${order.order_id} updated to ${status}`);
         this.loading = false;
-        if(status === 'Processing'){
+        if (status === 'Processing') {
           this.showMessage('success', 'Success', 'Order moved to Processing State.');
           this.showPendingOrdersDialog();
         } else {
@@ -315,6 +330,5 @@ showProcessingOrdersDialog() {
   showMessage(strSeverity: string, strSummary: string, strDetail: string) {
     this.messageService.add({ severity: strSeverity, summary: strSummary, detail: strDetail });
   }
-  
 
 }

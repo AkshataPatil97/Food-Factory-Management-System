@@ -289,7 +289,7 @@ def update_order_status(db_connection, request):
     try:
         order_id = request.data.get("order_id")
         status = request.data.get("status")
-
+        
         if not order_id or not status:
             return {"error": "Order ID and Status are required"}
         with db_connection.cursor() as cursor:

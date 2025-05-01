@@ -54,28 +54,6 @@
 
         <!-- Dashboard Overview -->
         <div *ngIf="activeComponent === 'dashboard'">
-            <div class="customCardsDiv">
-                <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Total Invoices">
-                        <h2>2478</h2>
-                    </p-card>
-                </div>
-                <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Paid Invoices">
-                        <h2>983</h2>
-                    </p-card>
-                </div>
-                <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Unpaid Invoices">
-                        <h2>1256</h2>
-                    </p-card>
-                </div>
-                <div class="col-12 md:col-6 lg:col-3 cardDiv">
-                    <p-card header="Total Sent">
-                        <h2>652</h2>
-                    </p-card>
-                </div>
-            </div>
 
             <!-- Transactions Table -->
             <div class="customTableDiv">
@@ -335,7 +313,7 @@
           
                 <div class="action-buttons">
                   <button (click)="editDetails()">Edit</button>
-                  <button class="danger" (click)="deleteDetails()">Delete</button>
+                  <!-- <button class="danger" (click)="deleteDetails()">Delete</button> -->
                 </div>
               </div>
             </div>
