@@ -340,7 +340,7 @@ def update_dealer_details(db_connection, request):
             raise ValueError("Invalid update field")
         
         user = fetch_user_details(db_connection, user_id)
-        print(user)
+        
         if user["role"] == "Dealer":
             user_details_update_query = f"{UPDATE_DEALER_DETAILS_QUERY} {column_name} = %s WHERE user_id = %s"
             LOGGER.info(f"Update Query - {user_details_update_query}")

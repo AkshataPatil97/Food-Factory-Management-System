@@ -61,4 +61,9 @@ export class HeaderComponent {
       }
     })
   }
+
+  onNgChange(changes: any) {
+    if (changes.userId) { 
+    this.ngOnInit();}
+  }
 }

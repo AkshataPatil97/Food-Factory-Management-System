@@ -163,7 +163,7 @@ class StaffDeleteView(APIView):
             # Update staff in the database
             data = request.data
             staff_id = data.get("id")
-            print(staff_id)
+            
             response_data, status_code = delete_staff(db_connection, staff_id)
 
             return Response(response_data, status=status_code)
@@ -187,7 +187,7 @@ class StaffSignInView(APIView):
 
             data = json.loads(request.body)
             phone_number = data.get('number')
-            print(phone_number)
+            
             if not phone_number:
                 return Response({"error": "Phone number is required"}, status=400)
 
@@ -196,7 +196,7 @@ class StaffSignInView(APIView):
             if error_message:
                 # LOGGER.error("Error in authentication: %s", error_message)
                 return Response({"error": error_message}, status=401)
-            print(user)
+            
             if user:
                 token = generate_jwt(user)
                 # LOGGER.info("StaffSignInView END...")

@@ -383,38 +383,38 @@ export class ReportComponent {
 
   generatePDF(title: string, data: any[]) {
     const doc = new jsPDF('l');
-
+  
     // Ensure data is properly formatted
     const rows: (string | number)[][] = data.map(item =>
       Object.values(item).map(value => (typeof value === 'string' || typeof value === 'number') ? value : JSON.stringify(value))
     );
-
+  
     // Define the headers based on the keys of the first item in the data
     const headers = [Object.keys(data[0])];
-
+  
     doc.text(`${title} Report`, 14, 10);
-
+  
     // Check if column length exceeds 6 or 7 columns
     const maxColumnsPerPage = 10; // You can adjust this value based on your requirement
     const splitHeaders = [];
     const splitRows = [];
-
+  
     // Split columns and rows if necessary
     if (headers[0].length > maxColumnsPerPage) {
       const firstHalfHeaders = headers[0].slice(0, maxColumnsPerPage);
       const secondHalfHeaders = headers[0].slice(maxColumnsPerPage);
-
+  
       splitHeaders.push(firstHalfHeaders, secondHalfHeaders);
-
+  
       const firstHalfRows = rows.map(row => row.slice(0, maxColumnsPerPage));
       const secondHalfRows = rows.map(row => row.slice(maxColumnsPerPage));
-
+  
       splitRows.push(firstHalfRows, secondHalfRows);
     } else {
       splitHeaders.push(headers[0]);
       splitRows.push(rows);
     }
-
+  
     // Render tables for the first set of columns
     autoTable(doc, {
       head: [splitHeaders[0]],
@@ -430,9 +430,16 @@ export class ReportComponent {
             doc.text(`${title} Report`, 14, 10);
           }
         }
+      },
+      headStyles: {
+        fillColor: [255, 255, 0],  // Yellow background for header
+        textColor: [0, 0, 0],       // Dark black text for header
+      },
+      styles: {
+        textColor: [0, 0, 0],       // Dark black text for all cells
       }
     });
-
+  
     // Render tables for the second set of columns (on a new page)
     if (splitHeaders.length > 1) {
       doc.addPage();
@@ -446,14 +453,21 @@ export class ReportComponent {
           if (data.cursor && data.cursor.y > doc.internal.pageSize.height - 40) {
             doc.addPage();
           }
+        },
+        headStyles: {
+          fillColor: [255, 255, 0],  // Yellow background for header
+          textColor: [0, 0, 0],       // Dark black text for header
+        },
+        styles: {
+          textColor: [0, 0, 0],       // Dark black text for all cells
         }
       });
     }
-
+  
     this.showMessage('success', 'Success', `✅ ${title} report generated successfully!`);
     // Save the PDF
     doc.save(`${title.toLowerCase().replace(' ', '_')}_report.pdf`);
-  }
+  }  
 
   getFormattedAddress(address: any): string {
     if (address && Object.keys(address).length > 0) {
