@@ -27,8 +27,8 @@ export class ProductComponent implements OnInit {
   ) { }
 
   categoryOptions = [
-    { name: 'Electronics', value: 1 },
-    { name: 'Clothing', value: 2 },
+    // { name: 'Electronics', value: 1 },
+    // { name: 'Clothing', value: 2 },
     { name: 'Food', value: 3 }
   ];
 

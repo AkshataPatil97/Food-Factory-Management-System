@@ -289,7 +289,7 @@
                         <td>{{ invoice.userData.shop_name }}</td>
                         <td>
                             <span [ngClass]="{
-                                'status-delivered': invoice.status === 'Paid',
+                                'status-processed': invoice.status === 'Paid',
                                 'status-cancelled': invoice.status === 'Cancelled',
                                 'status-pending': invoice.status === 'Pending'
                             }" class="status-badge">
@@ -305,7 +305,6 @@
                 </tbody>
             </table>
         </div>
-
 
     </div>
 

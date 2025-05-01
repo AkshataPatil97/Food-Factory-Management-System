@@ -1,6 +1,6 @@
 import json
 from decimal import Decimal
-from constants.queries import INSERT_INVOICE_QUERY, FETCH_USER_INVOICES_QUERY, FETCH_INVOICES_FOR_7_DAYS_QUERY
+from constants.queries import INSERT_INVOICE_QUERY, FETCH_USER_INVOICES_QUERY, FETCH_INVOICES_FOR_7_DAYS_QUERY, UPDATE_INVOICE_STATUS_QUERY
 
 def invoice_details(db_connection, order_id, user_id):
     try:
@@ -38,6 +38,7 @@ def invoice_details(db_connection, order_id, user_id):
         # Prepare invoice data
         invoice_data = {
             "user_id": user_id,
+            "order_id": order_id,
             "order_data": json.dumps(orders, default=str),  # Convert to JSON string
             "user_data": json.dumps(user_info, default=str),  # Convert to JSON string
             "total_amount": total_amount,
@@ -50,6 +51,7 @@ def invoice_details(db_connection, order_id, user_id):
         with db_connection.cursor() as cursor:
             cursor.execute(INSERT_INVOICE_QUERY, (
                 invoice_data['user_id'],
+                invoice_data['order_id'],
                 invoice_data['order_data'],
                 invoice_data['user_data'],
                 invoice_data['total_amount'],
@@ -92,3 +94,29 @@ def fetch_all_invoices(db_connection):
     finally:
         cursor.close()
         
+def update_invoice_status_to_paid(db_connection, status, order_id):
+    try:
+        from .orderService import fetch_order_by_id_invoice
+        with db_connection.cursor() as cursor:
+             # ✅ Pass only order_id (Fixes 'Python type type cannot be converted' error)
+            orders = fetch_order_by_id_invoice(db_connection, order_id)
+
+            if not orders:
+                print("No orders found or invalid format.")
+                return {"error": "No valid orders found"}
+        
+            cursor.execute(UPDATE_INVOICE_STATUS_QUERY, (json.dumps(orders, default=str), status, order_id,))
+            db_connection.commit()
+            if cursor.rowcount == 0:
+                print("No invoice found to update.")
+                return {"message": "No matching invoice found"}
+        
+        print(f"Invoice status updated to 'Paid' for order_id: {order_id}")
+        return {"message": "Invoice status updated to 'Paid'"}
+    
+    except Exception as e:
+        db_connection.rollback()
+        print(f"Error updating invoice status: {str(e)}")
+        return {"error": str(e)}
+    finally:
+        cursor.close()

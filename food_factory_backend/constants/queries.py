@@ -339,8 +339,8 @@ FETCH_ALL_STAFF_QUERY = """
 
 # Insert invoice
 INSERT_INVOICE_QUERY = """
-    INSERT INTO invoices (user_id, order_data, user_data, total_amount, status)
-    VALUES (%s, %s, %s, %s, %s)
+    INSERT INTO invoices (user_id, order_id, order_data, user_data, total_amount, status)
+    VALUES (%s, %s, %s, %s, %s, %s)
 """
 
 # Fetch user's order invoices
@@ -366,4 +366,9 @@ INSER_COMPANY_DETAIL = """
   INSERT INTO companydetail 
   (name, email, phone, alternate_phone, address, company_logo, founded_in)
   VALUES ( %s, %s, %s, %s, %s, %s, %s);
+"""
+
+# Invoice Update Status
+UPDATE_INVOICE_STATUS_QUERY = """
+    UPDATE invoices SET order_data = %s, status = %s WHERE order_id = %s
 """

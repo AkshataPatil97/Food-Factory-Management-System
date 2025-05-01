@@ -339,10 +339,10 @@ export class AdminDashboardComponent {
     doc.text(`Order Date: ${orderData.order_date}`, 15, 75);
 
     // Status with color background
-    doc.setFillColor(orderData.status === 'PAID' ? 46 : 255, orderData.status === 'PAID' ? 204 : 204, 113); // Green for paid, yellow for pending
+    doc.setFillColor(orderData.status === 'Delivered' ? 46 : 255, orderData.status === 'Pending' ? 204 : 204, 113); // Green for paid, yellow for pending
     doc.rect(15, 90, 50, 8, 'F');
     doc.setTextColor(255);
-    doc.text(`Status: ${orderData.status}`, 18, 96);
+    doc.text(`Order Status: ${orderData.status}`, 18, 96);
     doc.setTextColor(0);
 
     // Order items table

@@ -5,6 +5,7 @@ from services.staffService import (
     insert_staff, assign_order_to_delivery_boy, fetch_all_delivery_staff, fetch_all_staff, update_staff,
     delete_staff, send_otp_email
 )
+from services.invoiceService import update_invoice_status_to_paid
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
@@ -259,7 +260,9 @@ class VerifyOTPView(APIView):
                 return Response({"success": False, "message": "Staff ID is required"}, status=400)
 
             assign_order_to_delivery_boy(db_connection, staff_id, None)  # This sets order_id to NULL
-
+            order_id = request.data.get("order_id")
+            print(order_id)
+            update_invoice_status_to_paid(db_connection, 'Paid', order_id)  
             db_connection.commit()  # Ensure all changes are committed together
             return Response({"success": True, "message": "OTP verified successfully!"}, status=200)
 

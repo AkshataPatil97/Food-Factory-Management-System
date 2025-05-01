@@ -287,18 +287,34 @@ def fetch_all_order(db_connection):
 
 def update_order_status(db_connection, request):
     try:
+        from constants.constant import  (SHIPPED_EMAIL,ORDER_PLACED_EMAIL,ORDER_CANCELLED_EMAIL,ORDER_PROCESSING_EMAIL,ORDER_PROCESSED_EMAIL,DELIVERED_EMAIL)
+        from services.sendemail import send_order_status_email
+        
         order_id = request.data.get("order_id")
         status = request.data.get("status")
+        
+        STATUS_EMAIL_MAP = {
+            "Placed": ORDER_PLACED_EMAIL,
+            "Cancelled": ORDER_CANCELLED_EMAIL,
+            "Processing": ORDER_PROCESSING_EMAIL,
+            "Processed": ORDER_PROCESSED_EMAIL,
+            "Shipped": SHIPPED_EMAIL,
+            "Delivered": DELIVERED_EMAIL
+        }
+        email_template = STATUS_EMAIL_MAP.get(status)
         
         if not order_id or not status:
             return {"error": "Order ID and Status are required"}
         with db_connection.cursor() as cursor:
             cursor.execute(UPDATE_ORDER_STATUS_QUERY, (status, order_id))
             db_connection.commit()
+            
+            if email_template:
+                send_order_status_email(request, email_template)
 
             if cursor.rowcount == 0:
                 return {"error": "Order not found or status unchanged"}
-
+            
         return {"success": True, "message": "Order status updated successfully"}
 
     except Exception as e:
@@ -326,7 +342,7 @@ def update_shipped_order_status(db_connection, request):
                 return {"error": "Order not found or status unchanged"}
 
             db_connection.commit()
-            
+           
         return {"success": True, "message": "Order status updated successfully"}
 
     except Exception as e:

@@ -14,7 +14,7 @@ from services.orderService import (
     update_order_status, fetch_delivered_order, fetch_canceled_order,
     update_shipped_order_status, fetch_order_by_id
 )
-from services.invoiceService import invoice_details, fetch_invoices_user_id, fetch_all_invoices
+from services.invoiceService import invoice_details, fetch_invoices_user_id, fetch_all_invoices, update_invoice_status_to_paid
 from services.sendemail import send_order_status_email
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -77,7 +77,7 @@ class CancelOrderView(APIView):
                 return Response({"error": "Failed to connect to the database"}, status=500)
 
             result = cancel_order(db_connection, request)
-
+            update_invoice_status_to_paid(db_connection, "Cancelled", request.data.get("order_id"))
             if "error" in result:
                 return Response(result, status=400)
             return Response(result, status=200)

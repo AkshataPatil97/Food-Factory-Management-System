@@ -55,7 +55,7 @@ USER_DETAILS_COLUMNS = {
 
 ORDER_PROCESSING_EMAIL = {
     "STATUS": "Order Processing",
-    "SUBJECT": "⏳ Your Order is Being Processed",
+    "SUBJECT": "⏳ Your Order is Being Processing!",
     "MESSAGE": """\
 Hi {customer_name},
 
