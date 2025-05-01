@@ -78,6 +78,17 @@ class CancelOrderView(APIView):
 
             result = cancel_order(db_connection, request)
             update_invoice_status_to_paid(db_connection, "Cancelled", request.data.get("order_id"))
+            STATUS_EMAIL_MAP = {
+                "Placed": ORDER_PLACED_EMAIL,
+                "Cancelled": ORDER_CANCELLED_EMAIL,
+                "Processing": ORDER_PROCESSING_EMAIL,
+                "Processed": ORDER_PROCESSED_EMAIL,
+                "Shipped": SHIPPED_EMAIL,
+                "Delivered": DELIVERED_EMAIL
+            }
+            email_template = STATUS_EMAIL_MAP.get("Cancelled")
+            if email_template:
+                    send_order_status_email(request, email_template)
             if "error" in result:
                 return Response(result, status=400)
             return Response(result, status=200)
