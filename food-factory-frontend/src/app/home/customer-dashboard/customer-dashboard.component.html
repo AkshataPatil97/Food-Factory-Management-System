@@ -22,6 +22,9 @@
                     <i class="pi pi-shopping-bag"></i> Orders
                     <span class="cart-count" *ngIf="totalActiveOrdersCount > 0">({{ totalActiveOrdersCount }})</span>
                 </li>
+                <li [class.active]="isActiveComponent('order_history')" (click)="setActiveComponent('order_history')">
+                    <i class="pi pi-history"></i> Order Hoistory
+                </li>
                 <li [class.active]="isActiveComponent('invoices')" (click)="setActiveComponent('invoices')">
                     <i class="pi pi-file"></i> Invoices
                 </li>
@@ -214,6 +217,53 @@
             </div>
         </div>
 
+        <!-- order_history -->
+
+        <div *ngIf="activeComponent === 'order_history'" class="orders-container">
+            <h2>Order History</h2>
+
+            <div *ngIf="fetchUserOrdersHistory.length === 0" class="empty-orders">
+                No order history found.
+            </div>
+
+            <div *ngFor="let order of fetchUserOrdersHistory" class="order-card">
+                <p-card>
+                    <div class="order-header">
+                        <p>Status: <span [ngClass]="{
+                            'status-delivered': order.status === 'Delivered',
+                        }" class="status-badge">
+                                {{ order.status }}
+                            </span></p>
+                        <p>Order Date: {{ order.order_date }}</p>
+                        <p>Total Price: Rs: {{ order.total_price }}</p>
+                    </div>
+
+                    <div class="order-items">
+                        <h4>Items:</h4>
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of order.order_items">
+                                    <td>{{ item.product_name }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>Rs: {{ item.price_at_order }}</td>
+                                    <td>Rs: {{ item.sub_total }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- No action buttons for order history -->
+                </p-card>
+            </div>
+        </div>
 
         <div *ngIf="activeComponent === 'invoices'" class="invoices-container">
             <h2>Invoices</h2>

@@ -1,6 +1,13 @@
 from django.shortcuts import render
 from config.connection import get_conn, close_conn
-from constants.constant import SHIPPED_EMAIL
+from constants.constant import  (
+    SHIPPED_EMAIL,
+    ORDER_PLACED_EMAIL,
+    ORDER_CANCELLED_EMAIL,
+    ORDER_PROCESSING_EMAIL,
+    ORDER_PROCESSED_EMAIL,
+    DELIVERED_EMAIL
+)
 from services.orderService import (
     insert_order,insert_order_details,fetch_orders_by_userId,
     cancel_order, update_order, update_order_items, fetch_all_order,
@@ -8,7 +15,7 @@ from services.orderService import (
     update_shipped_order_status, fetch_order_by_id
 )
 from services.invoiceService import invoice_details, fetch_invoices_user_id, fetch_all_invoices
-from services.sendemail import send_shipped_email
+from services.sendemail import send_order_status_email
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
@@ -147,15 +154,31 @@ class UpdateOrderStatusView(APIView):
                 return Response({"error": "Failed to connect to the database"}, status=500)
 
             status = request.data.get("status")
+            if not status:
+                return Response({"error": "Order status is required"}, status=400)
+
+            # Map status to corresponding email templates
+            STATUS_EMAIL_MAP = {
+                "Placed": ORDER_PLACED_EMAIL,
+                "Cancelled": ORDER_CANCELLED_EMAIL,
+                "Processing": ORDER_PROCESSING_EMAIL,
+                "Processed": ORDER_PROCESSED_EMAIL,
+                "Shipped": SHIPPED_EMAIL,
+                "Delivered": DELIVERED_EMAIL
+            }
+
+            email_template = STATUS_EMAIL_MAP.get(status)
 
             if status == "Shipped":
                 success = update_shipped_order_status(db_connection, request)
-                if success.get("success"):
-                    send_shipped_email(request, SHIPPED_EMAIL)
             else:
                 success = update_order_status(db_connection, request)
 
             if success.get("success"):
+                # If an email template exists for the status, send email
+                if email_template:
+                    send_order_status_email(request, email_template)
+
                 return Response({"message": success["message"]}, status=200)
             else:
                 return Response({"error": success.get("error", "No changes made or order not found.")}, status=404)

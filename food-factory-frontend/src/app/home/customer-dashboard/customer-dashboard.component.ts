@@ -23,6 +23,7 @@ export class CustomerDashboardComponent {
   order_data: any = {};
   isUpdateOrder: boolean = false;
   fetchUserOrders: any = [];
+  fetchUserOrdersHistory: any = [];
   update_order_data: any = {};
   cancel_reason: string = '';
   selectedOrderId: number | null = null;
@@ -242,22 +243,28 @@ export class CustomerDashboardComponent {
     product.showDetails = !product.showDetails;
   }
 
+
   fetchUserOrdersData(userId: number) {
     this.orderService.fetchUserOrders(userId).subscribe({
       next: (response: any) => {
         const orders = response.data || [];
-
-        this.fetchUserOrders = orders.sort((a: any, b: any) =>
+        // Separate orders
+        const deliveredOrders = orders.filter((order: any) => order.status === 'Delivered');
+        const activeOrders = orders.filter((order: any) => order.status !== 'Delivered');
+  
+        this.fetchUserOrders = activeOrders.sort((a: any, b: any) =>
           new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
         );
-
+        this.fetchUserOrdersHistory = deliveredOrders.sort((a: any, b: any) =>
+          new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
+        );
+  
         this.calculateTotalActiveOrders();
       },
       error: (error) => console.error("Error fetching orders:", error)
     });
   }
-
-
+  
 
   cancelOrder(order_id: number) {
     this.activeComponent = 'cancel';
