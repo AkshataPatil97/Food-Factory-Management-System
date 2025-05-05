@@ -64,10 +64,10 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Dealer</th>
+                                    <th pSortableColumn="dealer">Dealer <i class="pi pi-sort"></i></th>
                                     <th pSortableColumn="date">Date <i class="pi pi-sort"></i></th>
-                                    <th>Total Price</th>
-                                    <th>Status</th>
+                                    <th pSortableColumn="totalPrice">Total Price <i class="pi pi-sort"></i></th>
+                                    <th pSortableColumn="status">Status <i class="pi pi-sort"></i></th>
                                 </tr>
                             </ng-template>
 
@@ -117,9 +117,9 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Dealer</th>
+                                    <th pSortableColumn="dealer">Dealer <i class="pi pi-sort"></i></th>
                                     <th pSortableColumn="date">Date <i class="pi pi-sort"></i></th>
-                                    <th>Total Price</th>
+                                    <th pSortableColumn="totalPrice">Total Price <i class="pi pi-sort"></i></th>
                                     <th>Status</th>
                                 </tr>
                             </ng-template>
@@ -171,11 +171,19 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Action</th>
-                                    <th>Dealer</th>
-                                    <th>Reason</th>
-                                    <th pSortableColumn="date">Date <i class="pi pi-sort"></i></th>
-                                    <th>Total Price</th>
-                                    <th>Status</th>
+                                    <th pSortableColumn="dealer">
+                                        Dealer <i class="pi pi-sort"></i>
+                                    </th>
+                                    <th pSortableColumn="reason">
+                                        Reason <i class="pi pi-sort"></i>
+                                    </th>
+                                    <th pSortableColumn="date">
+                                        Date <i class="pi pi-sort"></i>
+                                    </th>
+                                    <th pSortableColumn="totalPrice">
+                                        Total Price <i class="pi pi-sort"></i>
+                                    </th>
+                                    <th> Status </th>
                                 </tr>
                             </ng-template>
 
@@ -305,40 +313,44 @@
         <div *ngIf="activeComponent === 'company'">
             <!-- View Mode -->
             <div class="company-container" *ngIf="companyDetails && !updateCompanyDetail; else formBlock">
-              <div class="company-card">
-                <h2>{{ companyDetails.name }}</h2>
-                <p><strong>Email:</strong> {{ companyDetails.email }}</p>
-                <p><strong>Phone:</strong> {{ companyDetails.phone }}</p>
-                <p><strong>Address:</strong> {{ companyDetails.address }}</p>
-          
-                <div class="action-buttons">
-                  <button (click)="editDetails()">Edit</button>
-                  <!-- <button class="danger" (click)="deleteDetails()">Delete</button> -->
+                <div class="company-card">
+                    <h2>{{ companyDetails.name }}</h2>
+                    <p><strong>Email:</strong> {{ companyDetails.email }}</p>
+                    <p><strong>Phone:</strong> {{ companyDetails.phone }}</p>
+                    <p><strong>Address:</strong> {{ companyDetails.address }}</p>
+
+                    <div class="action-buttons">
+                        <button (click)="editDetails()">Edit</button>
+                        <!-- <button class="danger" (click)="deleteDetails()">Delete</button> -->
+                    </div>
                 </div>
-              </div>
             </div>
-          
+
             <!-- Form Block for Add / Update -->
             <ng-template #formBlock>
-              <div class="company-add-form">
-                <h3>{{ updateCompanyDetail ? 'Update Company Details' : 'Add Company Details' }}</h3>
-          
-                <form (ngSubmit)="updateCompanyDetail ? updateCompany() : addCompany()">
-                  <input type="text" placeholder="Company Name" [(ngModel)]="company.name" name="name" required />
-                  <input type="email" placeholder="Email" [(ngModel)]="company.email" name="email" required />
-                  <input type="text" placeholder="Phone" [(ngModel)]="company.phone" name="phone" required />
-                  <input type="text" placeholder="Alternate Phone" [(ngModel)]="company.alternate_phone" name="alternate_phone" />
-                  <input type="text" placeholder="Address" [(ngModel)]="company.address" name="address" required />
-                  <input type="url" placeholder="Company Logo URL" [(ngModel)]="company.company_logo" name="company_logo" />
-                  <input type="number" placeholder="Founded In" [(ngModel)]="company.founded_in" name="founded_in" />
-          
-                  <button type="submit">{{ updateCompanyDetail ? 'Update' : 'Add' }}</button>
-                  <button type="button" class="danger" (click)="cancelEdit()">Cancel</button>
-                </form>
-              </div>
+                <div class="company-add-form">
+                    <h3>{{ updateCompanyDetail ? 'Update Company Details' : 'Add Company Details' }}</h3>
+
+                    <form (ngSubmit)="updateCompanyDetail ? updateCompany() : addCompany()">
+                        <input type="text" placeholder="Company Name" [(ngModel)]="company.name" name="name" required />
+                        <input type="email" placeholder="Email" [(ngModel)]="company.email" name="email" required />
+                        <input type="text" placeholder="Phone" [(ngModel)]="company.phone" name="phone" required />
+                        <input type="text" placeholder="Alternate Phone" [(ngModel)]="company.alternate_phone"
+                            name="alternate_phone" />
+                        <input type="text" placeholder="Address" [(ngModel)]="company.address" name="address"
+                            required />
+                        <input type="url" placeholder="Company Logo URL" [(ngModel)]="company.company_logo"
+                            name="company_logo" />
+                        <input type="number" placeholder="Founded In" [(ngModel)]="company.founded_in"
+                            name="founded_in" />
+
+                        <button type="submit">{{ updateCompanyDetail ? 'Update' : 'Add' }}</button>
+                        <button type="button" class="danger" (click)="cancelEdit()">Cancel</button>
+                    </form>
+                </div>
             </ng-template>
-          </div>
-          
+        </div>
+
 
     </div>
 </div>
