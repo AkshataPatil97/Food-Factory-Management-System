@@ -207,4 +207,16 @@ export class ProductComponent implements OnInit {
     }
   }
 
+  searchTerm: string = '';
+
+  filteredProducts() {
+    if (!this.searchTerm) {
+      return this.products;
+    }
+    return this.products.filter(product =>
+      product.product_name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
+
 }

@@ -126,6 +126,15 @@
             }
         }
 
+        .noUnderline {
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+
         /* Optional Delete Button */
         .p-button-danger {
             background-color: #dc3545;

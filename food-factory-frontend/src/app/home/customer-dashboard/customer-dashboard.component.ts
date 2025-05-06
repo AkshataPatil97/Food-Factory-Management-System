@@ -134,18 +134,18 @@ export class CustomerDashboardComponent {
   updateQuantity(item: Cart, change: number) {
     const index = this.cart.findIndex(cartItem => cartItem.product.product_code === item.product.product_code);
     if (index === -1) return;
-  
+
     const updatedQuantity = this.cart[index].quantity + change;
-  
+
     if (updatedQuantity < 15) {
       this.showMessage('warn', 'Warning', 'You cannot select less than 15 kg.');
       return;
     }
-  
+
     this.cart[index].quantity = updatedQuantity;
     this.cart[index].sub_total = updatedQuantity * this.cart[index].product.price;
   }
-  
+
 
 
   removeFromCart(item: Cart) {
@@ -252,20 +252,20 @@ export class CustomerDashboardComponent {
         // Separate orders
         const deliveredOrders = orders.filter((order: any) => order.status === 'Delivered');
         const activeOrders = orders.filter((order: any) => order.status !== 'Delivered');
-  
+
         this.fetchUserOrders = activeOrders.sort((a: any, b: any) =>
           new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
         );
         this.fetchUserOrdersHistory = deliveredOrders.sort((a: any, b: any) =>
           new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
         );
-  
+
         this.calculateTotalActiveOrders();
       },
       error: (error) => console.error("Error fetching orders:", error)
     });
   }
-  
+
 
   cancelOrder(order_id: number) {
     this.activeComponent = 'cancel';
@@ -376,5 +376,17 @@ export class CustomerDashboardComponent {
 
     doc.save(`Invoice_${invoice.id}.pdf`);
   }
+
+  searchTerm: string = '';
+
+  filteredProducts() {
+    if (!this.searchTerm) {
+      return this.products;
+    }
+    return this.products.filter(product =>
+      product.product_name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
 
 }

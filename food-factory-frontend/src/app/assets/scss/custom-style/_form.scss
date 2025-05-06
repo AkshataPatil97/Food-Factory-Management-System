@@ -17,7 +17,7 @@
         min-width: 300px;
         max-width: 50%;
 
-        .image-container{
+        .image-container {
             width: 476px;
         }
     }
@@ -28,6 +28,25 @@
         height: 100%; // Prevents it from exceeding the viewport
         overflow-y: auto; // Enables vertical scrolling when content overflows
         padding-top: 10px;
+
+        .product-search-container {
+            text-align: center;
+            margin-bottom: 20px;
+
+            .product-search-input {
+                width: 40%;
+                padding: 10px;
+                font-size: 15px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                box-shadow: none;
+            }
+
+            .product-search-input:hover {
+                border: 1px solid #170cf3;
+            }
+        }
+
 
         .form-container {
             border: 1px solid #ccc;
@@ -76,7 +95,7 @@
                     }
                 }
 
-                .customRemoveBorderPadding{
+                .customRemoveBorderPadding {
                     border: none !important;
                     padding: 0px !important;
                 }

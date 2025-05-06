@@ -70,10 +70,12 @@
         </form>
     </div>
 
-
+    <div class="product-search-container" *ngIf="productAction === 'edit'">
+        <input type="text" pInputText placeholder="Search Products..." [(ngModel)]="searchTerm" class="product-search-input" />
+    </div>
     <div *ngIf="productAction === 'edit'" class="rightDashboardPard updateProductDiv">
         <div class="customCardsDiv">
-            <div class="col-12 md:col-6 lg:col-3 cardDiv" *ngFor="let product of products">
+            <div class="col-12 md:col-6 lg:col-3 cardDiv" *ngFor="let product of filteredProducts()">
                 <p-card [header]="product.product_name">
                     <div class="product-info">
                         <!-- Show Image Initially -->
