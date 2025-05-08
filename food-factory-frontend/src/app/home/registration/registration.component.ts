@@ -37,6 +37,20 @@ export class RegistrationComponent implements OnInit {
     });
   }
 
+  get isInvalidUsername(): boolean {
+    return typeof this.username === 'string' && !/^[a-zA-Z ]+$/.test(this.username);
+  }
+
+  get isInvalidPassword(): boolean {
+    return typeof this.password === 'string' && !/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(this.password);
+  }
+
+  // Check if email contains "@"
+  get isInvalidEmail(): boolean {
+    return typeof this.email === 'string' && !/@/.test(this.email);
+  }
+   
+
   onSubmit(): void {
     if (this.password !== this.confirmPassword) {
       alert('Passwords do not match!');

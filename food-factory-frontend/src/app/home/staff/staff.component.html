@@ -5,8 +5,12 @@
             <div class="input-group">
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" [(ngModel)]="phoneNumber" name="phoneNumber" required pattern="\d{10}"
-                    placeholder="Enter your phone number" />
+                    placeholder="Enter your phone number" #phoneField="ngModel" />
+                <small class="text-error" *ngIf="phoneField.touched && isInvalidPhoneNumber" style="color: red;">
+                    Phone number must be exactly 10 digits.
+                </small>
             </div>
+            
             <button type="submit" [disabled]="loading">Login</button>
         </form>
         <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>

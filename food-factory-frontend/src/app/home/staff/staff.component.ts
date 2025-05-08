@@ -267,6 +267,11 @@ export class StaffComponent implements OnInit {
   showPendingOrders: boolean = false;
   showProcessingOrders: boolean = false;
 
+  get isInvalidPhoneNumber(): boolean {
+    return typeof this.phoneNumber === 'string' && !/^\d{10}$/.test(this.phoneNumber);
+  }
+  
+
   showPendingOrdersDialog() {
     this.orderService.fetchAllOrderForAdmin().subscribe({
       next: (res: any) => {

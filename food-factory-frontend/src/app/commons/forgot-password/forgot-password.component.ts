@@ -63,7 +63,19 @@ export class ForgotPasswordComponent {
     }, 3000);
   }
 
+  get isInvalidEmail(): boolean {
+    return typeof this.email === 'string' && !/@/.test(this.email);
+  }
 
+  
+  get isInvalidPassword(): boolean {
+    return typeof this.password === 'string' && !/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(this.password);
+  }
+
+  get isInvalidOtp(): boolean {
+    return typeof this.otp === 'string' && !/^\d{6}$/.test(this.otp);
+  }
+  
   resetPassword() {
     this.isLoading = true;
     this.userService.resetPassword(this.email, this.password).subscribe(

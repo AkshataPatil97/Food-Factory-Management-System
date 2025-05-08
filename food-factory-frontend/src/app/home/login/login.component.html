@@ -18,20 +18,27 @@
         <label class="form-label">Email</label>
         <input type="email" pInputText [(ngModel)]="email" name="email" required class="form-input"
           placeholder="Enter your email" #emailField="ngModel" />
-      </div>
+    
+        <!-- Email validation messages -->
+        <small class="text-error" *ngIf="emailField.touched && emailField.errors?.['required']">
+          Email is required.
+        </small>
+        <small class="text-error" *ngIf="emailField.touched && isInvalidEmail">
+          Email must contain "&#64;".
+        </small>
+    </div>
       <div class="form-group">
         <label class="form-label">Password</label>
         <p-password [(ngModel)]="password" name="password" required [toggleMask]="true" class="form-password-input loginpass"
           placeholder="Enter Password" #passwordField="ngModel" />
       </div>
+      <a routerLink="/forgot-password" class="forgot-password-link">
+        <i class="pi pi-lock"></i>
+        Forget Password
+      </a>
       <div class="form-button-div">
         <button pButton type="submit" label="Sign In" class="form-submit-button" [disabled]="!password">
         </button>
-
-        <a routerLink="/forgot-password">
-          Forget Password
-        </a>
-
         <button pButton type="submit" label="Sign Up" class="form-submit-button" (click)="navigateToSignUp()"
           [disabled]="isFormFilled()">
         </button>

@@ -19,6 +19,9 @@ export class LoginComponent {
     private messageService: MessageService
   ) { }
 
+  get isInvalidEmail(): boolean {
+    return typeof this.email === 'string' && !/@/.test(this.email);
+  }
   onSubmit() {
     this.authService.loginWithEmailAndPassword(this.email, this.password).subscribe(
       (response: any) => {

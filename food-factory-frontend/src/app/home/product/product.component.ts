@@ -29,9 +29,43 @@ export class ProductComponent implements OnInit {
   categoryOptions = [
     // { name: 'Electronics', value: 1 },
     // { name: 'Clothing', value: 2 },
-    { name: 'Food', value: 3 }
+    { name: 'Food', value: 3 },
+    { name: 'Snacks', value: 1 }
   ];
 
+  get isInvalidProductName(): boolean {
+    return typeof this.product_name === 'string' && !/^[a-zA-Z\s]+$/.test(this.product_name);
+  }
+  
+  get isInvalidProductCode(): boolean {
+    return typeof this.product_code === 'string' && !/^[A-Za-z0-9]+$/.test(this.product_code);
+  }
+  
+  get isInvalidCategory(): boolean {
+    return !this.category_id;
+  }
+  
+  get isInvalidManufacturingDate(): boolean {
+    const today = new Date();
+    const manufacturingDate = new Date(this.manufacturing_date);
+    return manufacturingDate > today;
+  }
+  
+  get isInvalidExpiryDate(): boolean {
+    const manufacturingDate = new Date(this.manufacturing_date);
+    const expiryDate = new Date(this.expiry_date);
+    return expiryDate <= manufacturingDate;
+  }
+  
+  get isInvalidPrice(): boolean {
+    return this.price <= 0;
+  }
+  
+  get isInvalidProductImage(): boolean {
+    return !this.product_img;
+  }
+
+  
   ngOnInit(): void {
     this.fetchAllProducts();
   }

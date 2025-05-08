@@ -29,6 +29,16 @@
         overflow-y: auto; // Enables vertical scrolling when content overflows
         padding-top: 10px;
 
+        .forgot-password-link {
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .forgot-password-link:hover {
+            text-decoration: underline;
+            color: red;
+        }
+
         .product-search-container {
             text-align: center;
             margin-bottom: 20px;
@@ -58,6 +68,15 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+
+            .text-error,
+            .pass-not-match-text {
+                color: red;
+                font-size: 0.75rem;
+                margin-top: 0.25rem;
+                display: block;
+            }
+
 
             .form-group {
                 display: flex;

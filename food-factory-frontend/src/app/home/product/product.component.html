@@ -9,46 +9,65 @@
                 <label class="form-label">Product Name</label>
                 <input type="text" pInputText [(ngModel)]="product_name" name="product_name" required class="form-input"
                     placeholder="Enter product name" #productNameField="ngModel" />
+                <small class="text-error" *ngIf="productNameField.touched && isInvalidProductName">
+                    Product name must only contain alphabets and spaces.
+                </small>
             </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Product Code</label>
                 <input type="text" pInputText [(ngModel)]="product_code" name="product_code" required class="form-input"
                     placeholder="Enter product code" #productCodeField="ngModel" [readonly]="isEditing" />
+                <small class="text-error" *ngIf="productCodeField.touched && isInvalidProductCode">
+                    Product code must be alphanumeric.
+                </small>
             </div>
-
-
+            
             <div class="form-group">
                 <label class="form-label">Category</label>
                 <p-dropdown [options]="categoryOptions" [(ngModel)]="category_id" optionLabel="name" optionValue="value"
-                    name="category_id" class="form-dropdown-input" placeholder="Select Category"
-                    #categoryField="ngModel">
-                </p-dropdown>
+                    name="category_id" class="form-dropdown-input" placeholder="Select Category" #categoryField="ngModel" />
+                <small class="text-error" *ngIf="categoryField.touched && isInvalidCategory">
+                    Category is required.
+                </small>
             </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Manufacturing Date</label>
-                <input type="date" pInputText [(ngModel)]="manufacturing_date" name="manufacturing_date" required
-                    class="form-input" #manufacturingDateField="ngModel" />
+                <input type="date" pInputText [(ngModel)]="manufacturing_date" name="manufacturing_date" required class="form-input"
+                    #manufacturingDateField="ngModel" />
+                <small class="text-error" *ngIf="manufacturingDateField.touched && isInvalidManufacturingDate">
+                    Manufacturing date cannot be in the future.
+                </small>
             </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Expiry Date</label>
                 <input type="date" pInputText [(ngModel)]="expiry_date" name="expiry_date" required class="form-input"
                     #expiryDateField="ngModel" />
+                <small class="text-error" *ngIf="expiryDateField.touched && isInvalidExpiryDate">
+                    Expiry date must be after the manufacturing date.
+                </small>
             </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Price</label>
                 <input type="number" pInputText [(ngModel)]="price" name="price" required class="form-input"
                     placeholder="Enter price" #priceField="ngModel" />
+                <small class="text-error" *ngIf="priceField.touched && isInvalidPrice">
+                    Price must be a positive number.
+                </small>
             </div>
-
+            
             <div class="form-group">
                 <label class="form-label">Product Image</label>
                 <input type="file" accept="image/*" class="form-input customRemoveBorderPadding" [(ngModel)]="product_img" name="product_img"
                     (change)="onFileSelected($event)" />
+                <small class="text-error" *ngIf="isInvalidProductImage">
+                    Please select a product image.
+                </small>
             </div>
+            
 
             <hr>
 

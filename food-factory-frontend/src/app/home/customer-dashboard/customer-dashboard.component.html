@@ -93,7 +93,7 @@
         <!-- <app-settings *ngIf="activeComponent === 'settings'"></app-settings> -->
 
         <div *ngIf="cart.length == 0 && activeComponent === 'cart'" class="cart-container emptyCart">
-            No data <i class="pi pi-wallet"></i>
+            Your cart is empty <i class="pi pi-wallet"></i>
         </div>
 
         <div *ngIf="activeComponent === 'cart' && cart.length > 0" class="cart-container">
