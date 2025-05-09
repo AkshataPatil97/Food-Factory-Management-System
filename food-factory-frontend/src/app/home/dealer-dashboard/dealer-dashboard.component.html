@@ -235,7 +235,8 @@
                 <p-card>
                     <div class="order-header">
                         <p>Status: <span [ngClass]="{
-                            'status-delivered': order.status === 'Delivered',
+                            'status-processed': order.status === 'Delivered',
+                             'status-cancelled': order.status === 'Cancelled',
                         }" class="status-badge">
                                 {{ order.status }}
                             </span></p>

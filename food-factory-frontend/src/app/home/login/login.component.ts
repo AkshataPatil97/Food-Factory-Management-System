@@ -32,7 +32,7 @@ export class LoginComponent {
           if (user?.role === 'Admin') {
             this.router.navigate(['/admin-dashboard']);
           } else if (user?.role === 'Dealer') {
-            this.router.navigate(['/customer-dashboard']);
+            this.router.navigate(['/dealer-dashboard']);
           } else {
             this.showMessage('warn','Warn','Unknown user role. Please contact support.')
           }

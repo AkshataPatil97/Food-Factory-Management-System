@@ -156,8 +156,9 @@ FETCH_USER_ORDERS_QUERY = """
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     JOIN products p ON oi.product_id = p.product_code
-    WHERE o.user_id = %s AND o.is_cancelled = FALSE;
+    WHERE o.user_id = %s; 
 """
+#AND o.is_cancelled = FALSE
 
 # Cancel Order query
 CANCEL_ORDER_QUERY = """

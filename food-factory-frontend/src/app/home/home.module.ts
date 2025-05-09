@@ -8,10 +8,10 @@ import { RegistrationComponent } from "./registration/registration.component";
 import { FormsModule } from "@angular/forms";
 import { LoginComponent } from "./login/login.component";
 import { AdminDashboardComponent } from "./admin-dashboard/admin-dashboard.component";
-import { CustomerDashboardComponent } from "./customer-dashboard/customer-dashboard.component";
 import { ProductComponent } from "./product/product.component";
 import { StaffComponent } from "./staff/staff.component";
 import { ReportComponent } from "./report/report.component";
+import { DealerDashboardComponent } from "./dealer-dashboard/dealer-dashboard.component";
 
 @NgModule({
     declarations: [
@@ -19,7 +19,7 @@ import { ReportComponent } from "./report/report.component";
         RegistrationComponent,
         LoginComponent,
         AdminDashboardComponent,
-        CustomerDashboardComponent,
+        DealerDashboardComponent,
         ProductComponent,
         StaffComponent,
         ReportComponent
@@ -36,7 +36,7 @@ import { ReportComponent } from "./report/report.component";
         RegistrationComponent,
         LoginComponent,
         AdminDashboardComponent,
-        CustomerDashboardComponent,
+        DealerDashboardComponent,
         StaffComponent,
         ReportComponent
     ]

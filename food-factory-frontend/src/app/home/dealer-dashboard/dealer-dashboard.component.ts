@@ -9,12 +9,12 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 @Component({
-  selector: 'app-customer-dashboard',
-  templateUrl: './customer-dashboard.component.html',
-  styleUrls: ['./customer-dashboard.component.scss']
+  selector: 'app-dealer-dashboard',
+  templateUrl: './dealer-dashboard.component.html',
+  styleUrls: ['./dealer-dashboard.component.scss']
 })
-export class CustomerDashboardComponent {
-  products: Product[] = [];
+export class DealerDashboardComponent {
+products: Product[] = [];
   cart: Cart[] = [];
 
   userId: number = 0;
@@ -249,14 +249,15 @@ export class CustomerDashboardComponent {
     this.orderService.fetchUserOrders(userId).subscribe({
       next: (response: any) => {
         const orders = response.data || [];
+        const orderStatus = ['Delivered', 'Cancelled'];
         // Separate orders
-        const deliveredOrders = orders.filter((order: any) => order.status === 'Delivered');
+        const OrderHistory = orders.filter((order: any) => orderStatus.includes(order.status));
         const activeOrders = orders.filter((order: any) => order.status !== 'Delivered');
 
         this.fetchUserOrders = activeOrders.sort((a: any, b: any) =>
           new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
         );
-        this.fetchUserOrdersHistory = deliveredOrders.sort((a: any, b: any) =>
+        this.fetchUserOrdersHistory = OrderHistory.sort((a: any, b: any) =>
           new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
         );
 
@@ -387,6 +388,5 @@ export class CustomerDashboardComponent {
       product.product_name.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
-
 
 }

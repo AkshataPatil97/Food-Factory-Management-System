@@ -14,10 +14,10 @@ export class AuthGuard implements CanActivate {
     
     if (this.authService.isAuthenticated()) {
       if (next.routeConfig?.path === 'admin-dashboard' && user?.role !== 'Admin') {
-        this.router.navigate(['/customer-dashboard']);
+        this.router.navigate(['/dealer-dashboard']);
         return false;
       }
-      if (next.routeConfig?.path === 'customer-dashboard' && user?.role !== 'Dealer') {
+      if (next.routeConfig?.path === 'dealer-dashboard' && user?.role !== 'Dealer') {
         this.router.navigate(['/admin-dashboard']);
         return false;
       }
