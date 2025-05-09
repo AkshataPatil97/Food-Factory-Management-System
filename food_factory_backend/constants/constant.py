@@ -113,7 +113,6 @@ Hi {customer_name},
 Thank you for placing your order with us! 🛒
 
 🧾 Order Details:
-- Order ID: _{order_id}_
 - Total Amount: ₹_{total_price}_
 - Shipping Address: _{shipping_address}_
 
@@ -125,6 +124,27 @@ Warm Regards,
 _{company_name} Team_
 """
 }
+
+ORDER_UPDATED_EMAIL = {
+    "STATUS": "Order Updated",
+    "SUBJECT": "🔄 Your Order Has Been Updated!",
+    "MESSAGE": """\
+Hi {customer_name},
+
+We wanted to let you know that your order has been updated. 🚚
+
+📦 Order Update:
+- Shipping Address: _{shipping_address}_
+
+We’re working hard to make sure your order reaches you as soon as possible!
+
+If you have any questions, feel free to reply to this email.
+
+Warm Regards,  
+_{company_name} Team_
+"""
+}
+
 
 SHIPPED_EMAIL = {
     "SUBJECT": "🎉 Your Order Has Been Shipped!",

@@ -23,6 +23,81 @@ def send_email(subject, message, recipient_list, sender=None):
     except Exception as e:
         LOGGER.error(f"Error sending email: {str(e)}")
 
+def send_order_placed_email(user_data, total_price):
+    """
+    Sends an order confirmation email to the customer after placing the order.
+
+    Args:
+        user_data (dict): Dictionary containing user details (name, email, etc.).
+        total_price (float): Total amount of the order.
+        address_payload (str): JSON string representing the user's address.
+    """
+    from constants.constant import ORDER_PLACED_EMAIL
+
+    try:
+        customer_name = user_data.get("name", "Customer")
+        recipient_email = user_data.get("email")
+        shipping_address = format_address_for_order(user_data.get("address_payload"))
+        company_name = "Jayashree Food Products"
+
+        # Prepare message using the email template
+        message = ORDER_PLACED_EMAIL["MESSAGE"].format(
+            customer_name=customer_name,
+            total_price=total_price,
+            shipping_address=shipping_address,
+            company_name=company_name
+        )
+
+        subject = ORDER_PLACED_EMAIL["SUBJECT"]
+
+        send_email(subject, message, [recipient_email])
+        LOGGER.info(f"Order placed email sent to {recipient_email}")
+
+    except Exception as e:
+        LOGGER.error(f"Failed to send order placed email: {str(e)}")
+     
+def send_order_update_email(user_data, total_price):
+    try:
+        from constants.constant import ORDER_UPDATED_EMAIL
+        customer_name = user_data.get("name", "Customer")
+        recipient_email = user_data.get("email")
+        shipping_address = format_address_for_order(user_data.get("address_payload"))
+        company_name = "Jayashree Food Products"
+
+        # Prepare message using the email template
+        message = ORDER_UPDATED_EMAIL["MESSAGE"].format(
+            customer_name=customer_name,
+            total_price=total_price,
+            shipping_address=shipping_address,
+            company_name=company_name
+        )
+
+        subject = ORDER_UPDATED_EMAIL["SUBJECT"]
+
+        send_email(subject, message, [recipient_email])
+        LOGGER.info(f"Order updated email sent to {recipient_email}")
+        
+    except Exception as e:
+        LOGGER.error(f"Failed to send order placed email: {str(e)}")
+            
+def format_address_for_order(address_payload):
+    """Parse and format address payload from JSON string."""
+    import json
+
+    if not address_payload:
+        return "Address not available"
+
+    try:
+        address = json.loads(address_payload)
+        formatted_address = (
+            f"{address.get('street', 'N/A')}, {address.get('landmark', 'N/A')}, "
+            f"{address.get('city', 'N/A')}, {address.get('state', 'N/A')} - {address.get('zip', 'N/A')}"
+        )
+        return formatted_address
+    except json.JSONDecodeError:
+        return "Invalid Address Format"
+
+
 def format_address(address_payload):
     """Parse and format address payload from JSON string."""
     import json

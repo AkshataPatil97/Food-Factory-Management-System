@@ -11,6 +11,7 @@ from config.connection import get_conn, close_conn
 
 def insert_order(db_connection, request):
     try:
+        from .sendemail import send_order_placed_email
         cursor = db_connection.cursor()
         data = json.loads(request.body)
 
@@ -24,7 +25,10 @@ def insert_order(db_connection, request):
         # Get the last inserted order_id
         order_id = cursor.lastrowid  
         db_connection.commit()
-
+        
+        
+        userData = fetch_user_for_order(db_connection, data.get("user_id"))
+        send_order_placed_email(userData, data.get("total_price"))
         return order_id  # Return order_id
 
     except Exception as e:
@@ -138,6 +142,8 @@ def cancel_order(db_connection, request):
 
 def update_order(db_connection, data):
     try:
+        from .sendemail import send_order_update_email
+        print(data,"DATA")
         cursor = db_connection.cursor()
         cursor.execute(
             UPDATE_ORDER_QUERY,
@@ -145,6 +151,8 @@ def update_order(db_connection, data):
              data.get("cancellation_reason"), data.get("order_id"))
         )
         db_connection.commit()
+        userData = fetch_user_for_order(db_connection, data.get("user_id"))
+        send_order_update_email(userData, data.get("total_price"))
         return {"message": "Order updated successfully"}
 
     except Exception as e:
