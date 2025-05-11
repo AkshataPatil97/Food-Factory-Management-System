@@ -10,7 +10,7 @@
                     Phone number must be exactly 10 digits.
                 </small>
             </div>
-            
+
             <button type="submit" [disabled]="loading">Login</button>
         </form>
         <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
@@ -21,6 +21,11 @@
 
 <div class="staff-dashboard" *ngIf="isLoggedIn">
     <h2>Welcome to Staff Dashboard</h2>
+    <div class="refresh-wrapper">
+        <button class="p-button p-button-secondary refresh-btn" (click)="refresh()">
+            <i class="pi pi-refresh"></i>
+        </button>
+    </div>
     <p>Your Role: <strong>{{ staffRole }}</strong></p>
 
     <div *ngIf="staffRole === 'Delivery'">
@@ -43,54 +48,47 @@
                 </div>
                 <button (click)="openOrderDialog(assignedDeliveries)">View Details</button>
             </li>
-            
+
         </ul>
     </div>
 
-   <div *ngIf="staffRole === 'Manager'" class="order-section">
-  <h3>Pending Orders</h3>
-  <div class="button-wrapper">
-    <button (click)="showPendingOrdersDialog()" class="order-button">
-      View Pending Orders
-    </button>
-    <span
-      class="badge shake"
-      [@fadeIn]
-      *ngIf="pendingOrders?.length"
-    >
-      {{ pendingOrders.length }}
-    </span>
-  </div>
-</div>
+    <div *ngIf="staffRole === 'Manager'" class="order-section">
+        <h3>Pending Orders</h3>
+        <div class="button-wrapper">
+            <button (click)="showPendingOrdersDialog()" class="order-button">
+                View Pending Orders
+            </button>
+            <span class="badge shake" [@fadeIn] *ngIf="pendingOrders?.length">
+                {{ pendingOrders.length }}
+            </span>
+        </div>
+    </div>
 
-<div *ngIf="staffRole === 'Manager'" class="order-section">
-  <h3>Processing Orders</h3>
-  <div class="button-wrapper">
-    <button (click)="showProcessingOrdersDialog()" class="order-button">
-      View Processing Orders
-    </button>
-    <span
-      class="badge shake"
-      [@fadeIn]
-      *ngIf="processingOrders?.length"
-    >
-      {{ processingOrders.length }}
-    </span>
-  </div>
-</div>
+    <div *ngIf="staffRole === 'Manager'" class="order-section">
+        <h3>Processing Orders</h3>
+        <div class="button-wrapper">
+            <button (click)="showProcessingOrdersDialog()" class="order-button">
+                View Processing Orders
+            </button>
+            <span class="badge shake" [@fadeIn] *ngIf="processingOrders?.length">
+                {{ processingOrders.length }}
+            </span>
+        </div>
+    </div>
 
-    
+
     <button (click)="logout()">Logout</button>
 </div>
 
 <!-- Order Details Dialog -->
-<p-dialog [(visible)]="showDetailDialog" [modal]="true" [closable]="true" [style]="{width: '90vw'}" [header]="'Order Details'" class="order-details-dialog">
+<p-dialog [(visible)]="showDetailDialog" [modal]="true" [closable]="true" [style]="{width: '90vw'}"
+    [header]="'Order Details'" class="order-details-dialog">
     <div class="order-details-container">
         <h3 class="order-details-title">Order Details</h3>
-        
+
         <!-- Display only the Total Price -->
         <p><strong>Total Price:</strong> {{ orderDialog?.total_price }}</p>
-        
+
         <!-- Table for Order Items -->
         <table class="order-items-table">
             <thead>
@@ -112,7 +110,9 @@
         </table>
 
         <!-- Button to set the order as delivered -->
-        <button *ngIf="orderDialog?.status !== 'Delivered'" pButton type="button" label="Set as Delivered" (click)="openOtpDialog(orderDialog?.order_id, orderDialog.user.email)" class="set-delivered-button"></button>
+        <button *ngIf="orderDialog?.status !== 'Delivered'" pButton type="button" label="Set as Delivered"
+            (click)="openOtpDialog(orderDialog?.order_id, orderDialog.user.email)"
+            class="set-delivered-button"></button>
     </div>
 </p-dialog>
 
@@ -120,7 +120,8 @@
 
 
 <!-- OTP Verification Dialog -->
-<p-dialog [(visible)]="showOtpDialog" [modal]="true" [closable]="true" [style]="{width: '50vw'}" [header]="'Verify Delivery'">
+<p-dialog [(visible)]="showOtpDialog" [modal]="true" [closable]="true" [style]="{width: '50vw'}"
+    [header]="'Verify Delivery'">
     <div class="custom-otp-dialog">
         <p class="custom-otp-description">Enter OTP sent to customer</p>
         <input type="text" [(ngModel)]="otpCode" class="custom-otp-input" placeholder="Enter OTP" />
@@ -131,7 +132,8 @@
 
 
 <!-- Pending Orders Dialog -->
-<p-dialog [(visible)]="showPendingOrders" [modal]="true" [closable]="true" [style]="{width: '90vw'}" [header]="'Pending Orders'" class="orders-dialog-custom">
+<p-dialog [(visible)]="showPendingOrders" [modal]="true" [closable]="true" [style]="{width: '90vw'}"
+    [header]="'Pending Orders'" class="orders-dialog-custom">
     <div class="orders-dialog-custom-container">
         <table class="orders-table-custom">
             <thead>
@@ -157,7 +159,8 @@
 </p-dialog>
 
 <!-- Processing Orders Dialog -->
-<p-dialog [(visible)]="showProcessingOrders" [modal]="true" [closable]="true" [style]="{width: '90vw'}" [header]="'Processing Orders'" class="orders-dialog-custom">
+<p-dialog [(visible)]="showProcessingOrders" [modal]="true" [closable]="true" [style]="{width: '90vw'}"
+    [header]="'Processing Orders'" class="orders-dialog-custom">
     <div class="orders-dialog-custom-container">
         <table class="orders-table-custom">
             <thead>

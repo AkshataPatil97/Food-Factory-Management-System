@@ -40,7 +40,6 @@ export class AdminDashboardComponent {
     this.refreshData();
     this.fetchInvoices()
     this.fetchComapnyDetails()
-    
     setInterval(() => {
       this.refreshData();
     }, 300000); // Refresh every 5 minutes
@@ -54,6 +53,18 @@ export class AdminDashboardComponent {
     this.loadStaff();
     this.fetchInvoices();
   }
+
+  onRefreshClick() {
+    this.loadingService.show();
+
+    this.refreshData();
+
+    // Hide loader after 5 seconds
+    setTimeout(() => {
+      this.loadingService.hide();
+    }, 5000);
+  }
+
 
   logout() {
     this.authService.logout();
@@ -92,7 +103,6 @@ export class AdminDashboardComponent {
   }
 
   fetchAllOrders() {
-    this.loadingService.show();
     this.orderService.fetchAllOrderForAdmin().subscribe({
       next: (response) => {
         this.currentOrders = response.data.map((order: any) => ({
@@ -103,7 +113,6 @@ export class AdminDashboardComponent {
           order_items: order.order_items || [],
           user: order.user
         }));
-        this.loadingService.hide();
       },
       error: (error) => {
         console.log(error);
@@ -114,7 +123,6 @@ export class AdminDashboardComponent {
 
 
   fetchAllCancelledOrders() {
-    this.loadingService.show();
     this.orderService.fetchAllCancelledOrderForAdmin().subscribe({
       next: (response) => {
         this.cancelledOrders = response.data.map((order: any) => ({
@@ -125,7 +133,6 @@ export class AdminDashboardComponent {
           order_items: order.order_items || [],
           user: order.user
         }));
-        this.loadingService.hide();
       },
       error: (error) => {
         console.log(error);
@@ -170,8 +177,6 @@ export class AdminDashboardComponent {
   isOrderDetailsVisible: boolean = false;
 
   showOrderDetails(order: any) {
-    console.log(order);
-    
     this.selectOrderDetails = order;
     this.isOrderDetailsVisible = true;
   }
@@ -203,7 +208,6 @@ export class AdminDashboardComponent {
   availableDeliveryBoys: any = [];
 
   checkDeliveryBoyAvailability() {
-    this.loadingService.show();
     this.deliveryBoyService.fetchAllDeliveryBoy().subscribe({
       next: (res) => {
         if (res.staff && Array.isArray(res.staff)) {
@@ -214,7 +218,6 @@ export class AdminDashboardComponent {
             this.isDeliveryBoyAvailable = false;
           }
         }
-        this.loadingService.hide();
       },
       error: (err) => {
         console.log(err);
@@ -382,7 +385,7 @@ export class AdminDashboardComponent {
 
     doc.save(`Invoice_${invoice.id}.pdf`);
   }
-  
+
   company: any = {
     name: '',
     email: '',
@@ -401,24 +404,24 @@ export class AdminDashboardComponent {
       this.company = { name: '', email: '', phone: '', address: '' }; // Reset form
     });
   }
-  
+
   editDetails() {
     this.updateCompanyDetail = true;
     this.company = { ...this.companyDetails }; // Populate form with existing details
   }
-  
+
   updateCompany() {
     this.userService.updateCompany(this.company).subscribe(() => {
       this.fetchComapnyDetails(); // Refresh data
       this.updateCompanyDetail = false;
     });
   }
-  
+
   cancelEdit() {
     this.updateCompanyDetail = false;
     this.company = { name: '', email: '', phone: '', address: '' };
   }
-  
+
   deleteDetails() {
     if (confirm('Are you sure you want to delete this company?')) {
       this.loadingService.show();
@@ -428,5 +431,5 @@ export class AdminDashboardComponent {
       });
     }
   }
-  
+
 }

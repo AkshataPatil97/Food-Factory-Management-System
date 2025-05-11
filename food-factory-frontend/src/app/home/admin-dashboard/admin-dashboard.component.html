@@ -47,7 +47,11 @@
 
     <!-- Right Section (Main Content) -->
     <div class="col-12 md:col-9 right-section rightDashboardPard">
-
+        <div class="refresh-wrapper">
+            <button class="p-button p-button-secondary refresh-btn" (click)="onRefreshClick()">
+                <i class="pi pi-refresh"></i>
+            </button>
+        </div>
         <app-profile *ngIf="activeComponent === 'profile'"></app-profile>
         <app-product *ngIf="activeComponent === 'product'" [productAction]="selectedProductAction"></app-product>
         <app-settings *ngIf="activeComponent === 'settings'"></app-settings>
@@ -468,3 +472,5 @@
 <div class="card flex justify-content-center">
     <p-toast />
 </div>
+
+<app-loader></app-loader>
