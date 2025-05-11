@@ -6,6 +6,7 @@ import { UsersService } from '../../shared/services/users.service';
 import { Router } from '@angular/router';
 import { DbConfigService } from '../../shared/services/db-config.service';
 import { ALLOW_ADMIN_REGISTER } from '../../shared/constants';
+import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-registration',
@@ -19,12 +20,12 @@ export class RegistrationComponent implements OnInit {
   confirmPassword = '';
   roleOptions = [...USER_ROLE];
   role: { name: string } = { name: '' };
-  isLoading = false;
 
   constructor(
     private userService: UsersService,
     private router: Router,
-    private dbService: DbConfigService
+    private dbService: DbConfigService,
+    private loadingService: LoaderService
   ) {}
 
   ngOnInit(): void {
@@ -57,19 +58,19 @@ export class RegistrationComponent implements OnInit {
       return;
     }
     
-    this.isLoading = true;
+    this.loadingService.show();
     const formData = createFormData(this.username, this.email, this.password, this.role);
     this.userService.insertUser(formData).subscribe({
       next: () => {
         this.resetForm();
+        this.loadingService.hide();
         this.router.navigate(['/login']);
       },
       error: error => {
         console.error('Error during registration:', error);
-        this.isLoading = false;
       }
     });
-    setTimeout(() => this.isLoading = false, 6000);
+    setTimeout(() => this.loadingService.hide(), 6000);
   }
 
   resetForm(): void {

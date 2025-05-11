@@ -161,7 +161,6 @@ def send_order_status_email(request, STATUS_EMAIL_TEMPLATE):
             delivery_boy_phone=delivery_boy_phone,
             company_name="Jayashree Food Products",  
         )
-
         # Send email
         send_email(
             subject=STATUS_EMAIL_TEMPLATE["SUBJECT"],

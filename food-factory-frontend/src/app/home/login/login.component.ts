@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -16,13 +17,15 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoaderService
   ) { }
 
   get isInvalidEmail(): boolean {
     return typeof this.email === 'string' && !/@/.test(this.email);
   }
   onSubmit() {
+    this.loadingService.show();
     this.authService.loginWithEmailAndPassword(this.email, this.password).subscribe(
       (response: any) => {
         if (response.token) {
@@ -37,6 +40,7 @@ export class LoginComponent {
             this.showMessage('warn','Warn','Unknown user role. Please contact support.')
           }
         }
+        this.loadingService.hide();
       },
       (error) => {
         if (error.error && error.error.error) {

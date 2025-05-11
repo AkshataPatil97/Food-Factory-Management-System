@@ -223,7 +223,6 @@ class SendOTPToDealerView(APIView):
 
             data = json.loads(request.body)
             email = data.get('email')
-            print(email)
             otp , error = send_otp_email(db_connection, email)
             
             if otp:
@@ -261,7 +260,6 @@ class VerifyOTPView(APIView):
 
             assign_order_to_delivery_boy(db_connection, staff_id, None)  # This sets order_id to NULL
             order_id = request.data.get("order_id")
-            print(order_id)
             update_invoice_status_to_paid(db_connection, 'Paid', order_id)  
             db_connection.commit()  # Ensure all changes are committed together
             return Response({"success": True, "message": "OTP verified successfully!"}, status=200)

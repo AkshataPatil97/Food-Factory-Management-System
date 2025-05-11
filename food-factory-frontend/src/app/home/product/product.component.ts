@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Product } from '../../shared/interface/product';
 import { ProductService } from '../../shared/services/product.service';
 import { MessageService } from 'primeng/api';
+import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-product',
@@ -23,7 +24,8 @@ export class ProductComponent implements OnInit {
   product_img: File | null = null;
   constructor(
     private productService: ProductService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoaderService
   ) { }
 
   categoryOptions = [
@@ -103,6 +105,7 @@ export class ProductComponent implements OnInit {
   }
 
   onSubmit() {
+    this.loadingService.show();
     const formData = new FormData();
     formData.append('product_name', this.product_name);
     formData.append('product_code', this.product_code);
@@ -118,6 +121,7 @@ export class ProductComponent implements OnInit {
       next: () => {
         this.resetForm();
         this.fetchAllProducts();
+        this.loadingService.hide();
         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product added successfully!' });
       },
       error: (err) => {
@@ -174,6 +178,7 @@ export class ProductComponent implements OnInit {
   }
 
   onUpdate() {
+    this.loadingService.show();
     const formData = new FormData();
     formData.append('product_name', this.product_name);
     formData.append('product_code', this.product_code);
@@ -195,6 +200,7 @@ export class ProductComponent implements OnInit {
         this.resetForm();
         this.fetchAllProducts();
         this.isEditing = false;
+        this.loadingService.hide();
       },
       error: (err) => {
         console.error('Error updating product:', err);
@@ -204,11 +210,13 @@ export class ProductComponent implements OnInit {
 
 
   deleteProduct(productCode: string) {
+    this.loadingService.show();
     console.log('Delete Product:', productCode);
     this.productService.deleteProduct(productCode).subscribe(response => {
       console.log('Product deleted successfully:', response);
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product deleted successfully!' });
       this.fetchAllProducts(); // Refresh the product list after deletion
+      this.loadingService.hide();
     }, error => {
       console.error('Error deleting product:', error);
     });

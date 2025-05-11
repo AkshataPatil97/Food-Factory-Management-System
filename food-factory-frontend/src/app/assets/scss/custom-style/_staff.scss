@@ -794,3 +794,78 @@
 :host ::ng-deep .p-toast-message {
     max-width: 280px !important; /* Adjust to fit the content */
 }
+
+.order-section {
+  margin-bottom: 20px;
+
+  .button-wrapper {
+    position: relative;
+    display: inline-block;
+
+    .order-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+      }
+    }
+
+    .badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background-color: red;
+      color: white;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 50%;
+      z-index: 10;
+      animation: pop-in 0.3s ease-out;
+    }
+
+    .shake {
+      animation: shake 0.5s;
+      animation-iteration-count: 1;
+    }
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  20% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  40% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  60% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  80% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  100% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+}

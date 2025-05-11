@@ -144,7 +144,6 @@ def send_otp_email(db_connection, email):
 def set_otp_in_db(db_connection, otp, email):
     cursor = None 
     try:
-        print(email)
         cursor = db_connection.cursor(dictionary=True)  
         user = fetch_user_for_otp(db_connection, email)
         
@@ -302,7 +301,6 @@ def fetch_user_details(db_connection, user_id):
     cursor = None 
     try:
         LOGGER.info("Inside fetch_user_details!")
-        print(user_id)
         cursor = db_connection.cursor(dictionary=True) 
         cursor.execute(FETCH_USER_BY_ID, (user_id,))  # Use user_id directly
         user_details = cursor.fetchone() 

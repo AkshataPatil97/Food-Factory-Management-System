@@ -1,0 +1,14 @@
+<!-- shared/components/loader/loader.component.html -->
+<!-- <div class="loader-overlay" *ngIf="loaderService.loading$ | async">
+  <p-progressSpinner strokeWidth="4" styleClass="custom-spinner"></p-progressSpinner>
+</div> -->
+
+<div class="loader-overlay" *ngIf="loaderService.loading$ | async">
+  <div class="bouncing-dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>

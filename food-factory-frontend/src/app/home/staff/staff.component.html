@@ -47,16 +47,38 @@
         </ul>
     </div>
 
-    <div *ngIf="staffRole === 'Manager'">
-        <h3>Pending Orders</h3>
-        <button (click)="showPendingOrdersDialog()">View Pending Orders</button>
-    </div>
+   <div *ngIf="staffRole === 'Manager'" class="order-section">
+  <h3>Pending Orders</h3>
+  <div class="button-wrapper">
+    <button (click)="showPendingOrdersDialog()" class="order-button">
+      View Pending Orders
+    </button>
+    <span
+      class="badge shake"
+      [@fadeIn]
+      *ngIf="pendingOrders?.length"
+    >
+      {{ pendingOrders.length }}
+    </span>
+  </div>
+</div>
 
-    <!-- Processing Orders Dialog -->
-    <div *ngIf="staffRole === 'Manager'">
-        <h3>Processing Orders</h3>
-        <button (click)="showProcessingOrdersDialog()">View Processing Orders</button>
-    </div>
+<div *ngIf="staffRole === 'Manager'" class="order-section">
+  <h3>Processing Orders</h3>
+  <div class="button-wrapper">
+    <button (click)="showProcessingOrdersDialog()" class="order-button">
+      View Processing Orders
+    </button>
+    <span
+      class="badge shake"
+      [@fadeIn]
+      *ngIf="processingOrders?.length"
+    >
+      {{ processingOrders.length }}
+    </span>
+  </div>
+</div>
+
     
     <button (click)="logout()">Logout</button>
 </div>
@@ -158,8 +180,12 @@
             </tbody>
         </table>
     </div>
+
 </p-dialog>
 
 <div class="card flex justify-content-right">
     <p-toast position="top-right"></p-toast>
 </div>
+
+
+<app-loader></app-loader>

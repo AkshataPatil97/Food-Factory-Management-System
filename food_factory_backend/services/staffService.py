@@ -20,8 +20,7 @@ def insert_staff(db_connection, request):
         alternate_phone = data.get("alternate_phone", None)  # Optional field
         address = data.get("address")
         staff_type = data.get("staff_type") # Default NULL
-
-        print(name,phone)
+        
         # Check for missing required fields
         if not name or not phone or not address or not staff_type:
             return {"error": "Missing required fields"}, 400
@@ -51,13 +50,9 @@ def assign_order_to_delivery_boy(db_connection, staff_id, order_id):
         print(f"Assigning order: staff_id={staff_id}, order_id={order_id}")
 
         cursor = db_connection.cursor()
-
-        print(f"Executing CHECK_STAFF_QUERY for staff_id={staff_id}")
         cursor.execute(CHECK_STAFF_QUERY, (staff_id,))
-        print("Query executed successfully")
 
         result = cursor.fetchone()
-        print("Staff query result:", result)
 
         if not result:
             print(f"Staff ID {staff_id} not found or not a delivery boy.")
@@ -72,7 +67,6 @@ def assign_order_to_delivery_boy(db_connection, staff_id, order_id):
 
         db_connection.commit()
         affected_rows = cursor.rowcount
-        print(f"Rows affected: {affected_rows}")
 
         cursor.close()
 

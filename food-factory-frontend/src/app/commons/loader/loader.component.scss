@@ -1,0 +1,81 @@
+// /* shared/components/loader/loader.component.scss */
+// .loader-overlay {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100vw;
+//   height: 100vh;
+//   background-color: rgba(0, 0, 0, 0.3); // softer transparency effect
+//   z-index: 9999;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+
+//   .custom-spinner {
+//     width: 70px !important;
+//     height: 70px !important;
+//   }
+// }
+
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(224, 224, 224, 0.3); // semi-transparent dark background
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+// .bouncing-dots {
+//   display: flex;
+//   justify-content: space-between;
+//   width: 100px;
+// }
+
+// .dot {
+//   width: 15px;
+//   height: 15px;
+//   border-radius: 50%;
+//   animation: bounce 2s infinite;
+// }
+
+// .dot:nth-child(1) {
+//   background-color: #4285F4; // Blue
+//   animation-delay: 0s;
+// }
+
+// .dot:nth-child(2) {
+//   background-color: #9B72CF; // Purple
+//   animation-delay: 0.2s;
+// }
+
+// .dot:nth-child(3) {
+//   background-color: #E94245; // Red
+//   animation-delay: 0.4s;
+// }
+
+// .dot:nth-child(4) {
+//   background-color: #F4B400; // Yellow
+//   animation-delay: 0.6s;
+// }
+
+// .dot:nth-child(5) {
+//   background-color: #34A853; // Green
+//   animation-delay: 0.8s;
+// }
+
+// @keyframes bounce {
+//   0%, 100% {
+//     transform: translateY(0);
+//   }
+//   40% {
+//     transform: translateY(-20px);
+//   }
+//   80% {
+//     transform: translateY(0);
+//   }
+// }

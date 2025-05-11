@@ -7,6 +7,7 @@ import { DeliveryboyService } from '../../shared/services/deliveryboy.service';
 import { UsersService } from '../../shared/services/users.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -30,7 +31,8 @@ export class AdminDashboardComponent {
     private orderService: OrdersService,
     private messageService: MessageService,
     private deliveryBoyService: DeliveryboyService,
-    private userService: UsersService
+    private userService: UsersService,
+    private loadingService: LoaderService
   ) { }
 
   ngOnInit(): void {
@@ -38,7 +40,7 @@ export class AdminDashboardComponent {
     this.refreshData();
     this.fetchInvoices()
     this.fetchComapnyDetails()
-
+    
     setInterval(() => {
       this.refreshData();
     }, 300000); // Refresh every 5 minutes
@@ -90,6 +92,7 @@ export class AdminDashboardComponent {
   }
 
   fetchAllOrders() {
+    this.loadingService.show();
     this.orderService.fetchAllOrderForAdmin().subscribe({
       next: (response) => {
         this.currentOrders = response.data.map((order: any) => ({
@@ -100,6 +103,7 @@ export class AdminDashboardComponent {
           order_items: order.order_items || [],
           user: order.user
         }));
+        this.loadingService.hide();
       },
       error: (error) => {
         console.log(error);
@@ -110,6 +114,7 @@ export class AdminDashboardComponent {
 
 
   fetchAllCancelledOrders() {
+    this.loadingService.show();
     this.orderService.fetchAllCancelledOrderForAdmin().subscribe({
       next: (response) => {
         this.cancelledOrders = response.data.map((order: any) => ({
@@ -120,6 +125,7 @@ export class AdminDashboardComponent {
           order_items: order.order_items || [],
           user: order.user
         }));
+        this.loadingService.hide();
       },
       error: (error) => {
         console.log(error);
@@ -197,6 +203,7 @@ export class AdminDashboardComponent {
   availableDeliveryBoys: any = [];
 
   checkDeliveryBoyAvailability() {
+    this.loadingService.show();
     this.deliveryBoyService.fetchAllDeliveryBoy().subscribe({
       next: (res) => {
         if (res.staff && Array.isArray(res.staff)) {
@@ -207,6 +214,7 @@ export class AdminDashboardComponent {
             this.isDeliveryBoyAvailable = false;
           }
         }
+        this.loadingService.hide();
       },
       error: (err) => {
         console.log(err);
@@ -222,6 +230,7 @@ export class AdminDashboardComponent {
   }
 
   markAsShipped(order: any, deliveryBoyId: number) {
+    this.loadingService.show();
     if (!deliveryBoyId) {
       this.showMessage('warn', 'Warn', 'Please select a delivery boy first!')
       return;
@@ -233,6 +242,7 @@ export class AdminDashboardComponent {
       this.isDeliveryBoyModalVisible = false;
       this.showMessage('warn', 'Warn', `Order has been shipped successfully and assigned to ${this.selectedDeliveryBoy.name}!`)
       this.refreshData()
+      this.loadingService.hide();
     });
   }
 
@@ -411,6 +421,7 @@ export class AdminDashboardComponent {
   
   deleteDetails() {
     if (confirm('Are you sure you want to delete this company?')) {
+      this.loadingService.show();
       this.userService.deleteCompany(this.companyDetails.id).subscribe(() => {
         this.companyDetails = null;
         this.company = { name: '', email: '', phone: '', address: '' };

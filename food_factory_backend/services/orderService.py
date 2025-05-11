@@ -143,7 +143,6 @@ def cancel_order(db_connection, request):
 def update_order(db_connection, data):
     try:
         from .sendemail import send_order_update_email
-        print(data,"DATA")
         cursor = db_connection.cursor()
         cursor.execute(
             UPDATE_ORDER_QUERY,

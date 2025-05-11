@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UsersService } from '../../shared/services/users.service';
 import { MessageService } from 'primeng/api';
+import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -22,33 +23,36 @@ export class ForgotPasswordComponent {
     private http: HttpClient,
     private router: Router,
     private userService: UsersService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loadingService: LoaderService
   ) { }
 
   sendOTP() {
-    this.isLoading = true;
+    this.loadingService.show();
     this.userService.verifyEmailSendOtp(this.email).subscribe({
       next: (res) => {
         this.step = 2;
         this.showMessage('success', 'Success', 'OTP sent successfully.');
+        this.loadingService.hide();
       },
       error: (error) => {
         this.showMessage('error', 'Error', `Error while sending OTP: ${error.message || error}`);
-        this.isLoading = false;
+        this.loadingService.hide();
       },
       complete: () => {
-        this.isLoading = false;
+        this.loadingService.hide();
       }
     });
   }  
 
   verifyOTP() {
-    this.isLoading = true;
+    this.loadingService.show();
     this.userService.verifyOTP(this.email, this.otp).subscribe(
       (res: any) => {
         if (res.success) {
           this.step = 3
           this.showMessage('success', 'Success', 'OTP verified successfully.')
+          this.loadingService.hide();
         } else {
           this.showMessage('error', 'Error', `OTP verification failed: ${res.message || res}`)
         }
@@ -56,11 +60,9 @@ export class ForgotPasswordComponent {
       (error) => {
         console.error("Error during OTP verification:", error);
         alert(error.error?.message || "An unexpected error occurred. Please try again.");
+        this.loadingService.hide();
       }
     );
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 3000);
   }
 
   get isInvalidEmail(): boolean {
@@ -77,11 +79,12 @@ export class ForgotPasswordComponent {
   }
   
   resetPassword() {
-    this.isLoading = true;
+    this.loadingService.show();
     this.userService.resetPassword(this.email, this.password).subscribe(
       (res: any) => {
         if (res.success) {
           this.showMessage('success','Success','New password set!')
+          this.loadingService.hide();
           this.router.navigate(['/login']);
         } else {
           this.showMessage('error', 'Error', `Reset password failed: ${res.message || res}`)
@@ -90,11 +93,9 @@ export class ForgotPasswordComponent {
       (error) => {
         console.error("Error during reset password:", error);
         alert(error.error?.message || "An unexpected error occurred. Please try again.");
+        this.loadingService.hide();
       }
     );
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 3000);
   }
 
   showMessage(strSeverity: string, strSummary: string, strDetail: string) {

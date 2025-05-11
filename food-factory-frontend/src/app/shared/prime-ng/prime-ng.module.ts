@@ -16,6 +16,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { DialogModule } from 'primeng/dialog';
 import { MessageModule } from 'primeng/message';
 import { CalendarModule } from 'primeng/calendar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
     declarations:[],
@@ -38,7 +39,8 @@ import { CalendarModule } from 'primeng/calendar';
         FileUploadModule,
         DialogModule,
         MessageModule,
-        CalendarModule
+        CalendarModule,
+        ProgressSpinnerModule
     ]
 })
 

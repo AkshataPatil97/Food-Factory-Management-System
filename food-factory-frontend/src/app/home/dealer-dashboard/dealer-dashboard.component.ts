@@ -7,6 +7,7 @@ import { UsersService } from '../../shared/services/users.service';
 import { OrdersService } from '../../shared/services/orders.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { LoaderService } from '../../shared/services/loader.service';
 
 @Component({
   selector: 'app-dealer-dashboard',
@@ -37,7 +38,9 @@ products: Product[] = [];
     private productService: ProductService,
     private messageService: MessageService,
     private userService: UsersService,
-    private orderService: OrdersService
+    private orderService: OrdersService,
+    private loadingService: LoaderService
+
   ) { }
 
   ngOnInit(): void {
@@ -65,18 +68,22 @@ products: Product[] = [];
   }
 
   private fetchUserDetails() {
+    this.loadingService.show();
     this.userService.fetchUserById(this.userId).subscribe({
       next: (res) => {
         this.userName = res.user_details?.username || 'Guest';
+        this.loadingService.hide();
       },
       error: (error) => console.error("Error fetching user details:", error)
     });
   }
 
   private fetchAllProducts() {
+    this.loadingService.show();
     this.productService.fetchAllProduct().subscribe({
       next: (response: any) => {
         this.products = response.data ? this.mapProducts(response.data) : [];
+        this.loadingService.hide();
       },
       error: (error) => console.error("Error fetching products:", error)
     });
@@ -183,16 +190,19 @@ products: Product[] = [];
   }
 
   order_handling() {
+    this.loadingService.show();
     if (this.isUpdateOrder) {
       this.orderService.updateOrder(this.order_data).subscribe({
         next: () => {
           this.showMessage('success', 'Success', 'Order updated successfully');
           this.refereshData()
+          this.loadingService.hide();
           this.isUpdateOrder = false;
         },
         error: (error) => {
           console.error("Error updating order:", error);
           this.showMessage('error', 'Error', 'Failed to update order');
+          this.loadingService.hide();
         }
       });
     } else {
@@ -200,10 +210,12 @@ products: Product[] = [];
         next: () => {
           this.showMessage('success', 'Success', 'Order placed successfully');
           this.refereshData()
+          this.loadingService.hide();
         },
         error: (error) => {
           console.error("Error inserting order:", error);
           this.showMessage('error', 'Error', 'Failed to place order');
+          this.loadingService.hide();
         }
       });
     }
@@ -252,7 +264,7 @@ products: Product[] = [];
         const orderStatus = ['Delivered', 'Cancelled'];
         // Separate orders
         const OrderHistory = orders.filter((order: any) => orderStatus.includes(order.status));
-        const activeOrders = orders.filter((order: any) => order.status !== 'Delivered');
+        const activeOrders = orders.filter((order: any) => !orderStatus.includes(order.status));
 
         this.fetchUserOrders = activeOrders.sort((a: any, b: any) =>
           new Date(b.order_date).getTime() - new Date(a.order_date).getTime()
@@ -274,6 +286,7 @@ products: Product[] = [];
   }
 
   confirmCancel() {
+    this.loadingService.show();
     if (!this.cancel_reason || !this.selectedOrderId) {
       alert("Please enter a cancellation reason.");
       return;
@@ -285,6 +298,7 @@ products: Product[] = [];
         this.activeComponent = 'order';
         this.cancel_reason = '';
         this.selectedOrderId = null;
+        this.loadingService.hide();
         this.refereshData()
       }, error: (error) => {
         this.showMessage('error', 'Error', 'Failed to cancel order. Please try again!!!');
@@ -298,6 +312,7 @@ products: Product[] = [];
   }
   userInvoices: any = {};
   fetchInvoices() {
+    this.loadingService.show();
     this.orderService.fetchInvoicesForUser(this.userId).subscribe({
       next: (res) => {
         console.log(res.data);
@@ -310,6 +325,7 @@ products: Product[] = [];
             orderData
           };
         });
+        this.loadingService.hide();
       }
     });
   }

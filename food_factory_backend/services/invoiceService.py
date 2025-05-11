@@ -16,8 +16,6 @@ def invoice_details(db_connection, order_id, user_id):
             print("No orders found or invalid format.")
             return {"error": "No valid orders found"}
 
-        print("Fetched Orders:", orders)
-
         # Fetch user details
         user_data = fetch_user_by_id(db_connection, user_id) or {}
         dealer_details = fetch_dealer_details_by_id(db_connection, user_id) or {}
@@ -29,11 +27,8 @@ def invoice_details(db_connection, order_id, user_id):
             print("No user details found.")
             return {"error": "User details not found"}
 
-        print("Fetched User Data:", user_info)
-
         # Compute total amount safely
         total_amount = sum(Decimal(order_item.get('sub_total', 0)) for order_item in orders.get("order_items", []))
-        print(f"Total Amount: {total_amount}")
 
         # Prepare invoice data
         invoice_data = {
@@ -44,8 +39,6 @@ def invoice_details(db_connection, order_id, user_id):
             "total_amount": total_amount,
             "status": "Pending"  # Default status
         }
-
-        print("Invoice Data to Insert:", invoice_data)
 
         # Insert into invoices table
         with db_connection.cursor() as cursor:
@@ -59,8 +52,7 @@ def invoice_details(db_connection, order_id, user_id):
             ))
             invoice_id = cursor.lastrowid  # Get inserted row ID
             db_connection.commit()
-
-        print(f"Invoice Inserted Successfully - ID: {invoice_id}")
+            
         return {"message": "Invoice generated successfully", "invoice_id": invoice_id}
 
     except Exception as e:
@@ -111,7 +103,6 @@ def update_invoice_status_to_paid(db_connection, status, order_id):
                 print("No invoice found to update.")
                 return {"message": "No matching invoice found"}
         
-        print(f"Invoice status updated to 'Paid' for order_id: {order_id}")
         return {"message": "Invoice status updated to 'Paid'"}
     
     except Exception as e:

@@ -9,6 +9,7 @@ import { PrimeNgModule } from "../shared/prime-ng/prime-ng.module";
 import { FormsModule } from "@angular/forms";
 import { SettingsComponent } from "./settings/settings.component";
 import { ProfileComponent } from "./profile/profile.component";
+import { LoaderComponent } from "./loader/loader.component";
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { ProfileComponent } from "./profile/profile.component";
         WaveLoaderComponent,
         ForgotPasswordComponent,
         SettingsComponent,
-        ProfileComponent
+        ProfileComponent,
+        LoaderComponent
     ],
     imports: [
         CommonModule,
@@ -31,7 +33,8 @@ import { ProfileComponent } from "./profile/profile.component";
         WaveLoaderComponent,
         ForgotPasswordComponent,
         SettingsComponent,
-        ProfileComponent
+        ProfileComponent,
+        LoaderComponent
     ]
 })
 export class CommonsModule { }
