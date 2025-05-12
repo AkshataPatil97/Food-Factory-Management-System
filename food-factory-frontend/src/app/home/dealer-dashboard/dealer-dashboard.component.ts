@@ -8,6 +8,7 @@ import { OrdersService } from '../../shared/services/orders.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { LoaderService } from '../../shared/services/loader.service';
+import { PROFILE_MISSING_FIELDS } from '../../shared/constants';
 
 @Component({
   selector: 'app-dealer-dashboard',
@@ -217,7 +218,7 @@ export class DealerDashboardComponent {
 
           const errorMessage = error?.error?.error || 'Failed to place order';
 
-          if (errorMessage === 'User address is missing. Cannot place order.') {
+          if (PROFILE_MISSING_FIELDS.includes(errorMessage)) {
             this.showMessage('error', 'Error', errorMessage);
             this.loadingService.hide();
             this.setActiveComponent('profile');

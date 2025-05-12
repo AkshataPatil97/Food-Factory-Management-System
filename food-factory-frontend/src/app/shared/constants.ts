@@ -37,3 +37,4 @@ export const UPDATE_COMPANY_URL = 'user/updateCompany/';
 export const DELETE_COMPANY_URL = 'user/deleteCompany/';
 // DB Config Constants
 export const ALLOW_ADMIN_REGISTER = 'allow.admin.register';
+export const PROFILE_MISSING_FIELDS = ["User mobile number is missing. Cannot place order." , "User address is missing. Cannot place order.", "Shop name is missing. Cannot place order."]

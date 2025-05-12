@@ -8,37 +8,6 @@ from constants.queries import(
 )
 from config.connection import get_conn, close_conn
 
-
-# def insert_order(db_connection, request):
-#     try:
-#         from .sendemail import send_order_placed_email
-#         cursor = db_connection.cursor()
-#         data = json.loads(request.body)
-
-#         userData = fetch_user_for_order(db_connection, data.get("user_id"))
-#         print(userData)
-#         # Insert order into orders table
-#         cursor.execute(
-#             INSERT_ORDER_DETAIL_QUERY,
-#             (data.get("user_id"), data.get("total_price"), data.get("status"),
-#              data.get("is_cancelled", False), data.get("cancellation_reason"))
-#         )
-        
-#         # Get the last inserted order_id
-#         order_id = cursor.lastrowid  
-#         db_connection.commit()
-        
-#         send_order_placed_email(userData, data.get("total_price"))
-#         return order_id  # Return order_id
-
-#     except Exception as e:
-#         db_connection.rollback()
-#         print(f"Error inserting order: {str(e)}")
-#         return None  
-
-#     finally:
-#       cursor.close()
-
 def insert_order(db_connection, request):
     try:
         from .sendemail import send_order_placed_email
@@ -47,10 +16,20 @@ def insert_order(db_connection, request):
 
         userData = fetch_user_for_order(db_connection, data.get("user_id"))
 
-        # Validate address presence
+        # Validate address_payload presence
         address_payload = userData.get("address_payload")
         if not address_payload:
             return {"success": False, "message": "User address is missing. Cannot place order."}
+
+        # Validate mobile_no presence
+        mobile_no = userData.get("mobile_no")
+        if not mobile_no:
+            return {"success": False, "message": "User mobile number is missing. Cannot place order."}
+
+        # Validate shop_name presence
+        shop_name = userData.get("shop_name")
+        if not shop_name:
+            return {"success": False, "message": "Shop name is missing. Cannot place order."}
 
         # Insert order into orders table
         cursor.execute(
