@@ -9,11 +9,48 @@ from constants.queries import(
 from config.connection import get_conn, close_conn
 
 
+# def insert_order(db_connection, request):
+#     try:
+#         from .sendemail import send_order_placed_email
+#         cursor = db_connection.cursor()
+#         data = json.loads(request.body)
+
+#         userData = fetch_user_for_order(db_connection, data.get("user_id"))
+#         print(userData)
+#         # Insert order into orders table
+#         cursor.execute(
+#             INSERT_ORDER_DETAIL_QUERY,
+#             (data.get("user_id"), data.get("total_price"), data.get("status"),
+#              data.get("is_cancelled", False), data.get("cancellation_reason"))
+#         )
+        
+#         # Get the last inserted order_id
+#         order_id = cursor.lastrowid  
+#         db_connection.commit()
+        
+#         send_order_placed_email(userData, data.get("total_price"))
+#         return order_id  # Return order_id
+
+#     except Exception as e:
+#         db_connection.rollback()
+#         print(f"Error inserting order: {str(e)}")
+#         return None  
+
+#     finally:
+#       cursor.close()
+
 def insert_order(db_connection, request):
     try:
         from .sendemail import send_order_placed_email
         cursor = db_connection.cursor()
         data = json.loads(request.body)
+
+        userData = fetch_user_for_order(db_connection, data.get("user_id"))
+
+        # Validate address presence
+        address_payload = userData.get("address_payload")
+        if not address_payload:
+            return {"success": False, "message": "User address is missing. Cannot place order."}
 
         # Insert order into orders table
         cursor.execute(
@@ -26,18 +63,16 @@ def insert_order(db_connection, request):
         order_id = cursor.lastrowid  
         db_connection.commit()
         
-        
-        userData = fetch_user_for_order(db_connection, data.get("user_id"))
         send_order_placed_email(userData, data.get("total_price"))
-        return order_id  # Return order_id
+        return {"success": True, "order_id": order_id}
 
     except Exception as e:
         db_connection.rollback()
         print(f"Error inserting order: {str(e)}")
-        return None  
+        return {"success": False, "message": f"Error inserting order: {str(e)}"}
 
     finally:
-      cursor.close()
+        cursor.close()
 
 def insert_order_details(db_connection, order_id, request):
     try:

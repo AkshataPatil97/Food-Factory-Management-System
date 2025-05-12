@@ -15,7 +15,7 @@ import { LoaderService } from '../../shared/services/loader.service';
   styleUrls: ['./dealer-dashboard.component.scss']
 })
 export class DealerDashboardComponent {
-products: Product[] = [];
+  products: Product[] = [];
   cart: Cart[] = [];
 
   userId: number = 0;
@@ -209,13 +209,22 @@ products: Product[] = [];
       this.orderService.insertOrder(this.order_data).subscribe({
         next: () => {
           this.showMessage('success', 'Success', 'Order placed successfully');
-          this.refereshData()
+          this.refereshData();
           this.loadingService.hide();
         },
         error: (error) => {
           console.error("Error inserting order:", error);
-          this.showMessage('error', 'Error', 'Failed to place order');
-          this.loadingService.hide();
+
+          const errorMessage = error?.error?.error || 'Failed to place order';
+
+          if (errorMessage === 'User address is missing. Cannot place order.') {
+            this.showMessage('error', 'Error', errorMessage);
+            this.loadingService.hide();
+            this.setActiveComponent('profile');
+          } else {
+            this.showMessage('error', 'Error', 'Failed to place order');
+            this.loadingService.hide();
+          }
         }
       });
     }

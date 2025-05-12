@@ -28,18 +28,26 @@ class OrderInsertView(APIView):
             if not db_connection:
                 return Response({"error": "Failed to connect to the database"}, status=500)
 
-            order_id = insert_order(db_connection, request)
+            # Call insert_order and check response
+            order_response = insert_order(db_connection, request)
+            
+            if not order_response.get("success"):
+                # Return the exact error message from insert_order
+                return Response({"error": order_response.get("message")}, status=400)
+
+            order_id = order_response.get("order_id")
             user_id = request.data.get('user_id')
-            if order_id:
-                order_details_response = insert_order_details(db_connection, order_id, request)
-                if "error" in order_details_response:
-                    return Response(order_details_response, status=500)
-                
-                invoice_id = invoice_details(db_connection, order_id, user_id)
-                if invoice_id:
-                    return Response({"message": "Order inserted successfully", "order_id": order_id}, status=201)
-            else:
-                return Response({"error": "Failed to insert order"}, status=500)
+
+            order_details_response = insert_order_details(db_connection, order_id, request)
+            if "error" in order_details_response:
+                return Response(order_details_response, status=500)
+            
+            invoice_id = invoice_details(db_connection, order_id, user_id)
+            if invoice_id:
+                return Response({"message": "Order inserted successfully", "order_id": order_id}, status=201)
+            
+            return Response({"error": "Failed to generate invoice"}, status=500)
+
         except Exception as e:
             return Response({"error": str(e)}, status=500)
         finally:
